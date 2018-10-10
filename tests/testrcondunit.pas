@@ -54,6 +54,10 @@ procedure CMatrixRefRCond(const A : TComplex2DArray;
      N : AlglibInteger;
      var RC1 : Double;
      var RCInf : Double);forward;
+function TestRMatrixTRRCond(MaxN : AlglibInteger;
+     PassCount : AlglibInteger):Boolean;forward;
+function TestCMatrixTRRCond(MaxN : AlglibInteger;
+     PassCount : AlglibInteger):Boolean;forward;
 function TestRMatrixRCond(MaxN : AlglibInteger;
      PassCount : AlglibInteger):Boolean;forward;
 function TestSPDMatrixRCond(MaxN : AlglibInteger;
@@ -69,6 +73,8 @@ var
     MaxN : AlglibInteger;
     PassCount : AlglibInteger;
     WasErrors : Boolean;
+    RTRErr : Boolean;
+    CTRErr : Boolean;
     RErr : Boolean;
     CErr : Boolean;
     SPDErr : Boolean;
@@ -80,14 +86,34 @@ begin
     //
     // report
     //
+    RTRErr :=  not TestRMatrixTRRCond(MaxN, PassCount);
+    CTRErr :=  not TestCMatrixTRRCond(MaxN, PassCount);
     RErr :=  not TestRMatrixRCond(MaxN, PassCount);
     CErr :=  not TestCMatrixRCond(MaxN, PassCount);
     SPDErr :=  not TestSPDMatrixRCond(MaxN, PassCount);
     HPDErr :=  not TestHPDMatrixRCond(MaxN, PassCount);
-    WasErrors := RErr or CErr or SPDErr or HPDErr;
+    WasErrors := RTRErr or CTRErr or RErr or CErr or SPDErr or HPDErr;
     if  not Silent then
     begin
         Write(Format('TESTING RCOND'#13#10'',[]));
+        Write(Format('REAL TRIANGULAR:                         ',[]));
+        if  not RTRErr then
+        begin
+            Write(Format('OK'#13#10'',[]));
+        end
+        else
+        begin
+            Write(Format('FAILED'#13#10'',[]));
+        end;
+        Write(Format('COMPLEX TRIANGULAR:                      ',[]));
+        if  not CTRErr then
+        begin
+            Write(Format('OK'#13#10'',[]));
+        end
+        else
+        begin
+            Write(Format('FAILED'#13#10'',[]));
+        end;
         Write(Format('REAL:                                    ',[]));
         if  not RErr then
         begin
@@ -1003,6 +1029,414 @@ begin
     //
     RC1 := Nrm1InvA*Nrm1A;
     RCInf := NrmInfInvA*NrmInfA;
+end;
+
+
+(*************************************************************************
+Returns True for successful test, False - for failed test
+*************************************************************************)
+function TestRMatrixTRRCond(MaxN : AlglibInteger;
+     PassCount : AlglibInteger):Boolean;
+var
+    A : TReal2DArray;
+    EA : TReal2DArray;
+    P : TInteger1DArray;
+    N : AlglibInteger;
+    I : AlglibInteger;
+    J : AlglibInteger;
+    J1 : AlglibInteger;
+    J2 : AlglibInteger;
+    Pass : AlglibInteger;
+    Err50 : Boolean;
+    Err90 : Boolean;
+    ErrSpec : Boolean;
+    ErrLess : Boolean;
+    ERC1 : Double;
+    ERCInf : Double;
+    Q50 : TReal1DArray;
+    Q90 : TReal1DArray;
+    V : Double;
+    IsUpper : Boolean;
+    IsUnit : Boolean;
+begin
+    Err50 := False;
+    Err90 := False;
+    ErrLess := False;
+    ErrSpec := False;
+    SetLength(Q50, 2);
+    SetLength(Q90, 2);
+    N:=1;
+    while N<=MaxN do
+    begin
+        
+        //
+        // special test for zero matrix
+        //
+        RMatrixGenZero(A, N);
+        ErrSpec := ErrSpec or AP_FP_Neq(RMatrixTRRCond1(A, N, AP_FP_Greater(RandomReal,0.5), False),0);
+        ErrSpec := ErrSpec or AP_FP_Neq(RMatrixTRRCondInf(A, N, AP_FP_Greater(RandomReal,0.5), False),0);
+        
+        //
+        // general test
+        //
+        SetLength(A, N, N);
+        I:=0;
+        while I<=1 do
+        begin
+            Q50[I] := 0;
+            Q90[I] := 0;
+            Inc(I);
+        end;
+        Pass:=1;
+        while Pass<=PassCount do
+        begin
+            IsUpper := AP_FP_Greater(RandomReal,0.5);
+            IsUnit := AP_FP_Greater(RandomReal,0.5);
+            I:=0;
+            while I<=N-1 do
+            begin
+                J:=0;
+                while J<=N-1 do
+                begin
+                    A[I,J] := RandomReal-0.5;
+                    Inc(J);
+                end;
+                Inc(I);
+            end;
+            I:=0;
+            while I<=N-1 do
+            begin
+                A[I,I] := 1+RandomReal;
+                Inc(I);
+            end;
+            RMatrixMakeACopy(A, N, N, EA);
+            I:=0;
+            while I<=N-1 do
+            begin
+                if IsUpper then
+                begin
+                    J1 := 0;
+                    J2 := I-1;
+                end
+                else
+                begin
+                    J1 := I+1;
+                    J2 := N-1;
+                end;
+                J:=J1;
+                while J<=J2 do
+                begin
+                    EA[I,J] := 0;
+                    Inc(J);
+                end;
+                if IsUnit then
+                begin
+                    EA[I,I] := 1;
+                end;
+                Inc(I);
+            end;
+            RMatrixRefRCond(EA, N, ERC1, ERCInf);
+            
+            //
+            // 1-norm
+            //
+            V := 1/RMatrixTRRCond1(A, N, IsUpper, IsUnit);
+            if AP_FP_Greater_Eq(V,Threshold50*ERC1) then
+            begin
+                Q50[0] := Q50[0]+AP_Double(1)/PassCount;
+            end;
+            if AP_FP_Greater_Eq(V,Threshold90*ERC1) then
+            begin
+                Q90[0] := Q90[0]+AP_Double(1)/PassCount;
+            end;
+            ErrLess := ErrLess or AP_FP_Greater(V,ERC1*1.001);
+            
+            //
+            // Inf-norm
+            //
+            V := 1/RMatrixTRRCondInf(A, N, IsUpper, IsUnit);
+            if AP_FP_Greater_Eq(V,Threshold50*ERCInf) then
+            begin
+                Q50[1] := Q50[1]+AP_Double(1)/PassCount;
+            end;
+            if AP_FP_Greater_Eq(V,Threshold90*ERCInf) then
+            begin
+                Q90[1] := Q90[1]+AP_Double(1)/PassCount;
+            end;
+            ErrLess := ErrLess or AP_FP_Greater(V,ERCInf*1.001);
+            Inc(Pass);
+        end;
+        I:=0;
+        while I<=1 do
+        begin
+            Err50 := Err50 or AP_FP_Less(Q50[I],0.50);
+            Err90 := Err90 or AP_FP_Less(Q90[I],0.90);
+            Inc(I);
+        end;
+        
+        //
+        // degenerate matrix test
+        //
+        if N>=3 then
+        begin
+            SetLength(A, N, N);
+            I:=0;
+            while I<=N-1 do
+            begin
+                J:=0;
+                while J<=N-1 do
+                begin
+                    A[I,J] := 0.0;
+                    Inc(J);
+                end;
+                Inc(I);
+            end;
+            A[0,0] := 1;
+            A[N-1,N-1] := 1;
+            ErrSpec := ErrSpec or AP_FP_Neq(RMatrixTRRCond1(A, N, AP_FP_Greater(RandomReal,0.5), False),0);
+            ErrSpec := ErrSpec or AP_FP_Neq(RMatrixTRRCondInf(A, N, AP_FP_Greater(RandomReal,0.5), False),0);
+        end;
+        
+        //
+        // near-degenerate matrix test
+        //
+        if N>=2 then
+        begin
+            SetLength(A, N, N);
+            I:=0;
+            while I<=N-1 do
+            begin
+                J:=0;
+                while J<=N-1 do
+                begin
+                    A[I,J] := 0.0;
+                    Inc(J);
+                end;
+                Inc(I);
+            end;
+            I:=0;
+            while I<=N-1 do
+            begin
+                A[I,I] := 1;
+                Inc(I);
+            end;
+            I := RandomInteger(N);
+            A[I,I] := 0.1*MaxRealNumber;
+            ErrSpec := ErrSpec or AP_FP_Neq(RMatrixTRRCond1(A, N, AP_FP_Greater(RandomReal,0.5), False),0);
+            ErrSpec := ErrSpec or AP_FP_Neq(RMatrixTRRCondInf(A, N, AP_FP_Greater(RandomReal,0.5), False),0);
+        end;
+        Inc(N);
+    end;
+    
+    //
+    // report
+    //
+    Result :=  not (Err50 or Err90 or ErrLess or ErrSpec);
+end;
+
+
+(*************************************************************************
+Returns True for successful test, False - for failed test
+*************************************************************************)
+function TestCMatrixTRRCond(MaxN : AlglibInteger;
+     PassCount : AlglibInteger):Boolean;
+var
+    A : TComplex2DArray;
+    EA : TComplex2DArray;
+    P : TInteger1DArray;
+    N : AlglibInteger;
+    I : AlglibInteger;
+    J : AlglibInteger;
+    J1 : AlglibInteger;
+    J2 : AlglibInteger;
+    Pass : AlglibInteger;
+    Err50 : Boolean;
+    Err90 : Boolean;
+    ErrSpec : Boolean;
+    ErrLess : Boolean;
+    ERC1 : Double;
+    ERCInf : Double;
+    Q50 : TReal1DArray;
+    Q90 : TReal1DArray;
+    V : Double;
+    IsUpper : Boolean;
+    IsUnit : Boolean;
+begin
+    Err50 := False;
+    Err90 := False;
+    ErrLess := False;
+    ErrSpec := False;
+    SetLength(Q50, 2);
+    SetLength(Q90, 2);
+    N:=1;
+    while N<=MaxN do
+    begin
+        
+        //
+        // special test for zero matrix
+        //
+        CMatrixGenZero(A, N);
+        ErrSpec := ErrSpec or AP_FP_Neq(CMatrixTRRCond1(A, N, AP_FP_Greater(RandomReal,0.5), False),0);
+        ErrSpec := ErrSpec or AP_FP_Neq(CMatrixTRRCondInf(A, N, AP_FP_Greater(RandomReal,0.5), False),0);
+        
+        //
+        // general test
+        //
+        SetLength(A, N, N);
+        I:=0;
+        while I<=1 do
+        begin
+            Q50[I] := 0;
+            Q90[I] := 0;
+            Inc(I);
+        end;
+        Pass:=1;
+        while Pass<=PassCount do
+        begin
+            IsUpper := AP_FP_Greater(RandomReal,0.5);
+            IsUnit := AP_FP_Greater(RandomReal,0.5);
+            I:=0;
+            while I<=N-1 do
+            begin
+                J:=0;
+                while J<=N-1 do
+                begin
+                    A[I,J].X := RandomReal-0.5;
+                    A[I,J].Y := RandomReal-0.5;
+                    Inc(J);
+                end;
+                Inc(I);
+            end;
+            I:=0;
+            while I<=N-1 do
+            begin
+                A[I,I].X := 1+RandomReal;
+                A[I,I].Y := 1+RandomReal;
+                Inc(I);
+            end;
+            CMatrixMakeACopy(A, N, N, EA);
+            I:=0;
+            while I<=N-1 do
+            begin
+                if IsUpper then
+                begin
+                    J1 := 0;
+                    J2 := I-1;
+                end
+                else
+                begin
+                    J1 := I+1;
+                    J2 := N-1;
+                end;
+                J:=J1;
+                while J<=J2 do
+                begin
+                    EA[I,J] := C_Complex(0);
+                    Inc(J);
+                end;
+                if IsUnit then
+                begin
+                    EA[I,I] := C_Complex(1);
+                end;
+                Inc(I);
+            end;
+            CMatrixRefRCond(EA, N, ERC1, ERCInf);
+            
+            //
+            // 1-norm
+            //
+            V := 1/CMatrixTRRCond1(A, N, IsUpper, IsUnit);
+            if AP_FP_Greater_Eq(V,Threshold50*ERC1) then
+            begin
+                Q50[0] := Q50[0]+AP_Double(1)/PassCount;
+            end;
+            if AP_FP_Greater_Eq(V,Threshold90*ERC1) then
+            begin
+                Q90[0] := Q90[0]+AP_Double(1)/PassCount;
+            end;
+            ErrLess := ErrLess or AP_FP_Greater(V,ERC1*1.001);
+            
+            //
+            // Inf-norm
+            //
+            V := 1/CMatrixTRRCondInf(A, N, IsUpper, IsUnit);
+            if AP_FP_Greater_Eq(V,Threshold50*ERCInf) then
+            begin
+                Q50[1] := Q50[1]+AP_Double(1)/PassCount;
+            end;
+            if AP_FP_Greater_Eq(V,Threshold90*ERCInf) then
+            begin
+                Q90[1] := Q90[1]+AP_Double(1)/PassCount;
+            end;
+            ErrLess := ErrLess or AP_FP_Greater(V,ERCInf*1.001);
+            Inc(Pass);
+        end;
+        I:=0;
+        while I<=1 do
+        begin
+            Err50 := Err50 or AP_FP_Less(Q50[I],0.50);
+            Err90 := Err90 or AP_FP_Less(Q90[I],0.90);
+            Inc(I);
+        end;
+        
+        //
+        // degenerate matrix test
+        //
+        if N>=3 then
+        begin
+            SetLength(A, N, N);
+            I:=0;
+            while I<=N-1 do
+            begin
+                J:=0;
+                while J<=N-1 do
+                begin
+                    A[I,J] := C_Complex(0.0);
+                    Inc(J);
+                end;
+                Inc(I);
+            end;
+            A[0,0] := C_Complex(1);
+            A[N-1,N-1] := C_Complex(1);
+            ErrSpec := ErrSpec or AP_FP_Neq(CMatrixTRRCond1(A, N, AP_FP_Greater(RandomReal,0.5), False),0);
+            ErrSpec := ErrSpec or AP_FP_Neq(CMatrixTRRCondInf(A, N, AP_FP_Greater(RandomReal,0.5), False),0);
+        end;
+        
+        //
+        // near-degenerate matrix test
+        //
+        if N>=2 then
+        begin
+            SetLength(A, N, N);
+            I:=0;
+            while I<=N-1 do
+            begin
+                J:=0;
+                while J<=N-1 do
+                begin
+                    A[I,J] := C_Complex(0.0);
+                    Inc(J);
+                end;
+                Inc(I);
+            end;
+            I:=0;
+            while I<=N-1 do
+            begin
+                A[I,I] := C_Complex(1);
+                Inc(I);
+            end;
+            I := RandomInteger(N);
+            A[I,I] := C_Complex(0.1*MaxRealNumber);
+            ErrSpec := ErrSpec or AP_FP_Neq(CMatrixTRRCond1(A, N, AP_FP_Greater(RandomReal,0.5), False),0);
+            ErrSpec := ErrSpec or AP_FP_Neq(CMatrixTRRCondInf(A, N, AP_FP_Greater(RandomReal,0.5), False),0);
+        end;
+        Inc(N);
+    end;
+    
+    //
+    // report
+    //
+    Result :=  not (Err50 or Err90 or ErrLess or ErrSpec);
 end;
 
 

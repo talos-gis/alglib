@@ -1,6 +1,6 @@
 unit testxblasunit;
 interface
-uses Math, Sysutils, Ap, tsort, xblas;
+uses Math, Sysutils, Ap, xblas;
 
 function TestXBlas(Silent : Boolean):Boolean;
 function testxblasunit_test_silent():Boolean;

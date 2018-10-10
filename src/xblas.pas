@@ -1,6 +1,6 @@
 unit xblas;
 interface
-uses Math, Sysutils, Ap, tsort;
+uses Math, Sysutils, Ap;
 
 procedure XDot(const A : TReal1DArray;
      const B : TReal1DArray;

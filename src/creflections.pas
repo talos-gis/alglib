@@ -97,6 +97,8 @@ var
     XNORM : Double;
     MX : Double;
     T : Complex;
+    S : Double;
+    V : Complex;
     i_ : AlglibInteger;
 begin
     if N<=0 then
@@ -104,6 +106,44 @@ begin
         TAU := C_Complex(0);
         Exit;
     end;
+    
+    //
+    // Scale if needed (to avoid overflow/underflow during intermediate
+    // calculations).
+    //
+    MX := 0;
+    J:=1;
+    while J<=N do
+    begin
+        MX := Max(AbsComplex(X[J]), MX);
+        Inc(J);
+    end;
+    S := 1;
+    if AP_FP_Neq(MX,0) then
+    begin
+        if AP_FP_Less(MX,1) then
+        begin
+            S := Sqrt(MinRealNumber);
+            V := C_Complex(1/S);
+            for i_ := 1 to N do
+            begin
+                X[i_] := C_Mul(V, X[i_]);
+            end;
+        end
+        else
+        begin
+            S := Sqrt(MaxRealNumber);
+            V := C_Complex(1/S);
+            for i_ := 1 to N do
+            begin
+                X[i_] := C_Mul(V, X[i_]);
+            end;
+        end;
+    end;
+    
+    //
+    // calculate
+    //
     ALPHA := X[1];
     MX := 0;
     J:=2;
@@ -129,6 +169,7 @@ begin
     if AP_FP_Eq(XNORM,0) and AP_FP_Eq(ALPHI,0) then
     begin
         TAU := C_Complex(0);
+        X[1] := C_MulR(X[1],S);
         Exit;
     end;
     MX := Max(AbsReal(ALPHR), AbsReal(ALPHI));
@@ -150,6 +191,11 @@ begin
     end;
     ALPHA := C_Complex(BETA);
     X[1] := ALPHA;
+    
+    //
+    // Scale back
+    //
+    X[1] := C_MulR(X[1],S);
 end;
 
 

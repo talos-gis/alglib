@@ -1,6 +1,6 @@
 unit testautogk;
 interface
-uses Math, Sysutils, Ap, tsort, blas, rotations, tdevd, gammafunc, gq, gkq, autogk;
+uses Math, Sysutils, Ap, tsort, hblas, reflections, creflections, sblas, ablasf, ablas, ortfac, blas, rotations, hsschur, evd, gammafunc, gq, gkq, autogk;
 
 function TestAutoGKunit(Silent : Boolean):Boolean;
 function testautogk_test_silent():Boolean;

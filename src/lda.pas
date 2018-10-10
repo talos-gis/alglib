@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit lda;
 interface
-uses Math, Sysutils, Ap, blas, rotations, tdevd, sblas, reflections, tridiagonal, sevd, creflections, hqrnd, matgen, ablasf, ablas, trfac, spdinverse;
+uses Math, Sysutils, Ap, hblas, reflections, creflections, sblas, ablasf, ablas, ortfac, blas, rotations, hsschur, evd, hqrnd, matgen, trfac, trlinsolve, safesolve, rcond, matinv;
 
 procedure FisherLDA(const XY : TReal2DArray;
      NPoints : AlglibInteger;

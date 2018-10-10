@@ -1,6 +1,6 @@
 unit testlm;
 interface
-uses Math, Sysutils, Ap, blas, reflections, creflections, hqrnd, matgen, trinverse, ablasf, ablas, trfac, bidiagonal, qr, lq, rotations, bdsvd, svd, trlinsolve, safesolve, rcond, tsort, xblas, densesolver, lbfgs, minlm;
+uses Math, Sysutils, Ap, blas, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, hblas, sblas, ortfac, rotations, bdsvd, svd, xblas, densesolver, lbfgs, minlm;
 
 function TestMinLM(Silent : Boolean):Boolean;
 function testlm_test_silent():Boolean;

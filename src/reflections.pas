@@ -307,26 +307,12 @@ begin
     begin
         Exit;
     end;
-    
-    //
-    // w := C * v
-    //
     VM := N2-N1+1;
     I:=M1;
     while I<=M2 do
     begin
         T := APVDotProduct(@C[I][0], N1, N2, @V[0], 1, VM);
-        WORK[I] := T;
-        Inc(I);
-    end;
-    
-    //
-    // C := C - w * v'
-    //
-    I:=M1;
-    while I<=M2 do
-    begin
-        T := WORK[I]*TAU;
+        T := T*TAU;
         APVSub(@C[I][0], N1, N2, @V[0], 1, VM, T);
         Inc(I);
     end;

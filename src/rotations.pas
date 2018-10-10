@@ -403,7 +403,14 @@ begin
         begin
             F1 := F;
             G1 := G;
-            R := SQRT(AP_Sqr(F1)+AP_Sqr(G1));
+            if AP_FP_Greater(AbsReal(F1),AbsReal(G1)) then
+            begin
+                R := AbsReal(F1)*SQRT(1+AP_Sqr(G1/F1));
+            end
+            else
+            begin
+                R := AbsReal(G1)*SQRT(1+AP_Sqr(F1/G1));
+            end;
             CS := F1/R;
             SN := G1/R;
             if AP_FP_Greater(ABSReal(F),ABSReal(G)) and AP_FP_Less(CS,0) then

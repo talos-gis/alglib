@@ -32,6 +32,14 @@ function RMatrixRCondInf(A : TReal2DArray; N : AlglibInteger):Double;
 function SPDMatrixRCond(A : TReal2DArray;
      N : AlglibInteger;
      IsUpper : Boolean):Double;
+function RMatrixTRRCond1(const A : TReal2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean;
+     IsUnit : Boolean):Double;
+function RMatrixTRRCondInf(const A : TReal2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean;
+     IsUnit : Boolean):Double;
 function HPDMatrixRCond(A : TComplex2DArray;
      N : AlglibInteger;
      IsUpper : Boolean):Double;
@@ -49,10 +57,32 @@ function CMatrixLURCond1(const LUA : TComplex2DArray;
      N : AlglibInteger):Double;
 function CMatrixLURCondInf(const LUA : TComplex2DArray;
      N : AlglibInteger):Double;
+function CMatrixTRRCond1(const A : TComplex2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean;
+     IsUnit : Boolean):Double;
+function CMatrixTRRCondInf(const A : TComplex2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean;
+     IsUnit : Boolean):Double;
 function RCondThreshold():Double;
 
 implementation
 
+procedure RMatrixRCondTRInternal(const A : TReal2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean;
+     IsUnit : Boolean;
+     OneNorm : Boolean;
+     ANORM : Double;
+     var RC : Double);forward;
+procedure CMatrixRCondTRInternal(const A : TComplex2DArray;
+     const N : AlglibInteger;
+     IsUpper : Boolean;
+     IsUnit : Boolean;
+     OneNorm : Boolean;
+     ANORM : Double;
+     var RC : Double);forward;
 procedure SPDMatrixRCondCholeskyInternal(const CHA : TReal2DArray;
      N : AlglibInteger;
      IsUpper : Boolean;
@@ -132,8 +162,8 @@ Input parameters:
 Result: 1/LowerBound(cond(A))
 
 NOTE:
-    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
-    returned in such cases.
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
 *************************************************************************)
 function RMatrixRCond1(A : TReal2DArray; N : AlglibInteger):Double;
 var
@@ -191,8 +221,8 @@ Input parameters:
 Result: 1/LowerBound(cond(A))
 
 NOTE:
-    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
-    returned in such cases.
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
 *************************************************************************)
 function RMatrixRCondInf(A : TReal2DArray; N : AlglibInteger):Double;
 var
@@ -248,8 +278,8 @@ Result:
     could not be found by this algorithm.
 
 NOTE:
-    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
-    returned in such cases.
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
 *************************************************************************)
 function SPDMatrixRCond(A : TReal2DArray;
      N : AlglibInteger;
@@ -320,6 +350,158 @@ end;
 
 
 (*************************************************************************
+Triangular matrix: estimate of a condition number (1-norm)
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    A       -   matrix. Array[0..N-1, 0..N-1].
+    N       -   size of A.
+    IsUpper -   True, if the matrix is upper triangular.
+    IsUnit  -   True, if the matrix has a unit diagonal.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
+*************************************************************************)
+function RMatrixTRRCond1(const A : TReal2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean;
+     IsUnit : Boolean):Double;
+var
+    I : AlglibInteger;
+    J : AlglibInteger;
+    V : Double;
+    Nrm : Double;
+    Pivots : TInteger1DArray;
+    T : TReal1DArray;
+    J1 : AlglibInteger;
+    J2 : AlglibInteger;
+begin
+    Assert(N>=1, 'RMatrixTRRCond1: N<1!');
+    SetLength(T, N);
+    I:=0;
+    while I<=N-1 do
+    begin
+        T[I] := 0;
+        Inc(I);
+    end;
+    I:=0;
+    while I<=N-1 do
+    begin
+        if IsUpper then
+        begin
+            J1 := I+1;
+            J2 := N-1;
+        end
+        else
+        begin
+            J1 := 0;
+            J2 := I-1;
+        end;
+        J:=J1;
+        while J<=J2 do
+        begin
+            T[J] := T[J]+AbsReal(A[I,J]);
+            Inc(J);
+        end;
+        if IsUnit then
+        begin
+            T[I] := T[I]+1;
+        end
+        else
+        begin
+            T[I] := T[I]+AbsReal(A[I,I]);
+        end;
+        Inc(I);
+    end;
+    Nrm := 0;
+    I:=0;
+    while I<=N-1 do
+    begin
+        Nrm := Max(Nrm, T[I]);
+        Inc(I);
+    end;
+    RMatrixRCondTRInternal(A, N, IsUpper, IsUnit, True, Nrm, V);
+    Result := V;
+end;
+
+
+(*************************************************************************
+Triangular matrix: estimate of a matrix condition number (infinity-norm).
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    A   -   matrix. Array whose indexes range within [0..N-1, 0..N-1].
+    N   -   size of matrix A.
+    IsUpper -   True, if the matrix is upper triangular.
+    IsUnit  -   True, if the matrix has a unit diagonal.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
+*************************************************************************)
+function RMatrixTRRCondInf(const A : TReal2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean;
+     IsUnit : Boolean):Double;
+var
+    I : AlglibInteger;
+    J : AlglibInteger;
+    V : Double;
+    Nrm : Double;
+    Pivots : TInteger1DArray;
+    J1 : AlglibInteger;
+    J2 : AlglibInteger;
+begin
+    Assert(N>=1, 'RMatrixTRRCondInf: N<1!');
+    Nrm := 0;
+    I:=0;
+    while I<=N-1 do
+    begin
+        if IsUpper then
+        begin
+            J1 := I+1;
+            J2 := N-1;
+        end
+        else
+        begin
+            J1 := 0;
+            J2 := I-1;
+        end;
+        V := 0;
+        J:=J1;
+        while J<=J2 do
+        begin
+            V := V+AbsReal(A[I,J]);
+            Inc(J);
+        end;
+        if IsUnit then
+        begin
+            V := V+1;
+        end
+        else
+        begin
+            V := V+AbsReal(A[I,I]);
+        end;
+        Nrm := Max(Nrm, V);
+        Inc(I);
+    end;
+    RMatrixRCondTRInternal(A, N, IsUpper, IsUnit, False, Nrm, V);
+    Result := V;
+end;
+
+
+(*************************************************************************
 Condition number estimate of a Hermitian positive definite matrix.
 
 The algorithm calculates a lower bound of the condition number. In this case,
@@ -343,8 +525,8 @@ Result:
     could not be found by this algorithm.
 
 NOTE:
-    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
-    returned in such cases.
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
 *************************************************************************)
 function HPDMatrixRCond(A : TComplex2DArray;
      N : AlglibInteger;
@@ -428,8 +610,8 @@ Input parameters:
 Result: 1/LowerBound(cond(A))
 
 NOTE:
-    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
-    returned in such cases.
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
 *************************************************************************)
 function CMatrixRCond1(A : TComplex2DArray; N : AlglibInteger):Double;
 var
@@ -487,8 +669,8 @@ Input parameters:
 Result: 1/LowerBound(cond(A))
 
 NOTE:
-    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
-    returned in such cases.
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
 *************************************************************************)
 function CMatrixRCondInf(A : TComplex2DArray; N : AlglibInteger):Double;
 var
@@ -535,8 +717,8 @@ Input parameters:
 Result: 1/LowerBound(cond(A))
 
 NOTE:
-    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
-    returned in such cases.
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
 *************************************************************************)
 function RMatrixLURCond1(const LUA : TReal2DArray; N : AlglibInteger):Double;
 var
@@ -563,8 +745,8 @@ Input parameters:
 Result: 1/LowerBound(cond(A))
 
 NOTE:
-    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
-    returned in such cases.
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
 *************************************************************************)
 function RMatrixLURCondInf(const LUA : TReal2DArray; N : AlglibInteger):Double;
 var
@@ -595,8 +777,8 @@ Input parameters:
 Result: 1/LowerBound(cond(A))
 
 NOTE:
-    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
-    returned in such cases.
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
 *************************************************************************)
 function SPDMatrixCholeskyRCond(const A : TReal2DArray;
      N : AlglibInteger;
@@ -629,8 +811,8 @@ Input parameters:
 Result: 1/LowerBound(cond(A))
 
 NOTE:
-    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
-    returned in such cases.
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
 *************************************************************************)
 function HPDMatrixCholeskyRCond(const A : TComplex2DArray;
      N : AlglibInteger;
@@ -658,8 +840,8 @@ Input parameters:
 Result: 1/LowerBound(cond(A))
 
 NOTE:
-    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
-    returned in such cases.
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
 *************************************************************************)
 function CMatrixLURCond1(const LUA : TComplex2DArray;
      N : AlglibInteger):Double;
@@ -688,8 +870,8 @@ Input parameters:
 Result: 1/LowerBound(cond(A))
 
 NOTE:
-    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
-    returned in such cases.
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
 *************************************************************************)
 function CMatrixLURCondInf(const LUA : TComplex2DArray;
      N : AlglibInteger):Double;
@@ -698,6 +880,158 @@ var
 begin
     Assert(N>=1, 'CMatrixLURCondInf: N<1!');
     CMatrixRCondLUInternal(LUA, N, False, False, 0.0, V);
+    Result := V;
+end;
+
+
+(*************************************************************************
+Triangular matrix: estimate of a condition number (1-norm)
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    A       -   matrix. Array[0..N-1, 0..N-1].
+    N       -   size of A.
+    IsUpper -   True, if the matrix is upper triangular.
+    IsUnit  -   True, if the matrix has a unit diagonal.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
+*************************************************************************)
+function CMatrixTRRCond1(const A : TComplex2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean;
+     IsUnit : Boolean):Double;
+var
+    I : AlglibInteger;
+    J : AlglibInteger;
+    V : Double;
+    Nrm : Double;
+    Pivots : TInteger1DArray;
+    T : TReal1DArray;
+    J1 : AlglibInteger;
+    J2 : AlglibInteger;
+begin
+    Assert(N>=1, 'RMatrixTRRCond1: N<1!');
+    SetLength(T, N);
+    I:=0;
+    while I<=N-1 do
+    begin
+        T[I] := 0;
+        Inc(I);
+    end;
+    I:=0;
+    while I<=N-1 do
+    begin
+        if IsUpper then
+        begin
+            J1 := I+1;
+            J2 := N-1;
+        end
+        else
+        begin
+            J1 := 0;
+            J2 := I-1;
+        end;
+        J:=J1;
+        while J<=J2 do
+        begin
+            T[J] := T[J]+AbsComplex(A[I,J]);
+            Inc(J);
+        end;
+        if IsUnit then
+        begin
+            T[I] := T[I]+1;
+        end
+        else
+        begin
+            T[I] := T[I]+AbsComplex(A[I,I]);
+        end;
+        Inc(I);
+    end;
+    Nrm := 0;
+    I:=0;
+    while I<=N-1 do
+    begin
+        Nrm := Max(Nrm, T[I]);
+        Inc(I);
+    end;
+    CMatrixRCondTRInternal(A, N, IsUpper, IsUnit, True, Nrm, V);
+    Result := V;
+end;
+
+
+(*************************************************************************
+Triangular matrix: estimate of a matrix condition number (infinity-norm).
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    A   -   matrix. Array whose indexes range within [0..N-1, 0..N-1].
+    N   -   size of matrix A.
+    IsUpper -   True, if the matrix is upper triangular.
+    IsUnit  -   True, if the matrix has a unit diagonal.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A) is very large, then matrix is  assumed  degenerate,  k(A)=INF,
+    0.0 is returned in such cases.
+*************************************************************************)
+function CMatrixTRRCondInf(const A : TComplex2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean;
+     IsUnit : Boolean):Double;
+var
+    I : AlglibInteger;
+    J : AlglibInteger;
+    V : Double;
+    Nrm : Double;
+    Pivots : TInteger1DArray;
+    J1 : AlglibInteger;
+    J2 : AlglibInteger;
+begin
+    Assert(N>=1, 'RMatrixTRRCondInf: N<1!');
+    Nrm := 0;
+    I:=0;
+    while I<=N-1 do
+    begin
+        if IsUpper then
+        begin
+            J1 := I+1;
+            J2 := N-1;
+        end
+        else
+        begin
+            J1 := 0;
+            J2 := I-1;
+        end;
+        V := 0;
+        J:=J1;
+        while J<=J2 do
+        begin
+            V := V+AbsComplex(A[I,J]);
+            Inc(J);
+        end;
+        if IsUnit then
+        begin
+            V := V+1;
+        end
+        else
+        begin
+            V := V+AbsComplex(A[I,I]);
+        end;
+        Nrm := Max(Nrm, V);
+        Inc(I);
+    end;
+    CMatrixRCondTRInternal(A, N, IsUpper, IsUnit, False, Nrm, V);
     Result := V;
 end;
 
@@ -712,6 +1046,386 @@ be greater than underflow.
 function RCondThreshold():Double;
 begin
     Result := Sqrt(Sqrt(MinRealNumber));
+end;
+
+
+(*************************************************************************
+Internal subroutine for condition number estimation
+
+  -- LAPACK routine (version 3.0) --
+     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+     Courant Institute, Argonne National Lab, and Rice University
+     February 29, 1992
+*************************************************************************)
+procedure RMatrixRCondTRInternal(const A : TReal2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean;
+     IsUnit : Boolean;
+     OneNorm : Boolean;
+     ANORM : Double;
+     var RC : Double);
+var
+    EX : TReal1DArray;
+    EV : TReal1DArray;
+    IWORK : TInteger1DArray;
+    Tmp : TReal1DArray;
+    V : Double;
+    I : AlglibInteger;
+    J : AlglibInteger;
+    KASE : AlglibInteger;
+    KASE1 : AlglibInteger;
+    J1 : AlglibInteger;
+    J2 : AlglibInteger;
+    AINVNM : Double;
+    MaxGrowth : Double;
+    S : Double;
+    MUpper : Boolean;
+    MTrans : Boolean;
+    Munit : Boolean;
+begin
+    
+    //
+    // RC=0 if something happens
+    //
+    RC := 0;
+    
+    //
+    // init
+    //
+    if OneNorm then
+    begin
+        KASE1 := 1;
+    end
+    else
+    begin
+        KASE1 := 2;
+    end;
+    MUpper := True;
+    MTrans := True;
+    Munit := True;
+    SetLength(IWORK, N+1);
+    SetLength(Tmp, N);
+    
+    //
+    // prepare parameters for triangular solver
+    //
+    MaxGrowth := 1/RCondThreshold;
+    S := 0;
+    I:=0;
+    while I<=N-1 do
+    begin
+        if IsUpper then
+        begin
+            J1 := I+1;
+            J2 := N-1;
+        end
+        else
+        begin
+            J1 := 0;
+            J2 := I-1;
+        end;
+        J:=J1;
+        while J<=J2 do
+        begin
+            S := Max(S, AbsReal(A[I,J]));
+            Inc(J);
+        end;
+        if IsUnit then
+        begin
+            S := Max(S, 1);
+        end
+        else
+        begin
+            S := Max(S, AbsReal(A[I,I]));
+        end;
+        Inc(I);
+    end;
+    if AP_FP_Eq(S,0) then
+    begin
+        S := 1;
+    end;
+    S := 1/S;
+    
+    //
+    // Scale according to S
+    //
+    ANORM := ANORM*S;
+    
+    //
+    // Quick return if possible
+    // We assume that ANORM<>0 after this block
+    //
+    if AP_FP_Eq(ANORM,0) then
+    begin
+        Exit;
+    end;
+    if N=1 then
+    begin
+        RC := 1;
+        Exit;
+    end;
+    
+    //
+    // Estimate the norm of inv(A).
+    //
+    AINVNM := 0;
+    KASE := 0;
+    while True do
+    begin
+        RMatrixEstimateNorm(N, EV, EX, IWORK, AINVNM, KASE);
+        if KASE=0 then
+        begin
+            Break;
+        end;
+        
+        //
+        // from 1-based array to 0-based
+        //
+        I:=0;
+        while I<=N-1 do
+        begin
+            EX[I] := EX[I+1];
+            Inc(I);
+        end;
+        
+        //
+        // multiply by inv(A) or inv(A')
+        //
+        if KASE=KASE1 then
+        begin
+            
+            //
+            // multiply by inv(A)
+            //
+            if  not RMatrixScaledTRSafeSolve(A, S, N, EX, IsUpper, 0, IsUnit, MaxGrowth) then
+            begin
+                Exit;
+            end;
+        end
+        else
+        begin
+            
+            //
+            // multiply by inv(A')
+            //
+            if  not RMatrixScaledTRSafeSolve(A, S, N, EX, IsUpper, 1, IsUnit, MaxGrowth) then
+            begin
+                Exit;
+            end;
+        end;
+        
+        //
+        // from 0-based array to 1-based
+        //
+        I:=N-1;
+        while I>=0 do
+        begin
+            EX[I+1] := EX[I];
+            Dec(I);
+        end;
+    end;
+    
+    //
+    // Compute the estimate of the reciprocal condition number.
+    //
+    if AP_FP_Neq(AINVNM,0) then
+    begin
+        RC := 1/AINVNM;
+        RC := RC/ANORM;
+        if AP_FP_Less(RC,RCondThreshold) then
+        begin
+            RC := 0;
+        end;
+    end;
+end;
+
+
+(*************************************************************************
+Condition number estimation
+
+  -- LAPACK routine (version 3.0) --
+     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+     Courant Institute, Argonne National Lab, and Rice University
+     March 31, 1993
+*************************************************************************)
+procedure CMatrixRCondTRInternal(const A : TComplex2DArray;
+     const N : AlglibInteger;
+     IsUpper : Boolean;
+     IsUnit : Boolean;
+     OneNorm : Boolean;
+     ANORM : Double;
+     var RC : Double);
+var
+    EX : TComplex1DArray;
+    CWORK2 : TComplex1DArray;
+    CWORK3 : TComplex1DArray;
+    CWORK4 : TComplex1DArray;
+    ISAVE : TInteger1DArray;
+    RSAVE : TReal1DArray;
+    KASE : AlglibInteger;
+    KASE1 : AlglibInteger;
+    AINVNM : Double;
+    V : Complex;
+    I : AlglibInteger;
+    J : AlglibInteger;
+    J1 : AlglibInteger;
+    J2 : AlglibInteger;
+    S : Double;
+    MaxGrowth : Double;
+begin
+    
+    //
+    // RC=0 if something happens
+    //
+    RC := 0;
+    
+    //
+    // init
+    //
+    if N<=0 then
+    begin
+        Exit;
+    end;
+    if N=0 then
+    begin
+        RC := 1;
+        Exit;
+    end;
+    SetLength(CWORK2, N+1);
+    
+    //
+    // prepare parameters for triangular solver
+    //
+    MaxGrowth := 1/RCondThreshold;
+    S := 0;
+    I:=0;
+    while I<=N-1 do
+    begin
+        if IsUpper then
+        begin
+            J1 := I+1;
+            J2 := N-1;
+        end
+        else
+        begin
+            J1 := 0;
+            J2 := I-1;
+        end;
+        J:=J1;
+        while J<=J2 do
+        begin
+            S := Max(S, AbsComplex(A[I,J]));
+            Inc(J);
+        end;
+        if IsUnit then
+        begin
+            S := Max(S, 1);
+        end
+        else
+        begin
+            S := Max(S, AbsComplex(A[I,I]));
+        end;
+        Inc(I);
+    end;
+    if AP_FP_Eq(S,0) then
+    begin
+        S := 1;
+    end;
+    S := 1/S;
+    
+    //
+    // Scale according to S
+    //
+    ANORM := ANORM*S;
+    
+    //
+    // Quick return if possible
+    //
+    if AP_FP_Eq(ANORM,0) then
+    begin
+        Exit;
+    end;
+    
+    //
+    // Estimate the norm of inv(A).
+    //
+    AINVNM := 0;
+    if OneNorm then
+    begin
+        KASE1 := 1;
+    end
+    else
+    begin
+        KASE1 := 2;
+    end;
+    KASE := 0;
+    while True do
+    begin
+        CMatrixEstimateNorm(N, CWORK4, EX, AINVNM, KASE, ISAVE, RSAVE);
+        if KASE=0 then
+        begin
+            Break;
+        end;
+        
+        //
+        // From 1-based to 0-based
+        //
+        I:=0;
+        while I<=N-1 do
+        begin
+            EX[I] := EX[I+1];
+            Inc(I);
+        end;
+        
+        //
+        // multiply by inv(A) or inv(A')
+        //
+        if KASE=KASE1 then
+        begin
+            
+            //
+            // multiply by inv(A)
+            //
+            if  not CMatrixScaledTRSafeSolve(A, S, N, EX, IsUpper, 0, IsUnit, MaxGrowth) then
+            begin
+                Exit;
+            end;
+        end
+        else
+        begin
+            
+            //
+            // multiply by inv(A')
+            //
+            if  not CMatrixScaledTRSafeSolve(A, S, N, EX, IsUpper, 2, IsUnit, MaxGrowth) then
+            begin
+                Exit;
+            end;
+        end;
+        
+        //
+        // from 0-based to 1-based
+        //
+        I:=N-1;
+        while I>=0 do
+        begin
+            EX[I+1] := EX[I];
+            Dec(I);
+        end;
+    end;
+    
+    //
+    // Compute the estimate of the reciprocal condition number.
+    //
+    if AP_FP_Neq(AINVNM,0) then
+    begin
+        RC := 1/AINVNM;
+        RC := RC/ANORM;
+        if AP_FP_Less(RC,RCondThreshold) then
+        begin
+            RC := 0;
+        end;
+    end;
 end;
 
 

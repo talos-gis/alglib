@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit gq;
 interface
-uses Math, Sysutils, Ap, blas, rotations, tdevd, gammafunc;
+uses Math, Sysutils, Ap, hblas, reflections, creflections, sblas, ablasf, ablas, ortfac, blas, rotations, hsschur, evd, gammafunc;
 
 procedure GQGenerateRec(const Alpha : TReal1DArray;
      const Beta : TReal1DArray;
@@ -126,26 +126,26 @@ begin
     //
     // Initialize
     //
-    SetLength(D, N+1);
-    SetLength(E, N+1);
+    SetLength(D, N);
+    SetLength(E, N);
     I:=1;
     while I<=N-1 do
     begin
-        D[I] := Alpha[I-1];
+        D[I-1] := Alpha[I-1];
         if AP_FP_Less_Eq(Beta[I],0) then
         begin
             Info := -2;
             Exit;
         end;
-        E[I] := Sqrt(Beta[I]);
+        E[I-1] := Sqrt(Beta[I]);
         Inc(I);
     end;
-    D[N] := Alpha[N-1];
+    D[N-1] := Alpha[N-1];
     
     //
     // EVD
     //
-    if  not TridiagonalEVD(D, E, N, 3, Z) then
+    if  not SMatrixTDEVD(D, E, N, 3, Z) then
     begin
         Info := -3;
         Exit;
@@ -159,8 +159,8 @@ begin
     I:=1;
     while I<=N do
     begin
-        X[I-1] := D[I];
-        W[I-1] := Mu0*AP_Sqr(Z[1,I]);
+        X[I-1] := D[I-1];
+        W[I-1] := Mu0*AP_Sqr(Z[0,I-1]);
         Inc(I);
     end;
 end;
@@ -246,12 +246,12 @@ begin
     // Initialize, D[1:N+1], E[1:N]
     //
     N := N-2;
-    SetLength(D, N+3);
-    SetLength(E, N+2);
+    SetLength(D, N+2);
+    SetLength(E, N+1);
     I:=1;
     while I<=N+1 do
     begin
-        D[I] := Alpha[I-1];
+        D[I-1] := Alpha[I-1];
         Inc(I);
     end;
     I:=1;
@@ -262,7 +262,7 @@ begin
             Info := -2;
             Exit;
         end;
-        E[I] := Sqrt(Beta[I]);
+        E[I-1] := Sqrt(Beta[I]);
         Inc(I);
     end;
     
@@ -322,13 +322,13 @@ begin
         Info := -3;
         Exit;
     end;
-    D[N+2] := Alph;
-    E[N+1] := Sqrt(Bet);
+    D[N+1] := Alph;
+    E[N] := Sqrt(Bet);
     
     //
     // EVD
     //
-    if  not TridiagonalEVD(D, E, N+2, 3, Z) then
+    if  not SMatrixTDEVD(D, E, N+2, 3, Z) then
     begin
         Info := -3;
         Exit;
@@ -342,8 +342,8 @@ begin
     I:=1;
     while I<=N+2 do
     begin
-        X[I-1] := D[I];
-        W[I-1] := Mu0*AP_Sqr(Z[1,I]);
+        X[I-1] := D[I-1];
+        W[I-1] := Mu0*AP_Sqr(Z[0,I-1]);
         Inc(I);
     end;
 end;
@@ -418,18 +418,18 @@ begin
     // Initialize, D[1:N], E[1:N]
     //
     N := N-1;
-    SetLength(D, N+1+1);
-    SetLength(E, N+1);
+    SetLength(D, N+1);
+    SetLength(E, N);
     I:=1;
     while I<=N do
     begin
-        D[I] := Alpha[I-1];
+        D[I-1] := Alpha[I-1];
         if AP_FP_Less_Eq(Beta[I],0) then
         begin
             Info := -2;
             Exit;
         end;
-        E[I] := Sqrt(Beta[I]);
+        E[I-1] := Sqrt(Beta[I]);
         Inc(I);
     end;
     
@@ -447,12 +447,12 @@ begin
         PolI := T;
         Inc(I);
     end;
-    D[N+1] := A-Beta[N]*PolIM1/PolI;
+    D[N] := A-Beta[N]*PolIM1/PolI;
     
     //
     // EVD
     //
-    if  not TridiagonalEVD(D, E, N+1, 3, Z) then
+    if  not SMatrixTDEVD(D, E, N+1, 3, Z) then
     begin
         Info := -3;
         Exit;
@@ -466,8 +466,8 @@ begin
     I:=1;
     while I<=N+1 do
     begin
-        X[I-1] := D[I];
-        W[I-1] := Mu0*AP_Sqr(Z[1,I]);
+        X[I-1] := D[I-1];
+        W[I-1] := Mu0*AP_Sqr(Z[0,I-1]);
         Inc(I);
     end;
 end;

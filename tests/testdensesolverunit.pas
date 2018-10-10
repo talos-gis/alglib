@@ -1,6 +1,6 @@
 unit testdensesolverunit;
 interface
-uses Math, Sysutils, Ap, reflections, bidiagonal, qr, lq, blas, rotations, bdsvd, svd, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, tsort, xblas, densesolver;
+uses Math, Sysutils, Ap, hblas, reflections, creflections, sblas, ablasf, ablas, ortfac, blas, rotations, bdsvd, svd, hqrnd, matgen, trfac, trlinsolve, safesolve, rcond, xblas, densesolver;
 
 function TestDenseSolver(Silent : Boolean):Boolean;
 function testdensesolverunit_test_silent():Boolean;

@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit minlm;
 interface
-uses Math, Sysutils, Ap, blas, reflections, creflections, hqrnd, matgen, trinverse, ablasf, ablas, trfac, bidiagonal, qr, lq, rotations, bdsvd, svd, trlinsolve, safesolve, rcond, tsort, xblas, densesolver, lbfgs;
+uses Math, Sysutils, Ap, blas, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, hblas, sblas, ortfac, rotations, bdsvd, svd, xblas, densesolver, lbfgs;
 
 type
 LMState = record
@@ -61,6 +61,8 @@ LMState = record
     RepNCholesky : AlglibInteger;
     SolverInfo : AlglibInteger;
     SolverRep : DenseSolverReport;
+    InvInfo : AlglibInteger;
+    InvRep : MatInvReport;
 end;
 
 
@@ -717,7 +719,8 @@ lbl_3:
     //
     // Optimize using inv(cholesky(H)) as preconditioner
     //
-    if not RMatrixTRInverse(State.Model, N, True, False) then
+    RMatrixTRInverse(State.Model, N, True, False, State.InvInfo, State.InvRep);
+    if State.InvInfo>0 then
     begin
         goto lbl_19;
     end;

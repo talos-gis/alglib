@@ -1,6 +1,6 @@
 unit testregressunit;
 interface
-uses Math, Sysutils, Ap, descriptivestatistics, gammafunc, normaldistr, igammaf, reflections, bidiagonal, qr, lq, blas, rotations, bdsvd, svd, linreg;
+uses Math, Sysutils, Ap, descriptivestatistics, gammafunc, normaldistr, igammaf, hblas, reflections, creflections, sblas, ablasf, ablas, ortfac, blas, rotations, bdsvd, svd, linreg;
 
 function TestLinRegression(Silent : Boolean):Boolean;
 function testregressunit_test_silent():Boolean;

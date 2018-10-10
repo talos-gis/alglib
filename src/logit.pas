@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit logit;
 interface
-uses Math, Sysutils, Ap, descriptivestatistics, mlpbase, reflections, bidiagonal, qr, lq, blas, rotations, bdsvd, svd, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, tsort, xblas, densesolver, bdss;
+uses Math, Sysutils, Ap, descriptivestatistics, mlpbase, hblas, reflections, creflections, sblas, ablasf, ablas, ortfac, blas, rotations, bdsvd, svd, hqrnd, matgen, trfac, trlinsolve, safesolve, rcond, xblas, densesolver, tsort, bdss;
 
 type
 LogitModel = record

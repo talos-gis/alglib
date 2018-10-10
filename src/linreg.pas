@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit linreg;
 interface
-uses Math, Sysutils, Ap, descriptivestatistics, gammafunc, normaldistr, igammaf, reflections, bidiagonal, qr, lq, blas, rotations, bdsvd, svd;
+uses Math, Sysutils, Ap, descriptivestatistics, gammafunc, normaldistr, igammaf, hblas, reflections, creflections, sblas, ablasf, ablas, ortfac, blas, rotations, bdsvd, svd;
 
 type
 LinearModel = record

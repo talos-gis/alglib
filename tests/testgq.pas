@@ -1,6 +1,6 @@
 unit testgq;
 interface
-uses Math, Sysutils, Ap, blas, rotations, tdevd, gammafunc, gq;
+uses Math, Sysutils, Ap, hblas, reflections, creflections, sblas, ablasf, ablas, ortfac, blas, rotations, hsschur, evd, gammafunc, gq;
 
 function TestGQunit(Silent : Boolean):Boolean;
 procedure BuildGaussHermiteQuadrature(n : AlglibInteger;

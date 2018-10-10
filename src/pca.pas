@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit pca;
 interface
-uses Math, Sysutils, Ap, reflections, bidiagonal, qr, lq, blas, rotations, bdsvd, svd, descriptivestatistics;
+uses Math, Sysutils, Ap, hblas, reflections, creflections, sblas, ablasf, ablas, ortfac, blas, rotations, bdsvd, svd, descriptivestatistics;
 
 procedure PCABuildBasis(const X : TReal2DArray;
      NPoints : AlglibInteger;

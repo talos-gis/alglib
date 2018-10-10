@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit gkq;
 interface
-uses Math, Sysutils, Ap, tsort, blas, rotations, tdevd, gammafunc, gq;
+uses Math, Sysutils, Ap, tsort, hblas, reflections, creflections, sblas, ablasf, ablas, ortfac, blas, rotations, hsschur, evd, gammafunc, gq;
 
 procedure GKQGenerateRec(Alpha : TReal1DArray;
      Beta : TReal1DArray;

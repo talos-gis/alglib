@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit lsfit;
 interface
-uses Math, Sysutils, Ap, blas, reflections, creflections, hqrnd, matgen, trinverse, ablasf, ablas, trfac, bidiagonal, qr, lq, rotations, bdsvd, svd, trlinsolve, safesolve, rcond, tsort, xblas, densesolver, lbfgs, minlm, spline3, leastsquares;
+uses Math, Sysutils, Ap, blas, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, hblas, sblas, ortfac, rotations, bdsvd, svd, xblas, densesolver, lbfgs, minlm;
 
 type
 (*************************************************************************
@@ -1365,7 +1365,7 @@ begin
         Exit;
     end;
     Info := 1;
-    Threshold := 1000*MachineEpsilon;
+    Threshold := Sqrt(MachineEpsilon);
     
     //
     // Degenerate case, needs special handling

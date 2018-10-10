@@ -1,6 +1,6 @@
 unit testmlpunit;
 interface
-uses Math, Sysutils, Ap, mlpbase, trinverse, lbfgs, reflections, bidiagonal, qr, lq, blas, rotations, bdsvd, svd, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, tsort, xblas, densesolver, mlptrain;
+uses Math, Sysutils, Ap, mlpbase, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, lbfgs, hblas, sblas, ortfac, blas, rotations, bdsvd, svd, xblas, densesolver, mlptrain;
 
 function TestMLP(Silent : Boolean):Boolean;
 function testmlpunit_test_silent():Boolean;

@@ -25,12 +25,9 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit schur;
 interface
-uses Math, Sysutils, Ap, reflections, hessenberg, blas, rotations, hsschur;
+uses Math, Sysutils, Ap, hblas, reflections, creflections, sblas, ablasf, ablas, ortfac, blas, rotations, hsschur;
 
 function RMatrixSchur(var A : TReal2DArray;
-     N : AlglibInteger;
-     var S : TReal2DArray):Boolean;
-function SchurDecomposition(var A : TReal2DArray;
      N : AlglibInteger;
      var S : TReal2DArray):Boolean;
 
@@ -135,22 +132,6 @@ begin
         end;
         Inc(I);
     end;
-end;
-
-
-function SchurDecomposition(var A : TReal2DArray;
-     N : AlglibInteger;
-     var S : TReal2DArray):Boolean;
-var
-    Tau : TReal1DArray;
-    WI : TReal1DArray;
-    WR : TReal1DArray;
-    INFO : AlglibInteger;
-begin
-    ToUpperHessenberg(A, N, Tau);
-    UnpackQFromUpperHessenberg(A, N, Tau, S);
-    InternalSchurDecomposition(A, N, 1, 1, WR, WI, S, INFO);
-    Result := INFO=0;
 end;
 
 

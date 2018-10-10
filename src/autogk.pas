@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit autogk;
 interface
-uses Math, Sysutils, Ap, tsort, blas, rotations, tdevd, gammafunc, gq, gkq;
+uses Math, Sysutils, Ap, tsort, hblas, reflections, creflections, sblas, ablasf, ablas, ortfac, blas, rotations, hsschur, evd, gammafunc, gq, gkq;
 
 type
 (*************************************************************************

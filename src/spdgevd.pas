@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit spdgevd;
 interface
-uses Math, Sysutils, Ap, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, sblas, blas, trinverse, rotations, tdevd, tridiagonal, sevd;
+uses Math, Sysutils, Ap, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, sblas, blas, trlinsolve, safesolve, rcond, matinv, hblas, ortfac, rotations, hsschur, evd;
 
 function SMatrixGEVD(A : TReal2DArray;
      N : AlglibInteger;
@@ -258,6 +258,8 @@ var
     I : AlglibInteger;
     J : AlglibInteger;
     V : Double;
+    Rep : MatInvReport;
+    Info : AlglibInteger;
     i_ : AlglibInteger;
 begin
     Assert(N>0, 'SMatrixGEVDReduce: N<=0!');
@@ -309,7 +311,8 @@ begin
         //
         // Invert L in T
         //
-        if  not RMatrixTRInverse(T, N, False, False) then
+        RMatrixTRInverse(T, N, False, False, Info, Rep);
+        if Info<=0 then
         begin
             Result := False;
             Exit;
@@ -488,7 +491,8 @@ begin
             //
             // Invert U in T
             //
-            if  not RMatrixTRInverse(T, N, True, False) then
+            RMatrixTRInverse(T, N, True, False, Info, Rep);
+            if Info<=0 then
             begin
                 Result := False;
                 Exit;

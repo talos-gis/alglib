@@ -16,37 +16,34 @@ IF "%~2"=="bdss" GOTO lbl_4_bdss
 IF "%~2"=="kmeans" GOTO lbl_4_kmeans
 IF "%~2"=="blas" GOTO lbl_4_blas
 IF "%~2"=="lda" GOTO lbl_4_lda
-IF "%~2"=="rotations" GOTO lbl_4_rotations
-IF "%~2"=="tdevd" GOTO lbl_4_tdevd
-IF "%~2"=="sblas" GOTO lbl_4_sblas
+IF "%~2"=="hblas" GOTO lbl_4_hblas
 IF "%~2"=="reflections" GOTO lbl_4_reflections
-IF "%~2"=="tridiagonal" GOTO lbl_4_tridiagonal
-IF "%~2"=="sevd" GOTO lbl_4_sevd
 IF "%~2"=="creflections" GOTO lbl_4_creflections
-IF "%~2"=="hqrnd" GOTO lbl_4_hqrnd
-IF "%~2"=="matgen" GOTO lbl_4_matgen
+IF "%~2"=="sblas" GOTO lbl_4_sblas
 IF "%~2"=="ablasf" GOTO lbl_4_ablasf
 IF "%~2"=="ablas" GOTO lbl_4_ablas
+IF "%~2"=="ortfac" GOTO lbl_4_ortfac
+IF "%~2"=="rotations" GOTO lbl_4_rotations
+IF "%~2"=="hsschur" GOTO lbl_4_hsschur
+IF "%~2"=="evd" GOTO lbl_4_evd
+IF "%~2"=="hqrnd" GOTO lbl_4_hqrnd
+IF "%~2"=="matgen" GOTO lbl_4_matgen
 IF "%~2"=="trfac" GOTO lbl_4_trfac
-IF "%~2"=="spdinverse" GOTO lbl_4_spdinverse
+IF "%~2"=="trlinsolve" GOTO lbl_4_trlinsolve
+IF "%~2"=="safesolve" GOTO lbl_4_safesolve
+IF "%~2"=="rcond" GOTO lbl_4_rcond
+IF "%~2"=="matinv" GOTO lbl_4_matinv
 IF "%~2"=="linreg" GOTO lbl_4_linreg
 IF "%~2"=="gammafunc" GOTO lbl_4_gammafunc
 IF "%~2"=="normaldistr" GOTO lbl_4_normaldistr
 IF "%~2"=="igammaf" GOTO lbl_4_igammaf
-IF "%~2"=="bidiagonal" GOTO lbl_4_bidiagonal
-IF "%~2"=="qr" GOTO lbl_4_qr
-IF "%~2"=="lq" GOTO lbl_4_lq
 IF "%~2"=="bdsvd" GOTO lbl_4_bdsvd
 IF "%~2"=="svd" GOTO lbl_4_svd
 IF "%~2"=="logit" GOTO lbl_4_logit
 IF "%~2"=="mlpbase" GOTO lbl_4_mlpbase
-IF "%~2"=="trlinsolve" GOTO lbl_4_trlinsolve
-IF "%~2"=="safesolve" GOTO lbl_4_safesolve
-IF "%~2"=="rcond" GOTO lbl_4_rcond
 IF "%~2"=="xblas" GOTO lbl_4_xblas
 IF "%~2"=="densesolver" GOTO lbl_4_densesolver
 IF "%~2"=="mlpe" GOTO lbl_4_mlpe
-IF "%~2"=="trinverse" GOTO lbl_4_trinverse
 IF "%~2"=="lbfgs" GOTO lbl_4_lbfgs
 IF "%~2"=="mlptrain" GOTO lbl_4_mlptrain
 IF "%~2"=="pca" GOTO lbl_4_pca
@@ -61,40 +58,25 @@ IF "%~2"=="gq" GOTO lbl_4_gq
 IF "%~2"=="gkq" GOTO lbl_4_gkq
 IF "%~2"=="lsfit" GOTO lbl_4_lsfit
 IF "%~2"=="minlm" GOTO lbl_4_minlm
-IF "%~2"=="spline3" GOTO lbl_4_spline3
-IF "%~2"=="leastsquares" GOTO lbl_4_leastsquares
 IF "%~2"=="polint" GOTO lbl_4_polint
 IF "%~2"=="ratinterpolation" GOTO lbl_4_ratinterpolation
 IF "%~2"=="ratint" GOTO lbl_4_ratint
 IF "%~2"=="taskgen" GOTO lbl_4_taskgen
 IF "%~2"=="spline2d" GOTO lbl_4_spline2d
+IF "%~2"=="spline3" GOTO lbl_4_spline3
 IF "%~2"=="spline1d" GOTO lbl_4_spline1d
-IF "%~2"=="hessenberg" GOTO lbl_4_hessenberg
-IF "%~2"=="cdet" GOTO lbl_4_cdet
-IF "%~2"=="cinverse" GOTO lbl_4_cinverse
-IF "%~2"=="ctrinverse" GOTO lbl_4_ctrinverse
-IF "%~2"=="cqr" GOTO lbl_4_cqr
-IF "%~2"=="det" GOTO lbl_4_det
-IF "%~2"=="spddet" GOTO lbl_4_spddet
+IF "%~2"=="idwint" GOTO lbl_4_idwint
+IF "%~2"=="nearestneighbor" GOTO lbl_4_nearestneighbor
+IF "%~2"=="matdet" GOTO lbl_4_matdet
 IF "%~2"=="sdet" GOTO lbl_4_sdet
 IF "%~2"=="ldlt" GOTO lbl_4_ldlt
 IF "%~2"=="spdgevd" GOTO lbl_4_spdgevd
-IF "%~2"=="htridiagonal" GOTO lbl_4_htridiagonal
-IF "%~2"=="cblas" GOTO lbl_4_cblas
-IF "%~2"=="hblas" GOTO lbl_4_hblas
-IF "%~2"=="hbisinv" GOTO lbl_4_hbisinv
-IF "%~2"=="tdbisinv" GOTO lbl_4_tdbisinv
-IF "%~2"=="hevd" GOTO lbl_4_hevd
-IF "%~2"=="inv" GOTO lbl_4_inv
 IF "%~2"=="sinverse" GOTO lbl_4_sinverse
 IF "%~2"=="inverseupdate" GOTO lbl_4_inverseupdate
-IF "%~2"=="nsevd" GOTO lbl_4_nsevd
-IF "%~2"=="hsschur" GOTO lbl_4_hsschur
 IF "%~2"=="srcond" GOTO lbl_4_srcond
 IF "%~2"=="ssolve" GOTO lbl_4_ssolve
 IF "%~2"=="estnorm" GOTO lbl_4_estnorm
 IF "%~2"=="schur" GOTO lbl_4_schur
-IF "%~2"=="sbisinv" GOTO lbl_4_sbisinv
 IF "%~2"=="airyf" GOTO lbl_4_airyf
 IF "%~2"=="bessel" GOTO lbl_4_bessel
 IF "%~2"=="betaf" GOTO lbl_4_betaf
@@ -146,31 +128,16 @@ GOTO lbl_4___end
 :lbl_4_lda
 echo No examples for this unit
 GOTO lbl_4___end
-:lbl_4_rotations
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_tdevd
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_sblas
+:lbl_4_hblas
 echo No examples for this unit
 GOTO lbl_4___end
 :lbl_4_reflections
 echo No examples for this unit
 GOTO lbl_4___end
-:lbl_4_tridiagonal
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_sevd
-echo No examples for this unit
-GOTO lbl_4___end
 :lbl_4_creflections
 echo No examples for this unit
 GOTO lbl_4___end
-:lbl_4_hqrnd
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_matgen
+:lbl_4_sblas
 echo No examples for this unit
 GOTO lbl_4___end
 :lbl_4_ablasf
@@ -179,10 +146,37 @@ GOTO lbl_4___end
 :lbl_4_ablas
 echo No examples for this unit
 GOTO lbl_4___end
+:lbl_4_ortfac
+echo No examples for this unit
+GOTO lbl_4___end
+:lbl_4_rotations
+echo No examples for this unit
+GOTO lbl_4___end
+:lbl_4_hsschur
+echo No examples for this unit
+GOTO lbl_4___end
+:lbl_4_evd
+echo No examples for this unit
+GOTO lbl_4___end
+:lbl_4_hqrnd
+echo No examples for this unit
+GOTO lbl_4___end
+:lbl_4_matgen
+echo No examples for this unit
+GOTO lbl_4___end
 :lbl_4_trfac
 echo No examples for this unit
 GOTO lbl_4___end
-:lbl_4_spdinverse
+:lbl_4_trlinsolve
+echo No examples for this unit
+GOTO lbl_4___end
+:lbl_4_safesolve
+echo No examples for this unit
+GOTO lbl_4___end
+:lbl_4_rcond
+echo rcond_1             condition number of the Vandermonde matrix
+GOTO lbl_4___end
+:lbl_4_matinv
 echo No examples for this unit
 GOTO lbl_4___end
 :lbl_4_linreg
@@ -195,15 +189,6 @@ GOTO lbl_4___end
 echo No examples for this unit
 GOTO lbl_4___end
 :lbl_4_igammaf
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_bidiagonal
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_qr
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_lq
 echo No examples for this unit
 GOTO lbl_4___end
 :lbl_4_bdsvd
@@ -221,15 +206,6 @@ echo mlp_process_cls     MLPProcess() example
 echo mlp_randomize       MLPRandomize() example
 echo mlp_serialize       MLPSerialize()/MLPUnserialize() example
 GOTO lbl_4___end
-:lbl_4_trlinsolve
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_safesolve
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_rcond
-echo rcond_1             condition number of the Vandermonde matrix
-GOTO lbl_4___end
 :lbl_4_xblas
 echo No examples for this unit
 GOTO lbl_4___end
@@ -237,9 +213,6 @@ GOTO lbl_4___end
 echo No examples for this unit
 GOTO lbl_4___end
 :lbl_4_mlpe
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_trinverse
 echo No examples for this unit
 GOTO lbl_4___end
 :lbl_4_lbfgs
@@ -291,12 +264,6 @@ echo minlm_fgj           Levenberg-Marquardt optimization, FGJ scheme
 echo minlm_fj            Levenberg-Marquardt optimization, FJ scheme
 echo minlm_fj2           Levenberg-Marquardt optimization, FJ scheme
 GOTO lbl_4___end
-:lbl_4_spline3
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_leastsquares
-echo No examples for this unit
-GOTO lbl_4___end
 :lbl_4_polint
 echo polint_cheb1        1-dimensional Chebyshev polynomial interpolation
 echo polint_cheb2        1-dimensional Chebyshev polynomial interpolation
@@ -316,6 +283,9 @@ GOTO lbl_4___end
 :lbl_4_spline2d
 echo No examples for this unit
 GOTO lbl_4___end
+:lbl_4_spline3
+echo No examples for this unit
+GOTO lbl_4___end
 :lbl_4_spline1d
 echo spline1d_calc       1-dimensional spline operations
 echo spline1d_cubic      cubic spline interpolation
@@ -324,25 +294,13 @@ echo spline1d_fitc       1-dimensional constrained spline fitting
 echo spline1d_hermite    1-dimensional Hermite spline interpolation
 echo spline1d_linear     1-dimensional linear spline interpolation
 GOTO lbl_4___end
-:lbl_4_hessenberg
+:lbl_4_idwint
 echo No examples for this unit
 GOTO lbl_4___end
-:lbl_4_cdet
+:lbl_4_nearestneighbor
 echo No examples for this unit
 GOTO lbl_4___end
-:lbl_4_cinverse
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_ctrinverse
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_cqr
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_det
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_spddet
+:lbl_4_matdet
 echo No examples for this unit
 GOTO lbl_4___end
 :lbl_4_sdet
@@ -354,37 +312,10 @@ GOTO lbl_4___end
 :lbl_4_spdgevd
 echo No examples for this unit
 GOTO lbl_4___end
-:lbl_4_htridiagonal
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_cblas
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_hblas
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_hbisinv
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_tdbisinv
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_hevd
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_inv
-echo No examples for this unit
-GOTO lbl_4___end
 :lbl_4_sinverse
 echo No examples for this unit
 GOTO lbl_4___end
 :lbl_4_inverseupdate
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_nsevd
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_hsschur
 echo No examples for this unit
 GOTO lbl_4___end
 :lbl_4_srcond
@@ -397,9 +328,6 @@ GOTO lbl_4___end
 echo No examples for this unit
 GOTO lbl_4___end
 :lbl_4_schur
-echo No examples for this unit
-GOTO lbl_4___end
-:lbl_4_sbisinv
 echo No examples for this unit
 GOTO lbl_4___end
 :lbl_4_airyf

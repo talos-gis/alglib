@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit mlpe;
 interface
-uses Math, Sysutils, Ap, mlpbase, trinverse, lbfgs, reflections, bidiagonal, qr, lq, blas, rotations, bdsvd, svd, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, tsort, xblas, densesolver, mlptrain, descriptivestatistics, bdss;
+uses Math, Sysutils, Ap, mlpbase, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, lbfgs, hblas, sblas, ortfac, blas, rotations, bdsvd, svd, xblas, densesolver, mlptrain, tsort, descriptivestatistics, bdss;
 
 type
 (*************************************************************************

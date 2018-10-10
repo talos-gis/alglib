@@ -141,6 +141,7 @@ function TestGEMM(MinN : AlglibInteger; MaxN : AlglibInteger):Boolean;forward;
 function TestTrans(MinN : AlglibInteger; MaxN : AlglibInteger):Boolean;forward;
 function TestRANK1(MinN : AlglibInteger; MaxN : AlglibInteger):Boolean;forward;
 function TestMV(MinN : AlglibInteger; MaxN : AlglibInteger):Boolean;forward;
+function TestCopy(MinN : AlglibInteger; MaxN : AlglibInteger):Boolean;forward;
 
 
 function TestABLAS(Silent : Boolean):Boolean;
@@ -152,6 +153,7 @@ var
     TRANSErrors : Boolean;
     RANK1Errors : Boolean;
     MVErrors : Boolean;
+    CopyErrors : Boolean;
     WasErrors : Boolean;
     RA : TReal2DArray;
 begin
@@ -161,19 +163,21 @@ begin
     TRANSErrors := False;
     RANK1Errors := False;
     MVErrors := False;
+    CopyErrors := False;
     WasErrors := False;
     Threshold := 10000*MachineEpsilon;
-    TRSMErrors := TRSMErrors or TestTRSM(1, 3*ABLASBlockSize(RA));
-    SYRKErrors := SYRKErrors or TestSYRK(1, 3*ABLASBlockSize(RA));
-    GEMMErrors := GEMMErrors or TestGEMM(1, 3*ABLASBlockSize(RA));
-    TRANSErrors := TRANSErrors or TestTRANS(1, 3*ABLASBlockSize(RA));
-    RANK1Errors := RANK1Errors or TestRANK1(1, 3*ABLASBlockSize(RA));
-    MVErrors := MVErrors or TestMV(1, 3*ABLASBlockSize(RA));
+    TRSMErrors := TRSMErrors or TestTRSM(1, 3*ABLASBlockSize(RA)+1);
+    SYRKErrors := SYRKErrors or TestSYRK(1, 3*ABLASBlockSize(RA)+1);
+    GEMMErrors := GEMMErrors or TestGEMM(1, 3*ABLASBlockSize(RA)+1);
+    TRANSErrors := TRANSErrors or TestTRANS(1, 3*ABLASBlockSize(RA)+1);
+    RANK1Errors := RANK1Errors or TestRANK1(1, 3*ABLASBlockSize(RA)+1);
+    MVErrors := MVErrors or TestMV(1, 3*ABLASBlockSize(RA)+1);
+    CopyErrors := CopyErrors or TestCopy(1, 3*ABLASBlockSize(RA)+1);
     
     //
     // report
     //
-    WasErrors := TRSMErrors or SYRKErrors or GEMMErrors or TRANSErrors or RANK1Errors or MVErrors;
+    WasErrors := TRSMErrors or SYRKErrors or GEMMErrors or TRANSErrors or RANK1Errors or MVErrors or CopyErrors;
     if  not Silent then
     begin
         Write(Format('TESTING ABLAS'#13#10'',[]));
@@ -224,6 +228,15 @@ begin
         end;
         Write(Format('* MV:                                    ',[]));
         if MVErrors then
+        begin
+            Write(Format('FAILED'#13#10'',[]));
+        end
+        else
+        begin
+            Write(Format('OK'#13#10'',[]));
+        end;
+        Write(Format('* COPY:                                  ',[]));
+        if CopyErrors then
         begin
             Write(Format('FAILED'#13#10'',[]));
         end
@@ -2902,6 +2915,131 @@ begin
                     end;
                 end;
                 Result := Result or AP_FP_Greater(AbsReal(RV1-RV2),Threshold);
+            end;
+            Inc(I);
+        end;
+        Inc(MX);
+    end;
+end;
+
+
+(*************************************************************************
+COPY tests
+
+Returns False for passed test, True - for failed
+*************************************************************************)
+function TestCopy(MinN : AlglibInteger; MaxN : AlglibInteger):Boolean;
+var
+    M : AlglibInteger;
+    N : AlglibInteger;
+    MX : AlglibInteger;
+    I : AlglibInteger;
+    J : AlglibInteger;
+    AOffsI : AlglibInteger;
+    AOffsJ : AlglibInteger;
+    BOffsI : AlglibInteger;
+    BOffsJ : AlglibInteger;
+    Threshold : Double;
+    RV1 : Double;
+    RV2 : Double;
+    CV1 : Complex;
+    CV2 : Complex;
+    RA : TReal2DArray;
+    RB : TReal2DArray;
+    CA : TComplex2DArray;
+    CB : TComplex2DArray;
+begin
+    Result := False;
+    Threshold := 1000*MachineEpsilon;
+    MX:=MinN;
+    while MX<=MaxN do
+    begin
+        
+        //
+        // Select random M/N in [1,MX] such that max(M,N)=MX
+        //
+        M := 1+RandomInteger(MX);
+        N := 1+RandomInteger(MX);
+        if RandomInteger(2)=0 then
+        begin
+            M := MX;
+        end
+        else
+        begin
+            N := MX;
+        end;
+        
+        //
+        // Initialize A by random matrix with size (MaxN+MaxN)*(MaxN+MaxN)
+        // Initialize X by random vector with size (MaxN+MaxN)
+        // Fill Y by control values
+        //
+        SetLength(RA, MaxN+MaxN, MaxN+MaxN);
+        SetLength(CA, MaxN+MaxN, MaxN+MaxN);
+        SetLength(RB, MaxN+MaxN, MaxN+MaxN);
+        SetLength(CB, MaxN+MaxN, MaxN+MaxN);
+        I:=0;
+        while I<=2*MaxN-1 do
+        begin
+            J:=0;
+            while J<=2*MaxN-1 do
+            begin
+                RA[I,J] := 2*RandomReal-1;
+                CA[I,J].X := 2*RandomReal-1;
+                CA[I,J].Y := 2*RandomReal-1;
+                RB[I,J] := 1+2*I+3*J;
+                CB[I,J] := C_Complex(1+2*I+3*J);
+                Inc(J);
+            end;
+            Inc(I);
+        end;
+        
+        //
+        // test different offsets (zero or one)
+        //
+        // to avoid unnecessary slowdown we don't test ALL possible
+        // combinations of operation types. We just generate one random
+        // set of parameters and test it.
+        //
+        AOffsI := RandomInteger(MaxN);
+        AOffsJ := RandomInteger(MaxN);
+        BOffsI := RandomInteger(MaxN);
+        BOffsJ := RandomInteger(MaxN);
+        CMatrixCopy(M, N, CA, AOffsI, AOffsJ, CB, BOffsI, BOffsJ);
+        I:=0;
+        while I<=2*MaxN-1 do
+        begin
+            J:=0;
+            while J<=2*MaxN-1 do
+            begin
+                if (I<BOffsI) or (I>=BOffsI+M) or (J<BOffsJ) or (J>=BOffsJ+N) then
+                begin
+                    Result := Result or C_NotEqualR(CB[I,J],1+2*I+3*J);
+                end
+                else
+                begin
+                    Result := Result or AP_FP_Greater(AbsComplex(C_Sub(CA[AOffsI+I-BOffsI,AOffsJ+J-BOffsJ],CB[I,J])),Threshold);
+                end;
+                Inc(J);
+            end;
+            Inc(I);
+        end;
+        RMatrixCopy(M, N, RA, AOffsI, AOffsJ, RB, BOffsI, BOffsJ);
+        I:=0;
+        while I<=2*MaxN-1 do
+        begin
+            J:=0;
+            while J<=2*MaxN-1 do
+            begin
+                if (I<BOffsI) or (I>=BOffsI+M) or (J<BOffsJ) or (J>=BOffsJ+N) then
+                begin
+                    Result := Result or AP_FP_Neq(RB[I,J],1+2*I+3*J);
+                end
+                else
+                begin
+                    Result := Result or AP_FP_Greater(AbsReal(RA[AOffsI+I-BOffsI,AOffsJ+J-BOffsJ]-RB[I,J]),Threshold);
+                end;
+                Inc(J);
             end;
             Inc(I);
         end;

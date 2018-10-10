@@ -1,6 +1,6 @@
 unit testsvdunit;
 interface
-uses Math, Sysutils, Ap, reflections, bidiagonal, qr, lq, blas, rotations, bdsvd, svd;
+uses Math, Sysutils, Ap, hblas, reflections, creflections, sblas, ablasf, ablas, ortfac, blas, rotations, bdsvd, svd;
 
 function TestSVD(Silent : Boolean):Boolean;
 function testsvdunit_test_silent():Boolean;

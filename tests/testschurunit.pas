@@ -1,6 +1,6 @@
 unit testschurunit;
 interface
-uses Math, Sysutils, Ap, reflections, hessenberg, blas, rotations, hsschur, schur;
+uses Math, Sysutils, Ap, hblas, reflections, creflections, sblas, ablasf, ablas, ortfac, blas, rotations, hsschur, schur;
 
 function TestSchur(Silent : Boolean):Boolean;
 function testschurunit_test_silent():Boolean;

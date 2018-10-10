@@ -32,6 +32,19 @@ procedure TagSortFastR(var A : TReal1DArray;
      var B : TReal1DArray;
      N : AlglibInteger);
 procedure TagSortFast(var A : TReal1DArray; N : AlglibInteger);
+procedure TagHeapPushI(var A : TReal1DArray;
+     var B : TInteger1DArray;
+     var N : AlglibInteger;
+     VA : Double;
+     VB : AlglibInteger);
+procedure TagHeapReplaceTopI(var A : TReal1DArray;
+     var B : TInteger1DArray;
+     N : AlglibInteger;
+     VA : Double;
+     VB : AlglibInteger);
+procedure TagHeapPopI(var A : TReal1DArray;
+     var B : TInteger1DArray;
+     var N : AlglibInteger);
 
 implementation
 
@@ -390,6 +403,253 @@ begin
         end;
         i := i-1;
     until  not (i>=1);
+end;
+
+
+(*************************************************************************
+Heap operations: adds element to the heap
+
+PARAMETERS:
+    A       -   heap itself, must be at least array[0..N]
+    B       -   array of integer tags, which are updated according to
+                permutations in the heap
+    N       -   size of the heap (without new element).
+                updated on output
+    VA      -   value of the element being added
+    VB      -   value of the tag
+
+  -- ALGLIB --
+     Copyright 28.02.2010 by Bochkanov Sergey
+*************************************************************************)
+procedure TagHeapPushI(var A : TReal1DArray;
+     var B : TInteger1DArray;
+     var N : AlglibInteger;
+     VA : Double;
+     VB : AlglibInteger);
+var
+    J : AlglibInteger;
+    K : AlglibInteger;
+    V : Double;
+begin
+    if N<0 then
+    begin
+        Exit;
+    end;
+    
+    //
+    // N=0 is a special case
+    //
+    if N=0 then
+    begin
+        A[0] := VA;
+        B[0] := VB;
+        N := N+1;
+        Exit;
+    end;
+    
+    //
+    // add current point to the heap
+    // (add to the bottom, then move up)
+    //
+    // we don't write point to the heap
+    // until its final position is determined
+    // (it allow us to reduce number of array access operations)
+    //
+    J := N;
+    N := N+1;
+    while J>0 do
+    begin
+        K := (J-1) div 2;
+        V := A[K];
+        if AP_FP_Less(V,VA) then
+        begin
+            
+            //
+            // swap with higher element
+            //
+            A[J] := V;
+            B[J] := B[K];
+            J := K;
+        end
+        else
+        begin
+            
+            //
+            // element in its place. terminate.
+            //
+            Break;
+        end;
+    end;
+    A[J] := VA;
+    B[J] := VB;
+end;
+
+
+(*************************************************************************
+Heap operations: replaces top element with new element
+(which is moved down)
+
+PARAMETERS:
+    A       -   heap itself, must be at least array[0..N-1]
+    B       -   array of integer tags, which are updated according to
+                permutations in the heap
+    N       -   size of the heap
+    VA      -   value of the element which replaces top element
+    VB      -   value of the tag
+
+  -- ALGLIB --
+     Copyright 28.02.2010 by Bochkanov Sergey
+*************************************************************************)
+procedure TagHeapReplaceTopI(var A : TReal1DArray;
+     var B : TInteger1DArray;
+     N : AlglibInteger;
+     VA : Double;
+     VB : AlglibInteger);
+var
+    J : AlglibInteger;
+    K1 : AlglibInteger;
+    K2 : AlglibInteger;
+    V : Double;
+    V1 : Double;
+    V2 : Double;
+begin
+    if N<1 then
+    begin
+        Exit;
+    end;
+    
+    //
+    // N=1 is a special case
+    //
+    if N=1 then
+    begin
+        A[0] := VA;
+        B[0] := VB;
+        Exit;
+    end;
+    
+    //
+    // move down through heap:
+    // * J  -   current element
+    // * K1 -   first child (always exists)
+    // * K2 -   second child (may not exists)
+    //
+    // we don't write point to the heap
+    // until its final position is determined
+    // (it allow us to reduce number of array access operations)
+    //
+    J := 0;
+    K1 := 1;
+    K2 := 2;
+    while K1<N do
+    begin
+        if K2>=N then
+        begin
+            
+            //
+            // only one child.
+            //
+            // swap and terminate (because this child
+            // have no siblings due to heap structure)
+            //
+            V := A[K1];
+            if AP_FP_Greater(V,VA) then
+            begin
+                A[J] := V;
+                B[J] := B[K1];
+                J := K1;
+            end;
+            Break;
+        end
+        else
+        begin
+            
+            //
+            // two childs
+            //
+            V1 := A[K1];
+            V2 := A[K2];
+            if AP_FP_Greater(V1,V2) then
+            begin
+                if AP_FP_Less(VA,V1) then
+                begin
+                    A[J] := V1;
+                    B[J] := B[K1];
+                    J := K1;
+                end
+                else
+                begin
+                    Break;
+                end;
+            end
+            else
+            begin
+                if AP_FP_Less(VA,V2) then
+                begin
+                    A[J] := V2;
+                    B[J] := B[K2];
+                    J := K2;
+                end
+                else
+                begin
+                    Break;
+                end;
+            end;
+            K1 := 2*J+1;
+            K2 := 2*J+2;
+        end;
+    end;
+    A[J] := VA;
+    B[J] := VB;
+end;
+
+
+(*************************************************************************
+Heap operations: pops top element from the heap
+
+PARAMETERS:
+    A       -   heap itself, must be at least array[0..N-1]
+    B       -   array of integer tags, which are updated according to
+                permutations in the heap
+    N       -   size of the heap, N>=1
+
+On output top element is moved to A[N-1], B[N-1], heap is reordered, N is
+decreased by 1.
+
+  -- ALGLIB --
+     Copyright 28.02.2010 by Bochkanov Sergey
+*************************************************************************)
+procedure TagHeapPopI(var A : TReal1DArray;
+     var B : TInteger1DArray;
+     var N : AlglibInteger);
+var
+    VA : Double;
+    VB : AlglibInteger;
+begin
+    if N<1 then
+    begin
+        Exit;
+    end;
+    
+    //
+    // N=1 is a special case
+    //
+    if N=1 then
+    begin
+        N := 0;
+        Exit;
+    end;
+    
+    //
+    // swap top element and last element,
+    // then reorder heap
+    //
+    VA := A[N-1];
+    VB := B[N-1];
+    A[N-1] := A[0];
+    B[N-1] := B[0];
+    N := N-1;
+    TagHeapReplaceTopI(A, B, N, VA, VB);
 end;
 
 

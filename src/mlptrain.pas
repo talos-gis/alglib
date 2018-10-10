@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit mlptrain;
 interface
-uses Math, Sysutils, Ap, mlpbase, trinverse, lbfgs, reflections, bidiagonal, qr, lq, blas, rotations, bdsvd, svd, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, tsort, xblas, densesolver;
+uses Math, Sysutils, Ap, mlpbase, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, lbfgs, hblas, sblas, ortfac, blas, rotations, bdsvd, svd, xblas, densesolver;
 
 type
 (*************************************************************************
@@ -191,6 +191,8 @@ var
     Pass : AlglibInteger;
     WBest : TReal1DArray;
     EBest : Double;
+    InvInfo : AlglibInteger;
+    InvRep : MatInvReport;
     SolverInfo : AlglibInteger;
     SolverRep : DenseSolverReport;
 begin
@@ -364,7 +366,8 @@ begin
             //
             // Optimize using inv(cholesky(H)) as preconditioner
             //
-            if  not RMatrixTRInverse(HMod, WCount, True, False) then
+            RMatrixTRInverse(HMod, WCount, True, False, InvInfo, InvRep);
+            if InvInfo<=0 then
             begin
                 
                 //

@@ -12,8 +12,6 @@ function TestMinLBFGS(Silent : Boolean):Boolean;
 var
     WasErrors : Boolean;
     RefError : Boolean;
-    Lin1Error : Boolean;
-    Lin2Error : Boolean;
     EqError : Boolean;
     ConvError : Boolean;
     N : AlglibInteger;
@@ -228,30 +226,12 @@ begin
     //
     // end
     //
-    WasErrors := RefError or Lin1Error or Lin2Error or EqError or ConvError;
+    WasErrors := RefError or EqError or ConvError;
     if  not Silent then
     begin
         Write(Format('TESTING L-BFGS OPTIMIZATION'#13#10'',[]));
         Write(Format('REFERENCE PROBLEM:                        ',[]));
         if RefError then
-        begin
-            Write(Format('FAILED'#13#10'',[]));
-        end
-        else
-        begin
-            Write(Format('OK'#13#10'',[]));
-        end;
-        Write(Format('1-D PROBLEM #1:                           ',[]));
-        if Lin1Error then
-        begin
-            Write(Format('FAILED'#13#10'',[]));
-        end
-        else
-        begin
-            Write(Format('OK'#13#10'',[]));
-        end;
-        Write(Format('1-D PROBLEM #2:                           ',[]));
-        if Lin2Error then
         begin
             Write(Format('FAILED'#13#10'',[]));
         end

@@ -1,6 +1,6 @@
 unit testpcaunit;
 interface
-uses Math, Sysutils, Ap, reflections, bidiagonal, qr, lq, blas, rotations, bdsvd, svd, descriptivestatistics, pca;
+uses Math, Sysutils, Ap, hblas, reflections, creflections, sblas, ablasf, ablas, ortfac, blas, rotations, bdsvd, svd, descriptivestatistics, pca;
 
 function TestPCA(Silent : Boolean):Boolean;
 function testpcaunit_test_silent():Boolean;

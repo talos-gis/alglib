@@ -1,5 +1,5 @@
 (*************************************************************************
-Copyright (c) 2009, Sergey Bochkanov (ALGLIB project).
+Copyright (c) 2009-2010, Sergey Bochkanov (ALGLIB project).
 
 >>> SOURCE LICENSE >>>
 This program is free software; you can redistribute it and/or modify
@@ -41,6 +41,22 @@ procedure CMatrixTranspose(M : AlglibInteger;
      IB : AlglibInteger;
      JB : AlglibInteger);
 procedure RMatrixTranspose(M : AlglibInteger;
+     N : AlglibInteger;
+     const A : TReal2DArray;
+     IA : AlglibInteger;
+     JA : AlglibInteger;
+     var B : TReal2DArray;
+     IB : AlglibInteger;
+     JB : AlglibInteger);
+procedure CMatrixCopy(M : AlglibInteger;
+     N : AlglibInteger;
+     const A : TComplex2DArray;
+     IA : AlglibInteger;
+     JA : AlglibInteger;
+     var B : TComplex2DArray;
+     IB : AlglibInteger;
+     JB : AlglibInteger);
+procedure RMatrixCopy(M : AlglibInteger;
      N : AlglibInteger;
      const A : TReal2DArray;
      IA : AlglibInteger;
@@ -528,6 +544,78 @@ begin
             RMatrixTranspose(M, S1, A, IA, JA, B, IB, JB);
             RMatrixTranspose(M, S2, A, IA, JA+S1, B, IB+S1, JB);
         end;
+    end;
+end;
+
+
+(*************************************************************************
+Copy
+
+Input parameters:
+    M   -   number of rows
+    N   -   number of columns
+    A   -   source matrix, MxN submatrix is copied and transposed
+    IA  -   submatrix offset (row index)
+    JA  -   submatrix offset (column index)
+    B   -   destination matrix
+    IB  -   submatrix offset (row index)
+    JB  -   submatrix offset (column index)
+*************************************************************************)
+procedure CMatrixCopy(M : AlglibInteger;
+     N : AlglibInteger;
+     const A : TComplex2DArray;
+     IA : AlglibInteger;
+     JA : AlglibInteger;
+     var B : TComplex2DArray;
+     IB : AlglibInteger;
+     JB : AlglibInteger);
+var
+    I : AlglibInteger;
+    i_ : AlglibInteger;
+    i1_ : AlglibInteger;
+begin
+    I:=0;
+    while I<=M-1 do
+    begin
+        i1_ := (JA) - (JB);
+        for i_ := JB to JB+N-1 do
+        begin
+            B[IB+I,i_] := A[IA+I,i_+i1_];
+        end;
+        Inc(I);
+    end;
+end;
+
+
+(*************************************************************************
+Copy
+
+Input parameters:
+    M   -   number of rows
+    N   -   number of columns
+    A   -   source matrix, MxN submatrix is copied and transposed
+    IA  -   submatrix offset (row index)
+    JA  -   submatrix offset (column index)
+    B   -   destination matrix
+    IB  -   submatrix offset (row index)
+    JB  -   submatrix offset (column index)
+*************************************************************************)
+procedure RMatrixCopy(M : AlglibInteger;
+     N : AlglibInteger;
+     const A : TReal2DArray;
+     IA : AlglibInteger;
+     JA : AlglibInteger;
+     var B : TReal2DArray;
+     IB : AlglibInteger;
+     JB : AlglibInteger);
+var
+    I : AlglibInteger;
+begin
+    I:=0;
+    while I<=M-1 do
+    begin
+        APVMove(@B[IB+I][0], JB, JB+N-1, @A[IA+I][0], JA, JA+N-1);
+        Inc(I);
     end;
 end;
 

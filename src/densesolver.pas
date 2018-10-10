@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit densesolver;
 interface
-uses Math, Sysutils, Ap, reflections, bidiagonal, qr, lq, blas, rotations, bdsvd, svd, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, tsort, xblas;
+uses Math, Sysutils, Ap, hblas, reflections, creflections, sblas, ablasf, ablas, ortfac, blas, rotations, bdsvd, svd, hqrnd, matgen, trfac, trlinsolve, safesolve, rcond, xblas;
 
 type
 DenseSolverReport = record
@@ -2173,6 +2173,16 @@ begin
         Info := -1;
         Exit;
     end;
+    I:=0;
+    while I<=N-1 do
+    begin
+        if (P[I]>N-1) or (P[I]<I) then
+        begin
+            Info := -1;
+            Exit;
+        end;
+        Inc(I);
+    end;
     SetLength(X, N, M);
     SetLength(Y, N);
     SetLength(XC, N);
@@ -2497,6 +2507,16 @@ begin
     begin
         Info := -1;
         Exit;
+    end;
+    I:=0;
+    while I<=N-1 do
+    begin
+        if (P[I]>N-1) or (P[I]<I) then
+        begin
+            Info := -1;
+            Exit;
+        end;
+        Inc(I);
     end;
     SetLength(X, N, M);
     SetLength(Y, N);

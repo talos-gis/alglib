@@ -1,6 +1,6 @@
 unit llstestunit;
 interface
-uses Math, Sysutils, Ap, blas, reflections, creflections, hqrnd, matgen, trinverse, ablasf, ablas, trfac, bidiagonal, qr, lq, rotations, bdsvd, svd, trlinsolve, safesolve, rcond, tsort, xblas, densesolver, lbfgs, minlm, spline3, leastsquares, lsfit;
+uses Math, Sysutils, Ap, blas, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, hblas, sblas, ortfac, rotations, bdsvd, svd, xblas, densesolver, lbfgs, minlm, lsfit;
 
 function TestLLS(Silent : Boolean):Boolean;
 function llstestunit_test_silent():Boolean;
