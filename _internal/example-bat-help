@@ -1,0 +1,28 @@
+Windows batch file for execution of examples
+For compilation with Windows compilers
+
+EXECUTE EXAMPLE:  example compiler filename [options]
+    compiler    compiler name (see below)
+                Windows/Bash scripts support different compilers
+    filename    example name
+    options     optional string enclosed in quotes
+                additional options to be passed to compiler
+
+
+VIEW EXAMPLE SOURCE:  example view filename
+    filename    example name
+
+
+LIST OF EXAMPLES:  example list unitname
+    unitname    name of the unit (from /src directory)
+
+
+COMPILERS SUPPORTED:
+       dcc32    Delphi
+
+EXAMPLES:
+    example list
+    example dcc32 spline1d_cubic
+    example dcc32 spline1d_cubic "-$O+"
+
+See reference manual for more information

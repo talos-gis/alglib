@@ -1,0 +1,23 @@
+Windows batch file for testing ALGLIB
+For compilation with Windows compilers
+
+SYNTAX: check compiler unitname [options]
+    compiler    compiler name (see below)
+                Windows/Bash scripts support different compilers
+    unitname    unit to test, file name without extension.
+                specify 'all' to test all the package.
+                specify 'all_silent' for silent testing
+                (only errors are reported).
+                You can test everything from '/src' directory except 
+                for several special units (like ap, amp, ialglib, etc.).
+    options     optional string enclosed in quotes
+                additional options to be passed to compiler
+
+COMPILERS SUPPORTED:
+       dcc32    Delphi
+
+EXAMPLES:
+    check dcc32 all
+    check dcc32 all_silent "-$O+"
+
+See reference manual for more information
