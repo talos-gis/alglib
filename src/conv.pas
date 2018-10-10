@@ -253,9 +253,9 @@ OUTPUT PARAMETERS
     R   -   convolution: A*B. array[0..M-1].
 
 NOTE:
-    It is assumed that A is zero at T<0, B is zero too.  If  one  or  both
-functions have non-zero values at negative T's, you  can  still  use  this
-subroutine - just shift its result correspondingly.
+    It is assumed that B is zero at T<0. If  it  has  non-zero  values  at
+negative T's, you can still use this subroutine - just  shift  its  result
+correspondingly.
 
   -- ALGLIB --
      Copyright 21.07.2009 by Bochkanov Sergey
@@ -326,9 +326,9 @@ NOTE:
 (if your response function is degenerate, i.e. has zero Fourier coefficient).
 
 NOTE:
-    It is assumed that A is zero at T<0, B is zero too.  If  one  or  both
-functions have non-zero values at negative T's, you  can  still  use  this
-subroutine - just shift its result correspondingly.
+    It is assumed that B is zero at T<0. If  it  has  non-zero  values  at
+negative T's, you can still use this subroutine - just  shift  its  result
+correspondingly.
 
   -- ALGLIB --
      Copyright 21.07.2009 by Bochkanov Sergey
@@ -581,9 +581,9 @@ OUTPUT PARAMETERS
     R   -   convolution: A*B. array[0..M-1].
 
 NOTE:
-    It is assumed that A is zero at T<0, B is zero too.  If  one  or  both
-functions have non-zero values at negative T's, you  can  still  use  this
-subroutine - just shift its result correspondingly.
+    It is assumed that B is zero at T<0. If  it  has  non-zero  values  at
+negative T's, you can still use this subroutine - just  shift  its  result
+correspondingly.
 
   -- ALGLIB --
      Copyright 21.07.2009 by Bochkanov Sergey
@@ -652,9 +652,9 @@ NOTE:
 (if your response function is degenerate, i.e. has zero Fourier coefficient).
 
 NOTE:
-    It is assumed that A is zero at T<0, B is zero too.  If  one  or  both
-functions have non-zero values at negative T's, you  can  still  use  this
-subroutine - just shift its result correspondingly.
+    It is assumed that B is zero at T<0. If  it  has  non-zero  values  at
+negative T's, you can still use this subroutine - just  shift  its  result
+correspondingly.
 
   -- ALGLIB --
      Copyright 21.07.2009 by Bochkanov Sergey

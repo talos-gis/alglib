@@ -373,6 +373,7 @@ As there is no operator overloading in Object Pascal (and it is often subjected 
 <tr align=left valign=top><td><a href='#unit_idwint' class=toc>idwint</a></td><td width=15>&nbsp;</td><td>Inverse distance weighting: interpolation/fitting</td></tr>
 <tr align=left valign=top><td><a href='#unit_lsfit' class=toc>lsfit</a></td><td width=15>&nbsp;</td><td>Linear and nonlinear least-squares solvers</td></tr>
 <tr align=left valign=top><td><a href='#unit_polint' class=toc>polint</a></td><td width=15>&nbsp;</td><td>Polynomial interpolation/fitting</td></tr>
+<tr align=left valign=top><td><a href='#unit_pspline' class=toc>pspline</a></td><td width=15>&nbsp;</td><td>Parametric spline interpolation</td></tr>
 <tr align=left valign=top><td><a href='#unit_ratint' class=toc>ratint</a></td><td width=15>&nbsp;</td><td>Rational interpolation/fitting</td></tr>
 <tr align=left valign=top><td><a href='#unit_spline1d' class=toc>spline1d</a></td><td width=15>&nbsp;</td><td>1D spline interpolation/fitting</td></tr>
 <tr align=left valign=top><td><a href='#unit_spline2d' class=toc>spline2d</a></td><td width=15>&nbsp;</td><td>2D spline interpolation</td></tr>
@@ -2210,9 +2211,9 @@ OUTPUT PARAMETERS
     R   -   convolution: A*B. array[0..M-1].
 
 NOTE:
-    It is assumed that A is zero at T&lt;0, B is zero too.  If  one  or  both
-functions have non-zero values at negative T's, you  can  still  use  this
-subroutine - just shift its result correspondingly.
+    It is assumed that B is zero at T&lt;0. If  it  has  non-zero  values  at
+negative T's, you can still use this subroutine - just  shift  its  result
+correspondingly.
 
   -- ALGLIB --
      Copyright 21.07.2009 by Bochkanov Sergey
@@ -2244,9 +2245,9 @@ NOTE:
 (if your response function is degenerate, i.e. has zero Fourier coefficient).
 
 NOTE:
-    It is assumed that A is zero at T&lt;0, B is zero too.  If  one  or  both
-functions have non-zero values at negative T's, you  can  still  use  this
-subroutine - just shift its result correspondingly.
+    It is assumed that B is zero at T&lt;0. If  it  has  non-zero  values  at
+negative T's, you can still use this subroutine - just  shift  its  result
+correspondingly.
 
   -- ALGLIB --
      Copyright 21.07.2009 by Bochkanov Sergey
@@ -2374,9 +2375,9 @@ OUTPUT PARAMETERS
     R   -   convolution: A*B. array[0..M-1].
 
 NOTE:
-    It is assumed that A is zero at T&lt;0, B is zero too.  If  one  or  both
-functions have non-zero values at negative T's, you  can  still  use  this
-subroutine - just shift its result correspondingly.
+    It is assumed that B is zero at T&lt;0. If  it  has  non-zero  values  at
+negative T's, you can still use this subroutine - just  shift  its  result
+correspondingly.
 
   -- ALGLIB --
      Copyright 21.07.2009 by Bochkanov Sergey
@@ -2408,9 +2409,9 @@ NOTE:
 (if your response function is degenerate, i.e. has zero Fourier coefficient).
 
 NOTE:
-    It is assumed that A is zero at T&lt;0, B is zero too.  If  one  or  both
-functions have non-zero values at negative T's, you  can  still  use  this
-subroutine - just shift its result correspondingly.
+    It is assumed that B is zero at T&lt;0. If  it  has  non-zero  values  at
+negative T's, you can still use this subroutine - just  shift  its  result
+correspondingly.
 
   -- ALGLIB --
      Copyright 21.07.2009 by Bochkanov Sergey
@@ -6632,7 +6633,7 @@ INPUT PARAMETERS:
 
 OUTPUT PARAMETERS:
     Info        -   return code:
-                    * -3, if taskis degenerate (number of distinct points is
+                    * -3, if task is degenerate (number of distinct points is
                           less than K)
                     * -1, if incorrect NPoints/NFeatures/K/Restarts was passed
                     *  1, if subroutine finished successfully
@@ -9563,7 +9564,7 @@ evaluation), which is indicated by XUpdated field.
     MinASASetCond(State, 0.0, 0.0, 0.00001, 0);
     MinASASetXRep(State, True);
     MinASASetStpMax(State, 0.2);
-    Write(Format(<font color=blue>''</font>#13#10<font color=blue>''</font>#13#10<font color=blue>'F = x+2y+3z subject <b>to</b> 0&lt;=x&lt;=1, 0&lt;=y&lt;=1, 0&lt;=z&lt;=1'</font>#13#10<font color=blue>''</font>,[]));
+    Write(Format(<font color=blue>''</font>#13#10<font color=blue>''</font>#13#10<font color=blue>'F = x+4y+9z subject <b>to</b> 0&lt;=x&lt;=1, 0&lt;=y&lt;=1, 0&lt;=z&lt;=1'</font>#13#10<font color=blue>''</font>,[]));
     Write(Format(<font color=blue>'OPTIMIZATION STARTED'</font>#13#10<font color=blue>''</font>,[]));
     <b>while</b> MinASAIteration(State) <b>do</b>
     <b>begin</b>
@@ -15000,6 +15001,532 @@ Copyright 1984, 1987, 1992, 2000 by Stephen L. Moshier
 *************************************************************************)
 </div><div style='margin-top: 0; margin-bottom: 0;'><b>function</b> Psi(X : Double):Double;
 </div></pre>
+<a name=unit_pspline></a><h2><code>pspline</code> unit</h2>
+<h3>Structures</h3>
+<a href='#struct_pspline2interpolant' class=toc>pspline2interpolant</a><br>
+<a href='#struct_pspline3interpolant' class=toc>pspline3interpolant</a><br>
+<h3>Subroutines</h3>
+<a href='#sub_pspline2arclength' class=toc>pspline2arclength</a><br>
+<a href='#sub_pspline2build' class=toc>pspline2build</a><br>
+<a href='#sub_pspline2buildperiodic' class=toc>pspline2buildperiodic</a><br>
+<a href='#sub_pspline2calc' class=toc>pspline2calc</a><br>
+<a href='#sub_pspline2diff' class=toc>pspline2diff</a><br>
+<a href='#sub_pspline2diff2' class=toc>pspline2diff2</a><br>
+<a href='#sub_pspline2parametervalues' class=toc>pspline2parametervalues</a><br>
+<a href='#sub_pspline2tangent' class=toc>pspline2tangent</a><br>
+<a href='#sub_pspline3arclength' class=toc>pspline3arclength</a><br>
+<a href='#sub_pspline3build' class=toc>pspline3build</a><br>
+<a href='#sub_pspline3buildperiodic' class=toc>pspline3buildperiodic</a><br>
+<a href='#sub_pspline3calc' class=toc>pspline3calc</a><br>
+<a href='#sub_pspline3diff' class=toc>pspline3diff</a><br>
+<a href='#sub_pspline3diff2' class=toc>pspline3diff2</a><br>
+<a href='#sub_pspline3parametervalues' class=toc>pspline3parametervalues</a><br>
+<a href='#sub_pspline3tangent' class=toc>pspline3tangent</a><br>
+<a name='struct_pspline2interpolant'></a><h3><code>pspline2interpolant</code> structure</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+Parametric spline inteprolant: 2-dimensional curve.
+
+You should not try to access its members directly - use PSpline2XXXXXXXX()
+functions instead.
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'>PSpline2Interpolant = <b>record</b>
+    N : AlglibInteger;
+    Periodic : Boolean;
+    P : TReal1DArray;
+    X : Spline1DInterpolant;
+    Y : Spline1DInterpolant;
+<b>end</b>;
+</div></pre>
+<a name='struct_pspline3interpolant'></a><h3><code>pspline3interpolant</code> structure</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+Parametric spline inteprolant: 3-dimensional curve.
+
+You should not try to access its members directly - use PSpline3XXXXXXXX()
+functions instead.
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'>PSpline3Interpolant = <b>record</b>
+    N : AlglibInteger;
+    Periodic : Boolean;
+    P : TReal1DArray;
+    X : Spline1DInterpolant;
+    Y : Spline1DInterpolant;
+    Z : Spline1DInterpolant;
+<b>end</b>;
+</div></pre>
+<a name='sub_pspline2arclength'></a><h3><code>pspline2arclength</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function  calculates  arc length, i.e. length of  curve  between  t=a
+and t=b.
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+    A,B -   parameter values corresponding to arc ends:
+            * B&gt;A will result in positive length returned
+            * B&lt;A will result in negative length returned
+
+RESULT:
+    length of arc starting at T=A and ending at T=B.
+
+
+  -- ALGLIB PROJECT --
+     Copyright 30.05.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>function</b> PSpline2ArcLength(<b>const</b> P : PSpline2Interpolant;
+     A : Double;
+     B : Double):Double;
+</div></pre>
+<a name='sub_pspline2build'></a><h3><code>pspline2build</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function  builds  non-periodic 2-dimensional parametric spline  which
+starts at (X[0],Y[0]) and ends at (X[N-1],Y[N-1]).
+
+INPUT PARAMETERS:
+    XY  -   points, array[0..N-1,0..1].
+            XY[I,0:1] corresponds to the Ith point.
+            Order of points is important!
+    N   -   points count, N&gt;=5 for Akima splines, N&gt;=2 for other types  of
+            splines.
+    ST  -   spline type:
+            * 0     Akima spline
+            * 1     parabolically terminated Catmull-Rom spline (Tension=0)
+            * 2     parabolically terminated cubic spline
+    PT  -   parameterization type:
+            * 0     uniform
+            * 1     chord length
+            * 2     centripetal
+
+OUTPUT PARAMETERS:
+    P   -   parametric spline interpolant
+
+
+NOTES:
+* this function  assumes  that  there all consequent points  are distinct.
+  I.e. (x0,y0)&lt;&gt;(x1,y1),  (x1,y1)&lt;&gt;(x2,y2),  (x2,y2)&lt;&gt;(x3,y3)  and  so on.
+  However, non-consequent points may coincide, i.e. we can  have  (x0,y0)=
+  =(x2,y2).
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> PSpline2Build(XY : TReal2DArray;
+     N : AlglibInteger;
+     ST : AlglibInteger;
+     PT : AlglibInteger;
+     <b>var</b> P : PSpline2Interpolant);
+</div></pre>
+<a name='sub_pspline2buildperiodic'></a><h3><code>pspline2buildperiodic</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This  function  builds  periodic  2-dimensional  parametric  spline  which
+starts at (X[0],Y[0]), goes through all points to (X[N-1],Y[N-1]) and then
+back to (X[0],Y[0]).
+
+INPUT PARAMETERS:
+    XY  -   points, array[0..N-1,0..1].
+            XY[I,0:1] corresponds to the Ith point.
+            XY[N-1,0:1] must be different from XY[0,0:1].
+            Order of points is important!
+    N   -   points count, N&gt;=3 for other types of splines.
+    ST  -   spline type:
+            * 1     Catmull-Rom spline (Tension=0) with cyclic boundary conditions
+            * 2     cubic spline with cyclic boundary conditions
+    PT  -   parameterization type:
+            * 0     uniform
+            * 1     chord length
+            * 2     centripetal
+
+OUTPUT PARAMETERS:
+    P   -   parametric spline interpolant
+
+
+NOTES:
+* this function  assumes  that there all consequent points  are  distinct.
+  I.e. (x0,y0)&lt;&gt;(x1,y1), (x1,y1)&lt;&gt;(x2,y2),  (x2,y2)&lt;&gt;(x3,y3)  and  so  on.
+  However, non-consequent points may coincide, i.e. we can  have  (x0,y0)=
+  =(x2,y2).
+* last point of sequence is NOT equal to the first  point.  You  shouldn't
+  make curve &quot;explicitly periodic&quot; by making them equal.
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> PSpline2BuildPeriodic(XY : TReal2DArray;
+     N : AlglibInteger;
+     ST : AlglibInteger;
+     PT : AlglibInteger;
+     <b>var</b> P : PSpline2Interpolant);
+</div></pre>
+<a name='sub_pspline2calc'></a><h3><code>pspline2calc</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function  calculates  the value of the parametric spline for a  given
+value of parameter T
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+    T   -   point:
+            * T in [0,1] corresponds to interval spanned by points
+            * for non-periodic splines T&lt;0 (or T&gt;1) correspond to parts of
+              the curve before the first (after the last) point
+            * for periodic splines T&lt;0 (or T&gt;1) are projected  into  [0,1]
+              by making T=T-floor(T).
+
+OUTPUT PARAMETERS:
+    X   -   X-position
+    Y   -   Y-position
+
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> PSpline2Calc(<b>const</b> P : PSpline2Interpolant;
+     T : Double;
+     <b>var</b> X : Double;
+     <b>var</b> Y : Double);
+</div></pre>
+<a name='sub_pspline2diff'></a><h3><code>pspline2diff</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function calculates derivative, i.e. it returns (dX/dT,dY/dT).
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+    T   -   point:
+            * T in [0,1] corresponds to interval spanned by points
+            * for non-periodic splines T&lt;0 (or T&gt;1) correspond to parts of
+              the curve before the first (after the last) point
+            * for periodic splines T&lt;0 (or T&gt;1) are projected  into  [0,1]
+              by making T=T-floor(T).
+
+OUTPUT PARAMETERS:
+    X   -   X-value
+    DX  -   X-derivative
+    Y   -   Y-value
+    DY  -   Y-derivative
+
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> PSpline2Diff(<b>const</b> P : PSpline2Interpolant;
+     T : Double;
+     <b>var</b> X : Double;
+     <b>var</b> DX : Double;
+     <b>var</b> Y : Double;
+     <b>var</b> DY : Double);
+</div></pre>
+<a name='sub_pspline2diff2'></a><h3><code>pspline2diff2</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function calculates first and second derivative with respect to T.
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+    T   -   point:
+            * T in [0,1] corresponds to interval spanned by points
+            * for non-periodic splines T&lt;0 (or T&gt;1) correspond to parts of
+              the curve before the first (after the last) point
+            * for periodic splines T&lt;0 (or T&gt;1) are projected  into  [0,1]
+              by making T=T-floor(T).
+
+OUTPUT PARAMETERS:
+    X   -   X-value
+    DX  -   derivative
+    D2X -   second derivative
+    Y   -   Y-value
+    DY  -   derivative
+    D2Y -   second derivative
+
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> PSpline2Diff2(<b>const</b> P : PSpline2Interpolant;
+     T : Double;
+     <b>var</b> X : Double;
+     <b>var</b> DX : Double;
+     <b>var</b> D2X : Double;
+     <b>var</b> Y : Double;
+     <b>var</b> DY : Double;
+     <b>var</b> D2Y : Double);
+</div></pre>
+<a name='sub_pspline2parametervalues'></a><h3><code>pspline2parametervalues</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function returns vector of parameter values correspoding to points.
+
+I.e. for P created from (X[0],Y[0])...(X[N-1],Y[N-1]) and U=TValues(P)  we
+have
+    (X[0],Y[0]) = PSpline2Calc(P,U[0]),
+    (X[1],Y[1]) = PSpline2Calc(P,U[1]),
+    (X[2],Y[2]) = PSpline2Calc(P,U[2]),
+    ...
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+
+OUTPUT PARAMETERS:
+    N   -   array size
+    T   -   array[0..N-1]
+
+
+NOTES:
+* for non-periodic splines U[0]=0, U[0]&lt;U[1]&lt;...&lt;U[N-1], U[N-1]=1
+* for periodic splines     U[0]=0, U[0]&lt;U[1]&lt;...&lt;U[N-1], U[N-1]&lt;1
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> PSpline2ParameterValues(<b>const</b> P : PSpline2Interpolant;
+     <b>var</b> N : AlglibInteger;
+     <b>var</b> T : TReal1DArray);
+</div></pre>
+<a name='sub_pspline2tangent'></a><h3><code>pspline2tangent</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function  calculates  tangent vector for a given value of parameter T
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+    T   -   point:
+            * T in [0,1] corresponds to interval spanned by points
+            * for non-periodic splines T&lt;0 (or T&gt;1) correspond to parts of
+              the curve before the first (after the last) point
+            * for periodic splines T&lt;0 (or T&gt;1) are projected  into  [0,1]
+              by making T=T-floor(T).
+
+OUTPUT PARAMETERS:
+    X    -   X-component of tangent vector (normalized)
+    Y    -   Y-component of tangent vector (normalized)
+    
+NOTE:
+    X^2+Y^2 is either 1 (for non-zero tangent vector) or 0.
+
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> PSpline2Tangent(<b>const</b> P : PSpline2Interpolant;
+     T : Double;
+     <b>var</b> X : Double;
+     <b>var</b> Y : Double);
+</div></pre>
+<a name='sub_pspline3arclength'></a><h3><code>pspline3arclength</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function  calculates  arc length, i.e. length of  curve  between  t=a
+and t=b.
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+    A,B -   parameter values corresponding to arc ends:
+            * B&gt;A will result in positive length returned
+            * B&lt;A will result in negative length returned
+
+RESULT:
+    length of arc starting at T=A and ending at T=B.
+
+
+  -- ALGLIB PROJECT --
+     Copyright 30.05.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>function</b> PSpline3ArcLength(<b>const</b> P : PSpline3Interpolant;
+     A : Double;
+     B : Double):Double;
+</div></pre>
+<a name='sub_pspline3build'></a><h3><code>pspline3build</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function  builds  non-periodic 3-dimensional parametric spline  which
+starts at (X[0],Y[0],Z[0]) and ends at (X[N-1],Y[N-1],Z[N-1]).
+
+Same as PSpline2Build() function, but for 3D, so we  won't  duplicate  its
+description here.
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> PSpline3Build(XY : TReal2DArray;
+     N : AlglibInteger;
+     ST : AlglibInteger;
+     PT : AlglibInteger;
+     <b>var</b> P : PSpline3Interpolant);
+</div></pre>
+<a name='sub_pspline3buildperiodic'></a><h3><code>pspline3buildperiodic</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This  function  builds  periodic  3-dimensional  parametric  spline  which
+starts at (X[0],Y[0],Z[0]), goes through all points to (X[N-1],Y[N-1],Z[N-1])
+and then back to (X[0],Y[0],Z[0]).
+
+Same as PSpline2Build() function, but for 3D, so we  won't  duplicate  its
+description here.
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> PSpline3BuildPeriodic(XY : TReal2DArray;
+     N : AlglibInteger;
+     ST : AlglibInteger;
+     PT : AlglibInteger;
+     <b>var</b> P : PSpline3Interpolant);
+</div></pre>
+<a name='sub_pspline3calc'></a><h3><code>pspline3calc</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function  calculates  the value of the parametric spline for a  given
+value of parameter T.
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+    T   -   point:
+            * T in [0,1] corresponds to interval spanned by points
+            * for non-periodic splines T&lt;0 (or T&gt;1) correspond to parts of
+              the curve before the first (after the last) point
+            * for periodic splines T&lt;0 (or T&gt;1) are projected  into  [0,1]
+              by making T=T-floor(T).
+
+OUTPUT PARAMETERS:
+    X   -   X-position
+    Y   -   Y-position
+    Z   -   Z-position
+
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> PSpline3Calc(<b>const</b> P : PSpline3Interpolant;
+     T : Double;
+     <b>var</b> X : Double;
+     <b>var</b> Y : Double;
+     <b>var</b> Z : Double);
+</div></pre>
+<a name='sub_pspline3diff'></a><h3><code>pspline3diff</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function calculates derivative, i.e. it returns (dX/dT,dY/dT,dZ/dT).
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+    T   -   point:
+            * T in [0,1] corresponds to interval spanned by points
+            * for non-periodic splines T&lt;0 (or T&gt;1) correspond to parts of
+              the curve before the first (after the last) point
+            * for periodic splines T&lt;0 (or T&gt;1) are projected  into  [0,1]
+              by making T=T-floor(T).
+
+OUTPUT PARAMETERS:
+    X   -   X-value
+    DX  -   X-derivative
+    Y   -   Y-value
+    DY  -   Y-derivative
+    Z   -   Z-value
+    DZ  -   Z-derivative
+
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> PSpline3Diff(<b>const</b> P : PSpline3Interpolant;
+     T : Double;
+     <b>var</b> X : Double;
+     <b>var</b> DX : Double;
+     <b>var</b> Y : Double;
+     <b>var</b> DY : Double;
+     <b>var</b> Z : Double;
+     <b>var</b> DZ : Double);
+</div></pre>
+<a name='sub_pspline3diff2'></a><h3><code>pspline3diff2</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function calculates first and second derivative with respect to T.
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+    T   -   point:
+            * T in [0,1] corresponds to interval spanned by points
+            * for non-periodic splines T&lt;0 (or T&gt;1) correspond to parts of
+              the curve before the first (after the last) point
+            * for periodic splines T&lt;0 (or T&gt;1) are projected  into  [0,1]
+              by making T=T-floor(T).
+
+OUTPUT PARAMETERS:
+    X   -   X-value
+    DX  -   derivative
+    D2X -   second derivative
+    Y   -   Y-value
+    DY  -   derivative
+    D2Y -   second derivative
+    Z   -   Z-value
+    DZ  -   derivative
+    D2Z -   second derivative
+
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> PSpline3Diff2(<b>const</b> P : PSpline3Interpolant;
+     T : Double;
+     <b>var</b> X : Double;
+     <b>var</b> DX : Double;
+     <b>var</b> D2X : Double;
+     <b>var</b> Y : Double;
+     <b>var</b> DY : Double;
+     <b>var</b> D2Y : Double;
+     <b>var</b> Z : Double;
+     <b>var</b> DZ : Double;
+     <b>var</b> D2Z : Double);
+</div></pre>
+<a name='sub_pspline3parametervalues'></a><h3><code>pspline3parametervalues</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function returns vector of parameter values correspoding to points.
+
+Same as PSpline2ParameterValues(), but for 3D.
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> PSpline3ParameterValues(<b>const</b> P : PSpline3Interpolant;
+     <b>var</b> N : AlglibInteger;
+     <b>var</b> T : TReal1DArray);
+</div></pre>
+<a name='sub_pspline3tangent'></a><h3><code>pspline3tangent</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function  calculates  tangent vector for a given value of parameter T
+
+INPUT PARAMETERS:
+    P   -   parametric spline interpolant
+    T   -   point:
+            * T in [0,1] corresponds to interval spanned by points
+            * for non-periodic splines T&lt;0 (or T&gt;1) correspond to parts of
+              the curve before the first (after the last) point
+            * for periodic splines T&lt;0 (or T&gt;1) are projected  into  [0,1]
+              by making T=T-floor(T).
+
+OUTPUT PARAMETERS:
+    X    -   X-component of tangent vector (normalized)
+    Y    -   Y-component of tangent vector (normalized)
+    Z    -   Z-component of tangent vector (normalized)
+
+NOTE:
+    X^2+Y^2+Z^2 is either 1 (for non-zero tangent vector) or 0.
+
+
+  -- ALGLIB PROJECT --
+     Copyright 28.05.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> PSpline3Tangent(<b>const</b> P : PSpline3Interpolant;
+     T : Double;
+     <b>var</b> X : Double;
+     <b>var</b> Y : Double;
+     <b>var</b> Z : Double);
+</div></pre>
 <a name=unit_ratint></a><h2><code>ratint</code> unit</h2>
 <h3>Structures</h3>
 <a href='#struct_barycentricfitreport' class=toc>barycentricfitreport</a><br>
@@ -16387,6 +16914,7 @@ Result:
 <a href='#struct_spline1dinterpolant' class=toc>spline1dinterpolant</a><br>
 <h3>Subroutines</h3>
 <a href='#sub_spline1dbuildakima' class=toc>spline1dbuildakima</a><br>
+<a href='#sub_spline1dbuildcatmullrom' class=toc>spline1dbuildcatmullrom</a><br>
 <a href='#sub_spline1dbuildcubic' class=toc>spline1dbuildcubic</a><br>
 <a href='#sub_spline1dbuildhermite' class=toc>spline1dbuildhermite</a><br>
 <a href='#sub_spline1dbuildlinear' class=toc>spline1dbuildlinear</a><br>
@@ -16400,9 +16928,7 @@ Result:
 <a href='#sub_spline1dintegrate' class=toc>spline1dintegrate</a><br>
 <a href='#sub_spline1dlintransx' class=toc>spline1dlintransx</a><br>
 <a href='#sub_spline1dlintransy' class=toc>spline1dlintransy</a><br>
-<a href='#sub_spline1dserialize' class=toc>spline1dserialize</a><br>
 <a href='#sub_spline1dunpack' class=toc>spline1dunpack</a><br>
-<a href='#sub_spline1dunserialize' class=toc>spline1dunserialize</a><br>
 <h3>Examples</h3>
 <a href='#example_spline1d_calc' class=toc>spline1d_calc</a><br>
 <a href='#example_spline1d_cubic' class=toc>spline1d_cubic</a><br>
@@ -16434,6 +16960,7 @@ Spline fitting report:
 1-dimensional spline inteprolant
 *************************************************************************)
 </div><div style='margin-top: 0; margin-bottom: 0;'>Spline1DInterpolant = <b>record</b>
+    Periodic : Boolean;
     N : AlglibInteger;
     K : AlglibInteger;
     X : TReal1DArray;
@@ -16453,6 +16980,11 @@ INPUT PARAMETERS:
 OUTPUT PARAMETERS:
     C           -   spline interpolant
 
+
+ORDER OF POINTS
+
+Subroutine automatically sorts points, so caller may pass unsorted array.
+
   -- ALGLIB PROJECT --
      Copyright 24.06.2007 by Bochkanov Sergey
 *************************************************************************)
@@ -16461,14 +16993,54 @@ OUTPUT PARAMETERS:
      N : AlglibInteger;
      <b>var</b> C : Spline1DInterpolant);
 </div></pre>
+<a name='sub_spline1dbuildcatmullrom'></a><h3><code>spline1dbuildcatmullrom</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This subroutine builds Catmull-Rom spline interpolant.
+
+INPUT PARAMETERS:
+    X           -   spline nodes, array[0..N-1].
+    Y           -   function values, array[0..N-1].
+    N           -   points count, N&gt;=2
+    BoundType   -   boundary condition type:
+                    * -1 for periodic boundary condition
+                    *  0 for parabolically terminated spline
+    Tension     -   tension parameter:
+                    * tension=0   corresponds to classic Catmull-Rom spline
+                    * 0&lt;tension&lt;1 corresponds to more general form - cardinal spline
+
+OUTPUT PARAMETERS:
+    C           -   spline interpolant
+
+
+ORDER OF POINTS
+
+Subroutine automatically sorts points, so caller may pass unsorted array.
+
+PROBLEMS WITH PERIODIC BOUNDARY CONDITIONS:
+
+Problems with periodic boundary conditions have Y[first_point]=Y[last_point].
+However, this subroutine doesn't require you to specify equal  values  for
+the first and last points - it automatically forces them to be equal.
+
+  -- ALGLIB PROJECT --
+     Copyright 23.06.2007 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> Spline1DBuildCatmullRom(X : TReal1DArray;
+     Y : TReal1DArray;
+     N : AlglibInteger;
+     BoundType : AlglibInteger;
+     Tension : Double;
+     <b>var</b> C : Spline1DInterpolant);
+</div></pre>
 <a name='sub_spline1dbuildcubic'></a><h3><code>spline1dbuildcubic</code> subroutine</h3>
 <pre>
 <div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
 This subroutine builds cubic spline interpolant.
 
 INPUT PARAMETERS:
-    X           -   spline nodes, array[0..N-1]
-    Y           -   function values, array[0..N-1]
+    X           -   spline nodes, array[0..N-1].
+    Y           -   function values, array[0..N-1].
     N           -   points count, N&gt;=2
     BoundLType  -   boundary condition type for the left boundary
     BoundL      -   left boundary condition (first or second derivative,
@@ -16479,12 +17051,30 @@ INPUT PARAMETERS:
 
 OUTPUT PARAMETERS:
     C           -   spline interpolant
-                    
+
+
+ORDER OF POINTS
+
+Subroutine automatically sorts points, so caller may pass unsorted array.
+
+SETTING BOUNDARY VALUES:
+
 The BoundLType/BoundRType parameters can have the following values:
-    * 0, which  corresponds  to  the  parabolically   terminated  spline
-         (BoundL/BoundR are ignored).
-    * 1, which corresponds to the first derivative boundary condition
-    * 2, which corresponds to the second derivative boundary condition
+    * -1, which corresonds to the periodic (cyclic) boundary conditions.
+          In this case:
+          * both BoundLType and BoundRType must be equal to -1.
+          * BoundL/BoundR are ignored
+          * Y[last] is ignored (it is assumed to be equal to Y[first]).
+    *  0, which  corresponds  to  the  parabolically   terminated  spline
+          (BoundL and/or BoundR are ignored).
+    *  1, which corresponds to the first derivative boundary condition
+    *  2, which corresponds to the second derivative boundary condition
+
+PROBLEMS WITH PERIODIC BOUNDARY CONDITIONS:
+
+Problems with periodic boundary conditions have Y[first_point]=Y[last_point].
+However, this subroutine doesn't require you to specify equal  values  for
+the first and last points - it automatically forces them to be equal.
 
   -- ALGLIB PROJECT --
      Copyright 23.06.2007 by Bochkanov Sergey
@@ -16513,6 +17103,11 @@ INPUT PARAMETERS:
 OUTPUT PARAMETERS:
     C           -   spline interpolant.
 
+
+ORDER OF POINTS
+
+Subroutine automatically sorts points, so caller may pass unsorted array.
+
   -- ALGLIB PROJECT --
      Copyright 23.06.2007 by Bochkanov Sergey
 *************************************************************************)
@@ -16535,6 +17130,11 @@ INPUT PARAMETERS:
     
 OUTPUT PARAMETERS:
     C   -   spline interpolant
+
+
+ORDER OF POINTS
+
+Subroutine automatically sorts points, so caller may pass unsorted array.
 
   -- ALGLIB PROJECT --
      Copyright 24.06.2007 by Bochkanov Sergey
@@ -16686,6 +17286,11 @@ OUTPUT PARAMETERS:
 IMPORTANT:
     this subroitine doesn't calculate task's condition number for K&lt;&gt;0.
 
+
+ORDER OF POINTS
+
+Subroutine automatically sorts points, so caller may pass unsorted array.
+
 SETTING CONSTRAINTS - DANGERS AND OPPORTUNITIES:
 
 Setting constraints can lead  to undesired  results,  like ill-conditioned
@@ -16818,6 +17423,11 @@ IMPORTANT:
 IMPORTANT:
     this subroitine supports only even M's
 
+
+ORDER OF POINTS
+
+Subroutine automatically sorts points, so caller may pass unsorted array.
+
 SETTING CONSTRAINTS - DANGERS AND OPPORTUNITIES:
 
 Setting constraints can lead  to undesired  results,  like ill-conditioned
@@ -16869,7 +17479,8 @@ This subroutine integrates the spline.
 
 INPUT PARAMETERS:
     C   -   spline interpolant.
-    X   -   right bound of the integration interval [a, x]
+    X   -   right bound of the integration interval [a, x],
+            here 'a' denotes min(x[])
 Result:
     integral(S(t)dt,a,x)
 
@@ -16915,26 +17526,6 @@ Result:
      A : Double;
      B : Double);
 </div></pre>
-<a name='sub_spline1dserialize'></a><h3><code>spline1dserialize</code> subroutine</h3>
-<pre>
-<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
-Serialization of the spline interpolant
-
-INPUT PARAMETERS:
-    B   -   spline interpolant
-
-OUTPUT PARAMETERS:
-    RA      -   array of real numbers which contains interpolant,
-                array[0..RLen-1]
-    RLen    -   RA lenght
-
-  -- ALGLIB --
-     Copyright 17.08.2009 by Bochkanov Sergey
-*************************************************************************)
-</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> Spline1DSerialize(<b>const</b> C : Spline1DInterpolant;
-     <b>var</b> RA : TReal1DArray;
-     <b>var</b> RALen : AlglibInteger);
-</div></pre>
 <a name='sub_spline1dunpack'></a><h3><code>spline1dunpack</code> subroutine</h3>
 <pre>
 <div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
@@ -16963,23 +17554,6 @@ Result:
 </div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> Spline1DUnpack(<b>const</b> C : Spline1DInterpolant;
      <b>var</b> N : AlglibInteger;
      <b>var</b> Tbl : TReal2DArray);
-</div></pre>
-<a name='sub_spline1dunserialize'></a><h3><code>spline1dunserialize</code> subroutine</h3>
-<pre>
-<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
-Unserialization of the spline interpolant
-
-INPUT PARAMETERS:
-    RA  -   array of real numbers which contains interpolant,
-
-OUTPUT PARAMETERS:
-    B   -   spline interpolant
-
-  -- ALGLIB --
-     Copyright 17.08.2009 by Bochkanov Sergey
-*************************************************************************)
-</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> Spline1DUnserialize(<b>const</b> RA : TReal1DArray;
-     <b>var</b> C : Spline1DInterpolant);
 </div></pre>
 <a name='example_spline1d_calc'></a><h3>spline1d_calc example</h3>
 <pre>

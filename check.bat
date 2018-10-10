@@ -328,7 +328,7 @@ IF NOT ERRORLEVEL 1 GOTO lbl_56
 EXIT /B 1
 :lbl_56
 pushd .
-CALL .\check  "%~1"  "taskgen_short"  "%~3" 
+CALL .\check  "%~1"  "apserv_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_57
 EXIT /B 1
@@ -364,2353 +364,2380 @@ IF NOT ERRORLEVEL 1 GOTO lbl_62
 EXIT /B 1
 :lbl_62
 pushd .
-CALL .\check  "%~1"  "matdet_short"  "%~3" 
+CALL .\check  "%~1"  "pspline_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_63
 EXIT /B 1
 :lbl_63
 pushd .
-CALL .\check  "%~1"  "sdet_short"  "%~3" 
+CALL .\check  "%~1"  "matdet_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_64
 EXIT /B 1
 :lbl_64
 pushd .
-CALL .\check  "%~1"  "ldlt_short"  "%~3" 
+CALL .\check  "%~1"  "sdet_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_65
 EXIT /B 1
 :lbl_65
 pushd .
-CALL .\check  "%~1"  "spdgevd_short"  "%~3" 
+CALL .\check  "%~1"  "ldlt_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_66
 EXIT /B 1
 :lbl_66
 pushd .
-CALL .\check  "%~1"  "sinverse_short"  "%~3" 
+CALL .\check  "%~1"  "spdgevd_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_67
 EXIT /B 1
 :lbl_67
 pushd .
-CALL .\check  "%~1"  "inverseupdate_short"  "%~3" 
+CALL .\check  "%~1"  "sinverse_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_68
 EXIT /B 1
 :lbl_68
 pushd .
-CALL .\check  "%~1"  "srcond_short"  "%~3" 
+CALL .\check  "%~1"  "inverseupdate_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_69
 EXIT /B 1
 :lbl_69
 pushd .
-CALL .\check  "%~1"  "ssolve_short"  "%~3" 
+CALL .\check  "%~1"  "srcond_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_70
 EXIT /B 1
 :lbl_70
 pushd .
-CALL .\check  "%~1"  "estnorm_short"  "%~3" 
+CALL .\check  "%~1"  "ssolve_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_71
 EXIT /B 1
 :lbl_71
 pushd .
-CALL .\check  "%~1"  "schur_short"  "%~3" 
+CALL .\check  "%~1"  "estnorm_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_72
 EXIT /B 1
 :lbl_72
 pushd .
-CALL .\check  "%~1"  "mincg_short"  "%~3" 
+CALL .\check  "%~1"  "schur_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_73
 EXIT /B 1
 :lbl_73
 pushd .
-CALL .\check  "%~1"  "minasa_short"  "%~3" 
+CALL .\check  "%~1"  "mincg_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_74
 EXIT /B 1
 :lbl_74
 pushd .
-CALL .\check  "%~1"  "airyf_short"  "%~3" 
+CALL .\check  "%~1"  "minasa_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_75
 EXIT /B 1
 :lbl_75
 pushd .
-CALL .\check  "%~1"  "bessel_short"  "%~3" 
+CALL .\check  "%~1"  "airyf_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_76
 EXIT /B 1
 :lbl_76
 pushd .
-CALL .\check  "%~1"  "betaf_short"  "%~3" 
+CALL .\check  "%~1"  "bessel_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_77
 EXIT /B 1
 :lbl_77
 pushd .
-CALL .\check  "%~1"  "chebyshev_short"  "%~3" 
+CALL .\check  "%~1"  "betaf_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_78
 EXIT /B 1
 :lbl_78
 pushd .
-CALL .\check  "%~1"  "dawson_short"  "%~3" 
+CALL .\check  "%~1"  "chebyshev_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_79
 EXIT /B 1
 :lbl_79
 pushd .
-CALL .\check  "%~1"  "elliptic_short"  "%~3" 
+CALL .\check  "%~1"  "dawson_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_80
 EXIT /B 1
 :lbl_80
 pushd .
-CALL .\check  "%~1"  "expintegrals_short"  "%~3" 
+CALL .\check  "%~1"  "elliptic_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_81
 EXIT /B 1
 :lbl_81
 pushd .
-CALL .\check  "%~1"  "fresnel_short"  "%~3" 
+CALL .\check  "%~1"  "expintegrals_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_82
 EXIT /B 1
 :lbl_82
 pushd .
-CALL .\check  "%~1"  "hermite_short"  "%~3" 
+CALL .\check  "%~1"  "fresnel_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_83
 EXIT /B 1
 :lbl_83
 pushd .
-CALL .\check  "%~1"  "ibetaf_short"  "%~3" 
+CALL .\check  "%~1"  "hermite_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_84
 EXIT /B 1
 :lbl_84
 pushd .
-CALL .\check  "%~1"  "jacobianelliptic_short"  "%~3" 
+CALL .\check  "%~1"  "ibetaf_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_85
 EXIT /B 1
 :lbl_85
 pushd .
-CALL .\check  "%~1"  "laguerre_short"  "%~3" 
+CALL .\check  "%~1"  "jacobianelliptic_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_86
 EXIT /B 1
 :lbl_86
 pushd .
-CALL .\check  "%~1"  "legendre_short"  "%~3" 
+CALL .\check  "%~1"  "laguerre_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_87
 EXIT /B 1
 :lbl_87
 pushd .
-CALL .\check  "%~1"  "psif_short"  "%~3" 
+CALL .\check  "%~1"  "legendre_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_88
 EXIT /B 1
 :lbl_88
 pushd .
-CALL .\check  "%~1"  "trigintegrals_short"  "%~3" 
+CALL .\check  "%~1"  "psif_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_89
 EXIT /B 1
 :lbl_89
 pushd .
-CALL .\check  "%~1"  "binomialdistr_short"  "%~3" 
+CALL .\check  "%~1"  "trigintegrals_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_90
 EXIT /B 1
 :lbl_90
 pushd .
-CALL .\check  "%~1"  "nearunityunit_short"  "%~3" 
+CALL .\check  "%~1"  "binomialdistr_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_91
 EXIT /B 1
 :lbl_91
 pushd .
-CALL .\check  "%~1"  "chisquaredistr_short"  "%~3" 
+CALL .\check  "%~1"  "nearunityunit_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_92
 EXIT /B 1
 :lbl_92
 pushd .
-CALL .\check  "%~1"  "correlation_short"  "%~3" 
+CALL .\check  "%~1"  "chisquaredistr_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_93
 EXIT /B 1
 :lbl_93
 pushd .
-CALL .\check  "%~1"  "fdistr_short"  "%~3" 
+CALL .\check  "%~1"  "correlation_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_94
 EXIT /B 1
 :lbl_94
 pushd .
-CALL .\check  "%~1"  "correlationtests_short"  "%~3" 
+CALL .\check  "%~1"  "fdistr_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_95
 EXIT /B 1
 :lbl_95
 pushd .
-CALL .\check  "%~1"  "studenttdistr_short"  "%~3" 
+CALL .\check  "%~1"  "correlationtests_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_96
 EXIT /B 1
 :lbl_96
 pushd .
-CALL .\check  "%~1"  "jarquebera_short"  "%~3" 
+CALL .\check  "%~1"  "studenttdistr_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_97
 EXIT /B 1
 :lbl_97
 pushd .
-CALL .\check  "%~1"  "mannwhitneyu_short"  "%~3" 
+CALL .\check  "%~1"  "jarquebera_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_98
 EXIT /B 1
 :lbl_98
 pushd .
-CALL .\check  "%~1"  "poissondistr_short"  "%~3" 
+CALL .\check  "%~1"  "mannwhitneyu_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_99
 EXIT /B 1
 :lbl_99
 pushd .
-CALL .\check  "%~1"  "stest_short"  "%~3" 
+CALL .\check  "%~1"  "poissondistr_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_100
 EXIT /B 1
 :lbl_100
 pushd .
-CALL .\check  "%~1"  "studentttests_short"  "%~3" 
+CALL .\check  "%~1"  "stest_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_101
 EXIT /B 1
 :lbl_101
 pushd .
-CALL .\check  "%~1"  "variancetests_short"  "%~3" 
+CALL .\check  "%~1"  "studentttests_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_102
 EXIT /B 1
 :lbl_102
 pushd .
-CALL .\check  "%~1"  "wsr_short"  "%~3" 
+CALL .\check  "%~1"  "variancetests_short"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_103
 EXIT /B 1
 :lbl_103
+pushd .
+CALL .\check  "%~1"  "wsr_short"  "%~3" 
+popd
+IF NOT ERRORLEVEL 1 GOTO lbl_104
+EXIT /B 1
+:lbl_104
 EXIT /B 0
 :lbl_3_end
-IF NOT "%~2"=="all_silent" GOTO lbl_104_end
+IF NOT "%~2"=="all_silent" GOTO lbl_105_end
 pushd .
 CALL .\check  "%~1"  "dforest_silent"  "%~3" 
-popd
-IF NOT ERRORLEVEL 1 GOTO lbl_105
-EXIT /B 1
-:lbl_105
-pushd .
-CALL .\check  "%~1"  "tsort_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_106
 EXIT /B 1
 :lbl_106
 pushd .
-CALL .\check  "%~1"  "descriptivestatistics_silent"  "%~3" 
+CALL .\check  "%~1"  "tsort_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_107
 EXIT /B 1
 :lbl_107
 pushd .
-CALL .\check  "%~1"  "bdss_silent"  "%~3" 
+CALL .\check  "%~1"  "descriptivestatistics_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_108
 EXIT /B 1
 :lbl_108
 pushd .
-CALL .\check  "%~1"  "kmeans_silent"  "%~3" 
+CALL .\check  "%~1"  "bdss_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_109
 EXIT /B 1
 :lbl_109
 pushd .
-CALL .\check  "%~1"  "blas_silent"  "%~3" 
+CALL .\check  "%~1"  "kmeans_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_110
 EXIT /B 1
 :lbl_110
 pushd .
-CALL .\check  "%~1"  "lda_silent"  "%~3" 
+CALL .\check  "%~1"  "blas_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_111
 EXIT /B 1
 :lbl_111
 pushd .
-CALL .\check  "%~1"  "hblas_silent"  "%~3" 
+CALL .\check  "%~1"  "lda_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_112
 EXIT /B 1
 :lbl_112
 pushd .
-CALL .\check  "%~1"  "reflections_silent"  "%~3" 
+CALL .\check  "%~1"  "hblas_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_113
 EXIT /B 1
 :lbl_113
 pushd .
-CALL .\check  "%~1"  "creflections_silent"  "%~3" 
+CALL .\check  "%~1"  "reflections_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_114
 EXIT /B 1
 :lbl_114
 pushd .
-CALL .\check  "%~1"  "sblas_silent"  "%~3" 
+CALL .\check  "%~1"  "creflections_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_115
 EXIT /B 1
 :lbl_115
 pushd .
-CALL .\check  "%~1"  "ablasf_silent"  "%~3" 
+CALL .\check  "%~1"  "sblas_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_116
 EXIT /B 1
 :lbl_116
 pushd .
-CALL .\check  "%~1"  "ablas_silent"  "%~3" 
+CALL .\check  "%~1"  "ablasf_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_117
 EXIT /B 1
 :lbl_117
 pushd .
-CALL .\check  "%~1"  "ortfac_silent"  "%~3" 
+CALL .\check  "%~1"  "ablas_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_118
 EXIT /B 1
 :lbl_118
 pushd .
-CALL .\check  "%~1"  "rotations_silent"  "%~3" 
+CALL .\check  "%~1"  "ortfac_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_119
 EXIT /B 1
 :lbl_119
 pushd .
-CALL .\check  "%~1"  "hsschur_silent"  "%~3" 
+CALL .\check  "%~1"  "rotations_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_120
 EXIT /B 1
 :lbl_120
 pushd .
-CALL .\check  "%~1"  "evd_silent"  "%~3" 
+CALL .\check  "%~1"  "hsschur_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_121
 EXIT /B 1
 :lbl_121
 pushd .
-CALL .\check  "%~1"  "hqrnd_silent"  "%~3" 
+CALL .\check  "%~1"  "evd_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_122
 EXIT /B 1
 :lbl_122
 pushd .
-CALL .\check  "%~1"  "matgen_silent"  "%~3" 
+CALL .\check  "%~1"  "hqrnd_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_123
 EXIT /B 1
 :lbl_123
 pushd .
-CALL .\check  "%~1"  "trfac_silent"  "%~3" 
+CALL .\check  "%~1"  "matgen_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_124
 EXIT /B 1
 :lbl_124
 pushd .
-CALL .\check  "%~1"  "trlinsolve_silent"  "%~3" 
+CALL .\check  "%~1"  "trfac_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_125
 EXIT /B 1
 :lbl_125
 pushd .
-CALL .\check  "%~1"  "safesolve_silent"  "%~3" 
+CALL .\check  "%~1"  "trlinsolve_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_126
 EXIT /B 1
 :lbl_126
 pushd .
-CALL .\check  "%~1"  "rcond_silent"  "%~3" 
+CALL .\check  "%~1"  "safesolve_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_127
 EXIT /B 1
 :lbl_127
 pushd .
-CALL .\check  "%~1"  "matinv_silent"  "%~3" 
+CALL .\check  "%~1"  "rcond_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_128
 EXIT /B 1
 :lbl_128
 pushd .
-CALL .\check  "%~1"  "linreg_silent"  "%~3" 
+CALL .\check  "%~1"  "matinv_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_129
 EXIT /B 1
 :lbl_129
 pushd .
-CALL .\check  "%~1"  "gammafunc_silent"  "%~3" 
+CALL .\check  "%~1"  "linreg_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_130
 EXIT /B 1
 :lbl_130
 pushd .
-CALL .\check  "%~1"  "normaldistr_silent"  "%~3" 
+CALL .\check  "%~1"  "gammafunc_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_131
 EXIT /B 1
 :lbl_131
 pushd .
-CALL .\check  "%~1"  "igammaf_silent"  "%~3" 
+CALL .\check  "%~1"  "normaldistr_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_132
 EXIT /B 1
 :lbl_132
 pushd .
-CALL .\check  "%~1"  "bdsvd_silent"  "%~3" 
+CALL .\check  "%~1"  "igammaf_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_133
 EXIT /B 1
 :lbl_133
 pushd .
-CALL .\check  "%~1"  "svd_silent"  "%~3" 
+CALL .\check  "%~1"  "bdsvd_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_134
 EXIT /B 1
 :lbl_134
 pushd .
-CALL .\check  "%~1"  "logit_silent"  "%~3" 
+CALL .\check  "%~1"  "svd_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_135
 EXIT /B 1
 :lbl_135
 pushd .
-CALL .\check  "%~1"  "mlpbase_silent"  "%~3" 
+CALL .\check  "%~1"  "logit_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_136
 EXIT /B 1
 :lbl_136
 pushd .
-CALL .\check  "%~1"  "xblas_silent"  "%~3" 
+CALL .\check  "%~1"  "mlpbase_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_137
 EXIT /B 1
 :lbl_137
 pushd .
-CALL .\check  "%~1"  "densesolver_silent"  "%~3" 
+CALL .\check  "%~1"  "xblas_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_138
 EXIT /B 1
 :lbl_138
 pushd .
-CALL .\check  "%~1"  "mlpe_silent"  "%~3" 
+CALL .\check  "%~1"  "densesolver_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_139
 EXIT /B 1
 :lbl_139
 pushd .
-CALL .\check  "%~1"  "linmin_silent"  "%~3" 
+CALL .\check  "%~1"  "mlpe_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_140
 EXIT /B 1
 :lbl_140
 pushd .
-CALL .\check  "%~1"  "minlbfgs_silent"  "%~3" 
+CALL .\check  "%~1"  "linmin_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_141
 EXIT /B 1
 :lbl_141
 pushd .
-CALL .\check  "%~1"  "mlptrain_silent"  "%~3" 
+CALL .\check  "%~1"  "minlbfgs_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_142
 EXIT /B 1
 :lbl_142
 pushd .
-CALL .\check  "%~1"  "pca_silent"  "%~3" 
+CALL .\check  "%~1"  "mlptrain_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_143
 EXIT /B 1
 :lbl_143
 pushd .
-CALL .\check  "%~1"  "odesolver_silent"  "%~3" 
+CALL .\check  "%~1"  "pca_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_144
 EXIT /B 1
 :lbl_144
 pushd .
-CALL .\check  "%~1"  "conv_silent"  "%~3" 
+CALL .\check  "%~1"  "odesolver_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_145
 EXIT /B 1
 :lbl_145
 pushd .
-CALL .\check  "%~1"  "ftbase_silent"  "%~3" 
+CALL .\check  "%~1"  "conv_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_146
 EXIT /B 1
 :lbl_146
 pushd .
-CALL .\check  "%~1"  "fft_silent"  "%~3" 
+CALL .\check  "%~1"  "ftbase_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_147
 EXIT /B 1
 :lbl_147
 pushd .
-CALL .\check  "%~1"  "corr_silent"  "%~3" 
+CALL .\check  "%~1"  "fft_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_148
 EXIT /B 1
 :lbl_148
 pushd .
-CALL .\check  "%~1"  "fht_silent"  "%~3" 
+CALL .\check  "%~1"  "corr_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_149
 EXIT /B 1
 :lbl_149
 pushd .
-CALL .\check  "%~1"  "autogk_silent"  "%~3" 
+CALL .\check  "%~1"  "fht_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_150
 EXIT /B 1
 :lbl_150
 pushd .
-CALL .\check  "%~1"  "gq_silent"  "%~3" 
+CALL .\check  "%~1"  "autogk_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_151
 EXIT /B 1
 :lbl_151
 pushd .
-CALL .\check  "%~1"  "gkq_silent"  "%~3" 
+CALL .\check  "%~1"  "gq_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_152
 EXIT /B 1
 :lbl_152
 pushd .
-CALL .\check  "%~1"  "lsfit_silent"  "%~3" 
+CALL .\check  "%~1"  "gkq_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_153
 EXIT /B 1
 :lbl_153
 pushd .
-CALL .\check  "%~1"  "minlm_silent"  "%~3" 
+CALL .\check  "%~1"  "lsfit_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_154
 EXIT /B 1
 :lbl_154
 pushd .
-CALL .\check  "%~1"  "polint_silent"  "%~3" 
+CALL .\check  "%~1"  "minlm_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_155
 EXIT /B 1
 :lbl_155
 pushd .
-CALL .\check  "%~1"  "ratinterpolation_silent"  "%~3" 
+CALL .\check  "%~1"  "polint_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_156
 EXIT /B 1
 :lbl_156
 pushd .
-CALL .\check  "%~1"  "ratint_silent"  "%~3" 
+CALL .\check  "%~1"  "ratinterpolation_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_157
 EXIT /B 1
 :lbl_157
 pushd .
-CALL .\check  "%~1"  "taskgen_silent"  "%~3" 
+CALL .\check  "%~1"  "ratint_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_158
 EXIT /B 1
 :lbl_158
 pushd .
-CALL .\check  "%~1"  "spline2d_silent"  "%~3" 
+CALL .\check  "%~1"  "apserv_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_159
 EXIT /B 1
 :lbl_159
 pushd .
-CALL .\check  "%~1"  "spline3_silent"  "%~3" 
+CALL .\check  "%~1"  "spline2d_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_160
 EXIT /B 1
 :lbl_160
 pushd .
-CALL .\check  "%~1"  "spline1d_silent"  "%~3" 
+CALL .\check  "%~1"  "spline3_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_161
 EXIT /B 1
 :lbl_161
 pushd .
-CALL .\check  "%~1"  "idwint_silent"  "%~3" 
+CALL .\check  "%~1"  "spline1d_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_162
 EXIT /B 1
 :lbl_162
 pushd .
-CALL .\check  "%~1"  "nearestneighbor_silent"  "%~3" 
+CALL .\check  "%~1"  "idwint_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_163
 EXIT /B 1
 :lbl_163
 pushd .
-CALL .\check  "%~1"  "matdet_silent"  "%~3" 
+CALL .\check  "%~1"  "nearestneighbor_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_164
 EXIT /B 1
 :lbl_164
 pushd .
-CALL .\check  "%~1"  "sdet_silent"  "%~3" 
+CALL .\check  "%~1"  "pspline_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_165
 EXIT /B 1
 :lbl_165
 pushd .
-CALL .\check  "%~1"  "ldlt_silent"  "%~3" 
+CALL .\check  "%~1"  "matdet_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_166
 EXIT /B 1
 :lbl_166
 pushd .
-CALL .\check  "%~1"  "spdgevd_silent"  "%~3" 
+CALL .\check  "%~1"  "sdet_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_167
 EXIT /B 1
 :lbl_167
 pushd .
-CALL .\check  "%~1"  "sinverse_silent"  "%~3" 
+CALL .\check  "%~1"  "ldlt_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_168
 EXIT /B 1
 :lbl_168
 pushd .
-CALL .\check  "%~1"  "inverseupdate_silent"  "%~3" 
+CALL .\check  "%~1"  "spdgevd_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_169
 EXIT /B 1
 :lbl_169
 pushd .
-CALL .\check  "%~1"  "srcond_silent"  "%~3" 
+CALL .\check  "%~1"  "sinverse_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_170
 EXIT /B 1
 :lbl_170
 pushd .
-CALL .\check  "%~1"  "ssolve_silent"  "%~3" 
+CALL .\check  "%~1"  "inverseupdate_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_171
 EXIT /B 1
 :lbl_171
 pushd .
-CALL .\check  "%~1"  "estnorm_silent"  "%~3" 
+CALL .\check  "%~1"  "srcond_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_172
 EXIT /B 1
 :lbl_172
 pushd .
-CALL .\check  "%~1"  "schur_silent"  "%~3" 
+CALL .\check  "%~1"  "ssolve_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_173
 EXIT /B 1
 :lbl_173
 pushd .
-CALL .\check  "%~1"  "mincg_silent"  "%~3" 
+CALL .\check  "%~1"  "estnorm_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_174
 EXIT /B 1
 :lbl_174
 pushd .
-CALL .\check  "%~1"  "minasa_silent"  "%~3" 
+CALL .\check  "%~1"  "schur_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_175
 EXIT /B 1
 :lbl_175
 pushd .
-CALL .\check  "%~1"  "airyf_silent"  "%~3" 
+CALL .\check  "%~1"  "mincg_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_176
 EXIT /B 1
 :lbl_176
 pushd .
-CALL .\check  "%~1"  "bessel_silent"  "%~3" 
+CALL .\check  "%~1"  "minasa_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_177
 EXIT /B 1
 :lbl_177
 pushd .
-CALL .\check  "%~1"  "betaf_silent"  "%~3" 
+CALL .\check  "%~1"  "airyf_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_178
 EXIT /B 1
 :lbl_178
 pushd .
-CALL .\check  "%~1"  "chebyshev_silent"  "%~3" 
+CALL .\check  "%~1"  "bessel_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_179
 EXIT /B 1
 :lbl_179
 pushd .
-CALL .\check  "%~1"  "dawson_silent"  "%~3" 
+CALL .\check  "%~1"  "betaf_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_180
 EXIT /B 1
 :lbl_180
 pushd .
-CALL .\check  "%~1"  "elliptic_silent"  "%~3" 
+CALL .\check  "%~1"  "chebyshev_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_181
 EXIT /B 1
 :lbl_181
 pushd .
-CALL .\check  "%~1"  "expintegrals_silent"  "%~3" 
+CALL .\check  "%~1"  "dawson_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_182
 EXIT /B 1
 :lbl_182
 pushd .
-CALL .\check  "%~1"  "fresnel_silent"  "%~3" 
+CALL .\check  "%~1"  "elliptic_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_183
 EXIT /B 1
 :lbl_183
 pushd .
-CALL .\check  "%~1"  "hermite_silent"  "%~3" 
+CALL .\check  "%~1"  "expintegrals_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_184
 EXIT /B 1
 :lbl_184
 pushd .
-CALL .\check  "%~1"  "ibetaf_silent"  "%~3" 
+CALL .\check  "%~1"  "fresnel_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_185
 EXIT /B 1
 :lbl_185
 pushd .
-CALL .\check  "%~1"  "jacobianelliptic_silent"  "%~3" 
+CALL .\check  "%~1"  "hermite_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_186
 EXIT /B 1
 :lbl_186
 pushd .
-CALL .\check  "%~1"  "laguerre_silent"  "%~3" 
+CALL .\check  "%~1"  "ibetaf_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_187
 EXIT /B 1
 :lbl_187
 pushd .
-CALL .\check  "%~1"  "legendre_silent"  "%~3" 
+CALL .\check  "%~1"  "jacobianelliptic_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_188
 EXIT /B 1
 :lbl_188
 pushd .
-CALL .\check  "%~1"  "psif_silent"  "%~3" 
+CALL .\check  "%~1"  "laguerre_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_189
 EXIT /B 1
 :lbl_189
 pushd .
-CALL .\check  "%~1"  "trigintegrals_silent"  "%~3" 
+CALL .\check  "%~1"  "legendre_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_190
 EXIT /B 1
 :lbl_190
 pushd .
-CALL .\check  "%~1"  "binomialdistr_silent"  "%~3" 
+CALL .\check  "%~1"  "psif_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_191
 EXIT /B 1
 :lbl_191
 pushd .
-CALL .\check  "%~1"  "nearunityunit_silent"  "%~3" 
+CALL .\check  "%~1"  "trigintegrals_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_192
 EXIT /B 1
 :lbl_192
 pushd .
-CALL .\check  "%~1"  "chisquaredistr_silent"  "%~3" 
+CALL .\check  "%~1"  "binomialdistr_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_193
 EXIT /B 1
 :lbl_193
 pushd .
-CALL .\check  "%~1"  "correlation_silent"  "%~3" 
+CALL .\check  "%~1"  "nearunityunit_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_194
 EXIT /B 1
 :lbl_194
 pushd .
-CALL .\check  "%~1"  "fdistr_silent"  "%~3" 
+CALL .\check  "%~1"  "chisquaredistr_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_195
 EXIT /B 1
 :lbl_195
 pushd .
-CALL .\check  "%~1"  "correlationtests_silent"  "%~3" 
+CALL .\check  "%~1"  "correlation_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_196
 EXIT /B 1
 :lbl_196
 pushd .
-CALL .\check  "%~1"  "studenttdistr_silent"  "%~3" 
+CALL .\check  "%~1"  "fdistr_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_197
 EXIT /B 1
 :lbl_197
 pushd .
-CALL .\check  "%~1"  "jarquebera_silent"  "%~3" 
+CALL .\check  "%~1"  "correlationtests_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_198
 EXIT /B 1
 :lbl_198
 pushd .
-CALL .\check  "%~1"  "mannwhitneyu_silent"  "%~3" 
+CALL .\check  "%~1"  "studenttdistr_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_199
 EXIT /B 1
 :lbl_199
 pushd .
-CALL .\check  "%~1"  "poissondistr_silent"  "%~3" 
+CALL .\check  "%~1"  "jarquebera_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_200
 EXIT /B 1
 :lbl_200
 pushd .
-CALL .\check  "%~1"  "stest_silent"  "%~3" 
+CALL .\check  "%~1"  "mannwhitneyu_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_201
 EXIT /B 1
 :lbl_201
 pushd .
-CALL .\check  "%~1"  "studentttests_silent"  "%~3" 
+CALL .\check  "%~1"  "poissondistr_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_202
 EXIT /B 1
 :lbl_202
 pushd .
-CALL .\check  "%~1"  "variancetests_silent"  "%~3" 
+CALL .\check  "%~1"  "stest_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_203
 EXIT /B 1
 :lbl_203
 pushd .
-CALL .\check  "%~1"  "wsr_silent"  "%~3" 
+CALL .\check  "%~1"  "studentttests_silent"  "%~3" 
 popd
 IF NOT ERRORLEVEL 1 GOTO lbl_204
 EXIT /B 1
 :lbl_204
+pushd .
+CALL .\check  "%~1"  "variancetests_silent"  "%~3" 
+popd
+IF NOT ERRORLEVEL 1 GOTO lbl_205
+EXIT /B 1
+:lbl_205
+pushd .
+CALL .\check  "%~1"  "wsr_silent"  "%~3" 
+popd
+IF NOT ERRORLEVEL 1 GOTO lbl_206
+EXIT /B 1
+:lbl_206
 EXIT /B 0
-:lbl_104_end
+:lbl_105_end
 CHDIR _tmp
 IF EXIST * DEL /F /Q *
 CHDIR ..
-IF "%~1"=="dcc32" GOTO lbl_205_dcc32
-GOTO lbl_205___error
-:lbl_205_dcc32
+IF "%~1"=="dcc32" GOTO lbl_207_dcc32
+GOTO lbl_207___error
+:lbl_207_dcc32
 COPY src\*.pas _tmp > NUL 2> NUL
-IF NOT ERRORLEVEL 1 GOTO lbl_206
+IF NOT ERRORLEVEL 1 GOTO lbl_208
 echo Error copying ALGLIB source files.
 EXIT /B 1
-:lbl_206
-GOTO lbl_205___end
-:lbl_205___error
-echo unknown compiler
-EXIT /B 1
-:lbl_205___end
-IF "%~2"=="dforest" GOTO lbl_207_dforest
-IF "%~2"=="dforest_silent" GOTO lbl_207_dforest_silent
-IF "%~2"=="dforest_short" GOTO lbl_207_dforest_short
-IF "%~2"=="tsort" GOTO lbl_207_tsort
-IF "%~2"=="tsort_silent" GOTO lbl_207_tsort_silent
-IF "%~2"=="tsort_short" GOTO lbl_207_tsort_short
-IF "%~2"=="descriptivestatistics" GOTO lbl_207_descriptivestatistics
-IF "%~2"=="descriptivestatistics_silent" GOTO lbl_207_descriptivestatistics_silent
-IF "%~2"=="descriptivestatistics_short" GOTO lbl_207_descriptivestatistics_short
-IF "%~2"=="bdss" GOTO lbl_207_bdss
-IF "%~2"=="bdss_silent" GOTO lbl_207_bdss_silent
-IF "%~2"=="bdss_short" GOTO lbl_207_bdss_short
-IF "%~2"=="kmeans" GOTO lbl_207_kmeans
-IF "%~2"=="kmeans_silent" GOTO lbl_207_kmeans_silent
-IF "%~2"=="kmeans_short" GOTO lbl_207_kmeans_short
-IF "%~2"=="blas" GOTO lbl_207_blas
-IF "%~2"=="blas_silent" GOTO lbl_207_blas_silent
-IF "%~2"=="blas_short" GOTO lbl_207_blas_short
-IF "%~2"=="lda" GOTO lbl_207_lda
-IF "%~2"=="lda_silent" GOTO lbl_207_lda_silent
-IF "%~2"=="lda_short" GOTO lbl_207_lda_short
-IF "%~2"=="hblas" GOTO lbl_207_hblas
-IF "%~2"=="hblas_silent" GOTO lbl_207_hblas_silent
-IF "%~2"=="hblas_short" GOTO lbl_207_hblas_short
-IF "%~2"=="reflections" GOTO lbl_207_reflections
-IF "%~2"=="reflections_silent" GOTO lbl_207_reflections_silent
-IF "%~2"=="reflections_short" GOTO lbl_207_reflections_short
-IF "%~2"=="creflections" GOTO lbl_207_creflections
-IF "%~2"=="creflections_silent" GOTO lbl_207_creflections_silent
-IF "%~2"=="creflections_short" GOTO lbl_207_creflections_short
-IF "%~2"=="sblas" GOTO lbl_207_sblas
-IF "%~2"=="sblas_silent" GOTO lbl_207_sblas_silent
-IF "%~2"=="sblas_short" GOTO lbl_207_sblas_short
-IF "%~2"=="ablasf" GOTO lbl_207_ablasf
-IF "%~2"=="ablasf_silent" GOTO lbl_207_ablasf_silent
-IF "%~2"=="ablasf_short" GOTO lbl_207_ablasf_short
-IF "%~2"=="ablas" GOTO lbl_207_ablas
-IF "%~2"=="ablas_silent" GOTO lbl_207_ablas_silent
-IF "%~2"=="ablas_short" GOTO lbl_207_ablas_short
-IF "%~2"=="ortfac" GOTO lbl_207_ortfac
-IF "%~2"=="ortfac_silent" GOTO lbl_207_ortfac_silent
-IF "%~2"=="ortfac_short" GOTO lbl_207_ortfac_short
-IF "%~2"=="rotations" GOTO lbl_207_rotations
-IF "%~2"=="rotations_silent" GOTO lbl_207_rotations_silent
-IF "%~2"=="rotations_short" GOTO lbl_207_rotations_short
-IF "%~2"=="hsschur" GOTO lbl_207_hsschur
-IF "%~2"=="hsschur_silent" GOTO lbl_207_hsschur_silent
-IF "%~2"=="hsschur_short" GOTO lbl_207_hsschur_short
-IF "%~2"=="evd" GOTO lbl_207_evd
-IF "%~2"=="evd_silent" GOTO lbl_207_evd_silent
-IF "%~2"=="evd_short" GOTO lbl_207_evd_short
-IF "%~2"=="hqrnd" GOTO lbl_207_hqrnd
-IF "%~2"=="hqrnd_silent" GOTO lbl_207_hqrnd_silent
-IF "%~2"=="hqrnd_short" GOTO lbl_207_hqrnd_short
-IF "%~2"=="matgen" GOTO lbl_207_matgen
-IF "%~2"=="matgen_silent" GOTO lbl_207_matgen_silent
-IF "%~2"=="matgen_short" GOTO lbl_207_matgen_short
-IF "%~2"=="trfac" GOTO lbl_207_trfac
-IF "%~2"=="trfac_silent" GOTO lbl_207_trfac_silent
-IF "%~2"=="trfac_short" GOTO lbl_207_trfac_short
-IF "%~2"=="trlinsolve" GOTO lbl_207_trlinsolve
-IF "%~2"=="trlinsolve_silent" GOTO lbl_207_trlinsolve_silent
-IF "%~2"=="trlinsolve_short" GOTO lbl_207_trlinsolve_short
-IF "%~2"=="safesolve" GOTO lbl_207_safesolve
-IF "%~2"=="safesolve_silent" GOTO lbl_207_safesolve_silent
-IF "%~2"=="safesolve_short" GOTO lbl_207_safesolve_short
-IF "%~2"=="rcond" GOTO lbl_207_rcond
-IF "%~2"=="rcond_silent" GOTO lbl_207_rcond_silent
-IF "%~2"=="rcond_short" GOTO lbl_207_rcond_short
-IF "%~2"=="matinv" GOTO lbl_207_matinv
-IF "%~2"=="matinv_silent" GOTO lbl_207_matinv_silent
-IF "%~2"=="matinv_short" GOTO lbl_207_matinv_short
-IF "%~2"=="linreg" GOTO lbl_207_linreg
-IF "%~2"=="linreg_silent" GOTO lbl_207_linreg_silent
-IF "%~2"=="linreg_short" GOTO lbl_207_linreg_short
-IF "%~2"=="gammafunc" GOTO lbl_207_gammafunc
-IF "%~2"=="gammafunc_silent" GOTO lbl_207_gammafunc_silent
-IF "%~2"=="gammafunc_short" GOTO lbl_207_gammafunc_short
-IF "%~2"=="normaldistr" GOTO lbl_207_normaldistr
-IF "%~2"=="normaldistr_silent" GOTO lbl_207_normaldistr_silent
-IF "%~2"=="normaldistr_short" GOTO lbl_207_normaldistr_short
-IF "%~2"=="igammaf" GOTO lbl_207_igammaf
-IF "%~2"=="igammaf_silent" GOTO lbl_207_igammaf_silent
-IF "%~2"=="igammaf_short" GOTO lbl_207_igammaf_short
-IF "%~2"=="bdsvd" GOTO lbl_207_bdsvd
-IF "%~2"=="bdsvd_silent" GOTO lbl_207_bdsvd_silent
-IF "%~2"=="bdsvd_short" GOTO lbl_207_bdsvd_short
-IF "%~2"=="svd" GOTO lbl_207_svd
-IF "%~2"=="svd_silent" GOTO lbl_207_svd_silent
-IF "%~2"=="svd_short" GOTO lbl_207_svd_short
-IF "%~2"=="logit" GOTO lbl_207_logit
-IF "%~2"=="logit_silent" GOTO lbl_207_logit_silent
-IF "%~2"=="logit_short" GOTO lbl_207_logit_short
-IF "%~2"=="mlpbase" GOTO lbl_207_mlpbase
-IF "%~2"=="mlpbase_silent" GOTO lbl_207_mlpbase_silent
-IF "%~2"=="mlpbase_short" GOTO lbl_207_mlpbase_short
-IF "%~2"=="xblas" GOTO lbl_207_xblas
-IF "%~2"=="xblas_silent" GOTO lbl_207_xblas_silent
-IF "%~2"=="xblas_short" GOTO lbl_207_xblas_short
-IF "%~2"=="densesolver" GOTO lbl_207_densesolver
-IF "%~2"=="densesolver_silent" GOTO lbl_207_densesolver_silent
-IF "%~2"=="densesolver_short" GOTO lbl_207_densesolver_short
-IF "%~2"=="mlpe" GOTO lbl_207_mlpe
-IF "%~2"=="mlpe_silent" GOTO lbl_207_mlpe_silent
-IF "%~2"=="mlpe_short" GOTO lbl_207_mlpe_short
-IF "%~2"=="linmin" GOTO lbl_207_linmin
-IF "%~2"=="linmin_silent" GOTO lbl_207_linmin_silent
-IF "%~2"=="linmin_short" GOTO lbl_207_linmin_short
-IF "%~2"=="minlbfgs" GOTO lbl_207_minlbfgs
-IF "%~2"=="minlbfgs_silent" GOTO lbl_207_minlbfgs_silent
-IF "%~2"=="minlbfgs_short" GOTO lbl_207_minlbfgs_short
-IF "%~2"=="mlptrain" GOTO lbl_207_mlptrain
-IF "%~2"=="mlptrain_silent" GOTO lbl_207_mlptrain_silent
-IF "%~2"=="mlptrain_short" GOTO lbl_207_mlptrain_short
-IF "%~2"=="pca" GOTO lbl_207_pca
-IF "%~2"=="pca_silent" GOTO lbl_207_pca_silent
-IF "%~2"=="pca_short" GOTO lbl_207_pca_short
-IF "%~2"=="odesolver" GOTO lbl_207_odesolver
-IF "%~2"=="odesolver_silent" GOTO lbl_207_odesolver_silent
-IF "%~2"=="odesolver_short" GOTO lbl_207_odesolver_short
-IF "%~2"=="conv" GOTO lbl_207_conv
-IF "%~2"=="conv_silent" GOTO lbl_207_conv_silent
-IF "%~2"=="conv_short" GOTO lbl_207_conv_short
-IF "%~2"=="ftbase" GOTO lbl_207_ftbase
-IF "%~2"=="ftbase_silent" GOTO lbl_207_ftbase_silent
-IF "%~2"=="ftbase_short" GOTO lbl_207_ftbase_short
-IF "%~2"=="fft" GOTO lbl_207_fft
-IF "%~2"=="fft_silent" GOTO lbl_207_fft_silent
-IF "%~2"=="fft_short" GOTO lbl_207_fft_short
-IF "%~2"=="corr" GOTO lbl_207_corr
-IF "%~2"=="corr_silent" GOTO lbl_207_corr_silent
-IF "%~2"=="corr_short" GOTO lbl_207_corr_short
-IF "%~2"=="fht" GOTO lbl_207_fht
-IF "%~2"=="fht_silent" GOTO lbl_207_fht_silent
-IF "%~2"=="fht_short" GOTO lbl_207_fht_short
-IF "%~2"=="autogk" GOTO lbl_207_autogk
-IF "%~2"=="autogk_silent" GOTO lbl_207_autogk_silent
-IF "%~2"=="autogk_short" GOTO lbl_207_autogk_short
-IF "%~2"=="gq" GOTO lbl_207_gq
-IF "%~2"=="gq_silent" GOTO lbl_207_gq_silent
-IF "%~2"=="gq_short" GOTO lbl_207_gq_short
-IF "%~2"=="gkq" GOTO lbl_207_gkq
-IF "%~2"=="gkq_silent" GOTO lbl_207_gkq_silent
-IF "%~2"=="gkq_short" GOTO lbl_207_gkq_short
-IF "%~2"=="lsfit" GOTO lbl_207_lsfit
-IF "%~2"=="lsfit_silent" GOTO lbl_207_lsfit_silent
-IF "%~2"=="lsfit_short" GOTO lbl_207_lsfit_short
-IF "%~2"=="minlm" GOTO lbl_207_minlm
-IF "%~2"=="minlm_silent" GOTO lbl_207_minlm_silent
-IF "%~2"=="minlm_short" GOTO lbl_207_minlm_short
-IF "%~2"=="polint" GOTO lbl_207_polint
-IF "%~2"=="polint_silent" GOTO lbl_207_polint_silent
-IF "%~2"=="polint_short" GOTO lbl_207_polint_short
-IF "%~2"=="ratinterpolation" GOTO lbl_207_ratinterpolation
-IF "%~2"=="ratinterpolation_silent" GOTO lbl_207_ratinterpolation_silent
-IF "%~2"=="ratinterpolation_short" GOTO lbl_207_ratinterpolation_short
-IF "%~2"=="ratint" GOTO lbl_207_ratint
-IF "%~2"=="ratint_silent" GOTO lbl_207_ratint_silent
-IF "%~2"=="ratint_short" GOTO lbl_207_ratint_short
-IF "%~2"=="taskgen" GOTO lbl_207_taskgen
-IF "%~2"=="taskgen_silent" GOTO lbl_207_taskgen_silent
-IF "%~2"=="taskgen_short" GOTO lbl_207_taskgen_short
-IF "%~2"=="spline2d" GOTO lbl_207_spline2d
-IF "%~2"=="spline2d_silent" GOTO lbl_207_spline2d_silent
-IF "%~2"=="spline2d_short" GOTO lbl_207_spline2d_short
-IF "%~2"=="spline3" GOTO lbl_207_spline3
-IF "%~2"=="spline3_silent" GOTO lbl_207_spline3_silent
-IF "%~2"=="spline3_short" GOTO lbl_207_spline3_short
-IF "%~2"=="spline1d" GOTO lbl_207_spline1d
-IF "%~2"=="spline1d_silent" GOTO lbl_207_spline1d_silent
-IF "%~2"=="spline1d_short" GOTO lbl_207_spline1d_short
-IF "%~2"=="idwint" GOTO lbl_207_idwint
-IF "%~2"=="idwint_silent" GOTO lbl_207_idwint_silent
-IF "%~2"=="idwint_short" GOTO lbl_207_idwint_short
-IF "%~2"=="nearestneighbor" GOTO lbl_207_nearestneighbor
-IF "%~2"=="nearestneighbor_silent" GOTO lbl_207_nearestneighbor_silent
-IF "%~2"=="nearestneighbor_short" GOTO lbl_207_nearestneighbor_short
-IF "%~2"=="matdet" GOTO lbl_207_matdet
-IF "%~2"=="matdet_silent" GOTO lbl_207_matdet_silent
-IF "%~2"=="matdet_short" GOTO lbl_207_matdet_short
-IF "%~2"=="sdet" GOTO lbl_207_sdet
-IF "%~2"=="sdet_silent" GOTO lbl_207_sdet_silent
-IF "%~2"=="sdet_short" GOTO lbl_207_sdet_short
-IF "%~2"=="ldlt" GOTO lbl_207_ldlt
-IF "%~2"=="ldlt_silent" GOTO lbl_207_ldlt_silent
-IF "%~2"=="ldlt_short" GOTO lbl_207_ldlt_short
-IF "%~2"=="spdgevd" GOTO lbl_207_spdgevd
-IF "%~2"=="spdgevd_silent" GOTO lbl_207_spdgevd_silent
-IF "%~2"=="spdgevd_short" GOTO lbl_207_spdgevd_short
-IF "%~2"=="sinverse" GOTO lbl_207_sinverse
-IF "%~2"=="sinverse_silent" GOTO lbl_207_sinverse_silent
-IF "%~2"=="sinverse_short" GOTO lbl_207_sinverse_short
-IF "%~2"=="inverseupdate" GOTO lbl_207_inverseupdate
-IF "%~2"=="inverseupdate_silent" GOTO lbl_207_inverseupdate_silent
-IF "%~2"=="inverseupdate_short" GOTO lbl_207_inverseupdate_short
-IF "%~2"=="srcond" GOTO lbl_207_srcond
-IF "%~2"=="srcond_silent" GOTO lbl_207_srcond_silent
-IF "%~2"=="srcond_short" GOTO lbl_207_srcond_short
-IF "%~2"=="ssolve" GOTO lbl_207_ssolve
-IF "%~2"=="ssolve_silent" GOTO lbl_207_ssolve_silent
-IF "%~2"=="ssolve_short" GOTO lbl_207_ssolve_short
-IF "%~2"=="estnorm" GOTO lbl_207_estnorm
-IF "%~2"=="estnorm_silent" GOTO lbl_207_estnorm_silent
-IF "%~2"=="estnorm_short" GOTO lbl_207_estnorm_short
-IF "%~2"=="schur" GOTO lbl_207_schur
-IF "%~2"=="schur_silent" GOTO lbl_207_schur_silent
-IF "%~2"=="schur_short" GOTO lbl_207_schur_short
-IF "%~2"=="mincg" GOTO lbl_207_mincg
-IF "%~2"=="mincg_silent" GOTO lbl_207_mincg_silent
-IF "%~2"=="mincg_short" GOTO lbl_207_mincg_short
-IF "%~2"=="minasa" GOTO lbl_207_minasa
-IF "%~2"=="minasa_silent" GOTO lbl_207_minasa_silent
-IF "%~2"=="minasa_short" GOTO lbl_207_minasa_short
-IF "%~2"=="airyf" GOTO lbl_207_airyf
-IF "%~2"=="airyf_silent" GOTO lbl_207_airyf_silent
-IF "%~2"=="airyf_short" GOTO lbl_207_airyf_short
-IF "%~2"=="bessel" GOTO lbl_207_bessel
-IF "%~2"=="bessel_silent" GOTO lbl_207_bessel_silent
-IF "%~2"=="bessel_short" GOTO lbl_207_bessel_short
-IF "%~2"=="betaf" GOTO lbl_207_betaf
-IF "%~2"=="betaf_silent" GOTO lbl_207_betaf_silent
-IF "%~2"=="betaf_short" GOTO lbl_207_betaf_short
-IF "%~2"=="chebyshev" GOTO lbl_207_chebyshev
-IF "%~2"=="chebyshev_silent" GOTO lbl_207_chebyshev_silent
-IF "%~2"=="chebyshev_short" GOTO lbl_207_chebyshev_short
-IF "%~2"=="dawson" GOTO lbl_207_dawson
-IF "%~2"=="dawson_silent" GOTO lbl_207_dawson_silent
-IF "%~2"=="dawson_short" GOTO lbl_207_dawson_short
-IF "%~2"=="elliptic" GOTO lbl_207_elliptic
-IF "%~2"=="elliptic_silent" GOTO lbl_207_elliptic_silent
-IF "%~2"=="elliptic_short" GOTO lbl_207_elliptic_short
-IF "%~2"=="expintegrals" GOTO lbl_207_expintegrals
-IF "%~2"=="expintegrals_silent" GOTO lbl_207_expintegrals_silent
-IF "%~2"=="expintegrals_short" GOTO lbl_207_expintegrals_short
-IF "%~2"=="fresnel" GOTO lbl_207_fresnel
-IF "%~2"=="fresnel_silent" GOTO lbl_207_fresnel_silent
-IF "%~2"=="fresnel_short" GOTO lbl_207_fresnel_short
-IF "%~2"=="hermite" GOTO lbl_207_hermite
-IF "%~2"=="hermite_silent" GOTO lbl_207_hermite_silent
-IF "%~2"=="hermite_short" GOTO lbl_207_hermite_short
-IF "%~2"=="ibetaf" GOTO lbl_207_ibetaf
-IF "%~2"=="ibetaf_silent" GOTO lbl_207_ibetaf_silent
-IF "%~2"=="ibetaf_short" GOTO lbl_207_ibetaf_short
-IF "%~2"=="jacobianelliptic" GOTO lbl_207_jacobianelliptic
-IF "%~2"=="jacobianelliptic_silent" GOTO lbl_207_jacobianelliptic_silent
-IF "%~2"=="jacobianelliptic_short" GOTO lbl_207_jacobianelliptic_short
-IF "%~2"=="laguerre" GOTO lbl_207_laguerre
-IF "%~2"=="laguerre_silent" GOTO lbl_207_laguerre_silent
-IF "%~2"=="laguerre_short" GOTO lbl_207_laguerre_short
-IF "%~2"=="legendre" GOTO lbl_207_legendre
-IF "%~2"=="legendre_silent" GOTO lbl_207_legendre_silent
-IF "%~2"=="legendre_short" GOTO lbl_207_legendre_short
-IF "%~2"=="psif" GOTO lbl_207_psif
-IF "%~2"=="psif_silent" GOTO lbl_207_psif_silent
-IF "%~2"=="psif_short" GOTO lbl_207_psif_short
-IF "%~2"=="trigintegrals" GOTO lbl_207_trigintegrals
-IF "%~2"=="trigintegrals_silent" GOTO lbl_207_trigintegrals_silent
-IF "%~2"=="trigintegrals_short" GOTO lbl_207_trigintegrals_short
-IF "%~2"=="binomialdistr" GOTO lbl_207_binomialdistr
-IF "%~2"=="binomialdistr_silent" GOTO lbl_207_binomialdistr_silent
-IF "%~2"=="binomialdistr_short" GOTO lbl_207_binomialdistr_short
-IF "%~2"=="nearunityunit" GOTO lbl_207_nearunityunit
-IF "%~2"=="nearunityunit_silent" GOTO lbl_207_nearunityunit_silent
-IF "%~2"=="nearunityunit_short" GOTO lbl_207_nearunityunit_short
-IF "%~2"=="chisquaredistr" GOTO lbl_207_chisquaredistr
-IF "%~2"=="chisquaredistr_silent" GOTO lbl_207_chisquaredistr_silent
-IF "%~2"=="chisquaredistr_short" GOTO lbl_207_chisquaredistr_short
-IF "%~2"=="correlation" GOTO lbl_207_correlation
-IF "%~2"=="correlation_silent" GOTO lbl_207_correlation_silent
-IF "%~2"=="correlation_short" GOTO lbl_207_correlation_short
-IF "%~2"=="fdistr" GOTO lbl_207_fdistr
-IF "%~2"=="fdistr_silent" GOTO lbl_207_fdistr_silent
-IF "%~2"=="fdistr_short" GOTO lbl_207_fdistr_short
-IF "%~2"=="correlationtests" GOTO lbl_207_correlationtests
-IF "%~2"=="correlationtests_silent" GOTO lbl_207_correlationtests_silent
-IF "%~2"=="correlationtests_short" GOTO lbl_207_correlationtests_short
-IF "%~2"=="studenttdistr" GOTO lbl_207_studenttdistr
-IF "%~2"=="studenttdistr_silent" GOTO lbl_207_studenttdistr_silent
-IF "%~2"=="studenttdistr_short" GOTO lbl_207_studenttdistr_short
-IF "%~2"=="jarquebera" GOTO lbl_207_jarquebera
-IF "%~2"=="jarquebera_silent" GOTO lbl_207_jarquebera_silent
-IF "%~2"=="jarquebera_short" GOTO lbl_207_jarquebera_short
-IF "%~2"=="mannwhitneyu" GOTO lbl_207_mannwhitneyu
-IF "%~2"=="mannwhitneyu_silent" GOTO lbl_207_mannwhitneyu_silent
-IF "%~2"=="mannwhitneyu_short" GOTO lbl_207_mannwhitneyu_short
-IF "%~2"=="poissondistr" GOTO lbl_207_poissondistr
-IF "%~2"=="poissondistr_silent" GOTO lbl_207_poissondistr_silent
-IF "%~2"=="poissondistr_short" GOTO lbl_207_poissondistr_short
-IF "%~2"=="stest" GOTO lbl_207_stest
-IF "%~2"=="stest_silent" GOTO lbl_207_stest_silent
-IF "%~2"=="stest_short" GOTO lbl_207_stest_short
-IF "%~2"=="studentttests" GOTO lbl_207_studentttests
-IF "%~2"=="studentttests_silent" GOTO lbl_207_studentttests_silent
-IF "%~2"=="studentttests_short" GOTO lbl_207_studentttests_short
-IF "%~2"=="variancetests" GOTO lbl_207_variancetests
-IF "%~2"=="variancetests_silent" GOTO lbl_207_variancetests_silent
-IF "%~2"=="variancetests_short" GOTO lbl_207_variancetests_short
-IF "%~2"=="wsr" GOTO lbl_207_wsr
-IF "%~2"=="wsr_silent" GOTO lbl_207_wsr_silent
-IF "%~2"=="wsr_short" GOTO lbl_207_wsr_short
-GOTO lbl_207___error
-:lbl_207_dforest
-COPY _internal\_run_testforestunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testforestunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_dforest_short
-COPY _internal\_run_short_testforestunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testforestunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_dforest_silent
-COPY _internal\_run_silent_testforestunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testforestunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_tsort
-COPY _internal\_run_testtsortunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testtsortunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_tsort_short
-COPY _internal\_run_short_testtsortunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testtsortunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_tsort_silent
-COPY _internal\_run_silent_testtsortunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testtsortunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_descriptivestatistics
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_descriptivestatistics_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_descriptivestatistics_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_bdss
-COPY _internal\_run_testbdssunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testbdssunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_bdss_short
-COPY _internal\_run_short_testbdssunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testbdssunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_bdss_silent
-COPY _internal\_run_silent_testbdssunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testbdssunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_kmeans
-COPY _internal\_run_testkmeansunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testkmeansunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_kmeans_short
-COPY _internal\_run_short_testkmeansunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testkmeansunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_kmeans_silent
-COPY _internal\_run_silent_testkmeansunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testkmeansunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_blas
-COPY _internal\_run_testblasunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testblasunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_blas_short
-COPY _internal\_run_short_testblasunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testblasunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_blas_silent
-COPY _internal\_run_silent_testblasunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testblasunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_lda
-COPY _internal\_run_testldaunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testldaunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_lda_short
-COPY _internal\_run_short_testldaunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testldaunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_lda_silent
-COPY _internal\_run_silent_testldaunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testldaunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_hblas
-COPY _internal\_run_testhblasunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testhblasunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_hblas_short
-COPY _internal\_run_short_testhblasunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testhblasunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_hblas_silent
-COPY _internal\_run_silent_testhblasunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testhblasunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_reflections
-COPY _internal\_run_testreflectionsunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testreflectionsunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_reflections_short
-COPY _internal\_run_short_testreflectionsunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testreflectionsunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_reflections_silent
-COPY _internal\_run_silent_testreflectionsunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testreflectionsunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_creflections
-COPY _internal\_run_testcreflunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testcreflunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_creflections_short
-COPY _internal\_run_short_testcreflunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testcreflunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_creflections_silent
-COPY _internal\_run_silent_testcreflunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testcreflunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_sblas
-COPY _internal\_run_testsblasunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testsblasunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_sblas_short
-COPY _internal\_run_short_testsblasunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testsblasunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_sblas_silent
-COPY _internal\_run_silent_testsblasunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testsblasunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_ablasf
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_ablasf_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_ablasf_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_ablas
-COPY _internal\_run_testablasunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testablasunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_ablas_short
-COPY _internal\_run_short_testablasunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testablasunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_ablas_silent
-COPY _internal\_run_silent_testablasunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testablasunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_ortfac
-COPY _internal\_run_testortfacunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testortfacunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_ortfac_short
-COPY _internal\_run_short_testortfacunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testortfacunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_ortfac_silent
-COPY _internal\_run_silent_testortfacunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testortfacunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_rotations
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_rotations_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_rotations_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_hsschur
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_hsschur_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_hsschur_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_evd
-COPY _internal\_run_testevdunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testevdunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_evd_short
-COPY _internal\_run_short_testevdunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testevdunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_evd_silent
-COPY _internal\_run_silent_testevdunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testevdunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_hqrnd
-COPY _internal\_run_testhqrndunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testhqrndunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_hqrnd_short
-COPY _internal\_run_short_testhqrndunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testhqrndunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_hqrnd_silent
-COPY _internal\_run_silent_testhqrndunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testhqrndunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_matgen
-COPY _internal\_run_testmatgenunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testmatgenunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_matgen_short
-COPY _internal\_run_short_testmatgenunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testmatgenunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_matgen_silent
-COPY _internal\_run_silent_testmatgenunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testmatgenunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_trfac
-COPY _internal\_run_testtrfacunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testtrfacunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_trfac_short
-COPY _internal\_run_short_testtrfacunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testtrfacunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_trfac_silent
-COPY _internal\_run_silent_testtrfacunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testtrfacunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_trlinsolve
-COPY _internal\_run_testsstunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testsstunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_trlinsolve_short
-COPY _internal\_run_short_testsstunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testsstunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_trlinsolve_silent
-COPY _internal\_run_silent_testsstunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testsstunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_safesolve
-COPY _internal\_run_testsafesolveunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testsafesolveunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_safesolve_short
-COPY _internal\_run_short_testsafesolveunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testsafesolveunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_safesolve_silent
-COPY _internal\_run_silent_testsafesolveunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testsafesolveunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_rcond
-COPY _internal\_run_testrcondunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testrcondunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_rcond_short
-COPY _internal\_run_short_testrcondunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testrcondunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_rcond_silent
-COPY _internal\_run_silent_testrcondunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testrcondunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_matinv
-COPY _internal\_run_testmatinvunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testmatinvunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_matinv_short
-COPY _internal\_run_short_testmatinvunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testmatinvunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_matinv_silent
-COPY _internal\_run_silent_testmatinvunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testmatinvunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_linreg
-COPY _internal\_run_testregressunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testregressunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_linreg_short
-COPY _internal\_run_short_testregressunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testregressunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_linreg_silent
-COPY _internal\_run_silent_testregressunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testregressunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_gammafunc
-COPY _internal\_run_testgammaunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testgammaunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_gammafunc_short
-COPY _internal\_run_short_testgammaunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testgammaunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_gammafunc_silent
-COPY _internal\_run_silent_testgammaunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testgammaunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_normaldistr
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_normaldistr_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_normaldistr_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_igammaf
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_igammaf_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_igammaf_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_bdsvd
-COPY _internal\_run_testbdsvdunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testbdsvdunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_bdsvd_short
-COPY _internal\_run_short_testbdsvdunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testbdsvdunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_bdsvd_silent
-COPY _internal\_run_silent_testbdsvdunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testbdsvdunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_svd
-COPY _internal\_run_testsvdunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testsvdunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_svd_short
-COPY _internal\_run_short_testsvdunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testsvdunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_svd_silent
-COPY _internal\_run_silent_testsvdunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testsvdunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_logit
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_logit_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_logit_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_mlpbase
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_mlpbase_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_mlpbase_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_xblas
-COPY _internal\_run_testxblasunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testxblasunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_xblas_short
-COPY _internal\_run_short_testxblasunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testxblasunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_xblas_silent
-COPY _internal\_run_silent_testxblasunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testxblasunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_densesolver
-COPY _internal\_run_testdensesolverunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testdensesolverunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_densesolver_short
-COPY _internal\_run_short_testdensesolverunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testdensesolverunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_densesolver_silent
-COPY _internal\_run_silent_testdensesolverunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testdensesolverunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_mlpe
-COPY _internal\_run_testmlpeunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testmlpeunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_mlpe_short
-COPY _internal\_run_short_testmlpeunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testmlpeunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_mlpe_silent
-COPY _internal\_run_silent_testmlpeunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testmlpeunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_linmin
-COPY _internal\_run_testlinminunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testlinminunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_linmin_short
-COPY _internal\_run_short_testlinminunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testlinminunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_linmin_silent
-COPY _internal\_run_silent_testlinminunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testlinminunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_minlbfgs
-COPY _internal\_run_testminlbfgsunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testminlbfgsunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_minlbfgs_short
-COPY _internal\_run_short_testminlbfgsunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testminlbfgsunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_minlbfgs_silent
-COPY _internal\_run_silent_testminlbfgsunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testminlbfgsunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_mlptrain
-COPY _internal\_run_testmlpunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testmlpunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_mlptrain_short
-COPY _internal\_run_short_testmlpunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testmlpunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_mlptrain_silent
-COPY _internal\_run_silent_testmlpunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testmlpunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_pca
-COPY _internal\_run_testpcaunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testpcaunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_pca_short
-COPY _internal\_run_short_testpcaunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testpcaunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_pca_silent
-COPY _internal\_run_silent_testpcaunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testpcaunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_odesolver
-COPY _internal\_run_testodesolverunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testodesolverunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_odesolver_short
-COPY _internal\_run_short_testodesolverunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testodesolverunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_odesolver_silent
-COPY _internal\_run_silent_testodesolverunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testodesolverunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_conv
-COPY _internal\_run_testconvunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testconvunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_conv_short
-COPY _internal\_run_short_testconvunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testconvunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_conv_silent
-COPY _internal\_run_silent_testconvunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testconvunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_ftbase
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_ftbase_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_ftbase_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_fft
-COPY _internal\_run_testfftunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testfftunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_fft_short
-COPY _internal\_run_short_testfftunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testfftunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_fft_silent
-COPY _internal\_run_silent_testfftunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testfftunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_corr
-COPY _internal\_run_testcorrunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testcorrunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_corr_short
-COPY _internal\_run_short_testcorrunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testcorrunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_corr_silent
-COPY _internal\_run_silent_testcorrunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testcorrunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_fht
-COPY _internal\_run_testfhtunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testfhtunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_fht_short
-COPY _internal\_run_short_testfhtunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testfhtunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_fht_silent
-COPY _internal\_run_silent_testfhtunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testfhtunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_autogk
-COPY _internal\_run_testautogk.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testautogk.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_autogk_short
-COPY _internal\_run_short_testautogk.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testautogk.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_autogk_silent
-COPY _internal\_run_silent_testautogk.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testautogk.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_gq
-COPY _internal\_run_testgq.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testgq.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_gq_short
-COPY _internal\_run_short_testgq.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testgq.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_gq_silent
-COPY _internal\_run_silent_testgq.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testgq.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_gkq
-COPY _internal\_run_testgkq.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testgkq.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_gkq_short
-COPY _internal\_run_short_testgkq.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testgkq.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_gkq_silent
-COPY _internal\_run_silent_testgkq.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testgkq.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_lsfit
-COPY _internal\_run_llstestunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\llstestunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_lsfit_short
-COPY _internal\_run_short_llstestunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\llstestunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_lsfit_silent
-COPY _internal\_run_silent_llstestunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\llstestunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_minlm
-COPY _internal\_run_testminlmunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testminlmunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_minlm_short
-COPY _internal\_run_short_testminlmunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testminlmunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_minlm_silent
-COPY _internal\_run_silent_testminlmunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testminlmunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_polint
-COPY _internal\_run_testpolintunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testpolintunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_polint_short
-COPY _internal\_run_short_testpolintunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testpolintunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_polint_silent
-COPY _internal\_run_silent_testpolintunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testpolintunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_ratinterpolation
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_ratinterpolation_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_ratinterpolation_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_ratint
-COPY _internal\_run_testratinterpolation.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testratinterpolation.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_ratint_short
-COPY _internal\_run_short_testratinterpolation.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testratinterpolation.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_ratint_silent
-COPY _internal\_run_silent_testratinterpolation.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testratinterpolation.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_taskgen
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_taskgen_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_taskgen_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_spline2d
-COPY _internal\_run_testspline2dunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testspline2dunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_spline2d_short
-COPY _internal\_run_short_testspline2dunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testspline2dunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_spline2d_silent
-COPY _internal\_run_silent_testspline2dunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testspline2dunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_spline3
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_spline3_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_spline3_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_spline1d
-COPY _internal\_run_testspline1dunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testspline1dunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_spline1d_short
-COPY _internal\_run_short_testspline1dunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testspline1dunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_spline1d_silent
-COPY _internal\_run_silent_testspline1dunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testspline1dunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_idwint
-COPY _internal\_run_testidwunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testidwunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_idwint_short
-COPY _internal\_run_short_testidwunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testidwunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_idwint_silent
-COPY _internal\_run_silent_testidwunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testidwunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_nearestneighbor
-COPY _internal\_run_testnearestneighborunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testnearestneighborunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_nearestneighbor_short
-COPY _internal\_run_short_testnearestneighborunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testnearestneighborunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_nearestneighbor_silent
-COPY _internal\_run_silent_testnearestneighborunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testnearestneighborunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_matdet
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_matdet_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_matdet_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_sdet
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_sdet_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_sdet_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_ldlt
-COPY _internal\_run_testldltunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testldltunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_ldlt_short
-COPY _internal\_run_short_testldltunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testldltunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_ldlt_silent
-COPY _internal\_run_silent_testldltunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testldltunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_spdgevd
-COPY _internal\_run_testspdgevdunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testspdgevdunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_spdgevd_short
-COPY _internal\_run_short_testspdgevdunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testspdgevdunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_spdgevd_silent
-COPY _internal\_run_silent_testspdgevdunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testspdgevdunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_sinverse
-COPY _internal\_run_testinvldltunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testinvldltunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_sinverse_short
-COPY _internal\_run_short_testinvldltunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testinvldltunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_sinverse_silent
-COPY _internal\_run_silent_testinvldltunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testinvldltunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_inverseupdate
-COPY _internal\_run_testinverseupdateunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testinverseupdateunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_inverseupdate_short
-COPY _internal\_run_short_testinverseupdateunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testinverseupdateunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_inverseupdate_silent
-COPY _internal\_run_silent_testinverseupdateunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testinverseupdateunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_srcond
-COPY _internal\_run_testrcondldltunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testrcondldltunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_srcond_short
-COPY _internal\_run_short_testrcondldltunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testrcondldltunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_srcond_silent
-COPY _internal\_run_silent_testrcondldltunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testrcondldltunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_ssolve
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_ssolve_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_ssolve_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_estnorm
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_estnorm_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_estnorm_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_schur
-COPY _internal\_run_testschurunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testschurunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_schur_short
-COPY _internal\_run_short_testschurunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testschurunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_schur_silent
-COPY _internal\_run_silent_testschurunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testschurunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_mincg
-COPY _internal\_run_testmincgunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testmincgunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_mincg_short
-COPY _internal\_run_short_testmincgunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testmincgunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_mincg_silent
-COPY _internal\_run_silent_testmincgunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testmincgunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_minasa
-COPY _internal\_run_testasa.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testasa.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_minasa_short
-COPY _internal\_run_short_testasa.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testasa.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_minasa_silent
-COPY _internal\_run_silent_testasa.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testasa.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_airyf
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_airyf_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_airyf_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_bessel
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_bessel_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_bessel_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_betaf
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_betaf_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_betaf_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_chebyshev
-COPY _internal\_run_testchebyshevunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testchebyshevunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_chebyshev_short
-COPY _internal\_run_short_testchebyshevunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testchebyshevunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_chebyshev_silent
-COPY _internal\_run_silent_testchebyshevunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testchebyshevunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_dawson
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_dawson_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_dawson_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_elliptic
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_elliptic_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_elliptic_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_expintegrals
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_expintegrals_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_expintegrals_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_fresnel
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_fresnel_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_fresnel_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_hermite
-COPY _internal\_run_testhermiteunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testhermiteunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_hermite_short
-COPY _internal\_run_short_testhermiteunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testhermiteunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_hermite_silent
-COPY _internal\_run_silent_testhermiteunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testhermiteunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_ibetaf
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_ibetaf_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_ibetaf_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_jacobianelliptic
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_jacobianelliptic_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_jacobianelliptic_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_laguerre
-COPY _internal\_run_testlaguerreunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testlaguerreunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_laguerre_short
-COPY _internal\_run_short_testlaguerreunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testlaguerreunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_laguerre_silent
-COPY _internal\_run_silent_testlaguerreunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testlaguerreunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_legendre
-COPY _internal\_run_testlegendreunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testlegendreunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_legendre_short
-COPY _internal\_run_short_testlegendreunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testlegendreunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_legendre_silent
-COPY _internal\_run_silent_testlegendreunit.pas _tmp\_test.pas > NUL 2> NUL
-COPY tests\testlegendreunit.* _tmp > NUL 2> NUL
-GOTO lbl_207___end
-:lbl_207_psif
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_psif_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_psif_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_trigintegrals
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_trigintegrals_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_trigintegrals_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_binomialdistr
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_binomialdistr_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_binomialdistr_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_nearunityunit
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_nearunityunit_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_nearunityunit_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_chisquaredistr
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_chisquaredistr_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_chisquaredistr_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_correlation
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_correlation_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_correlation_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_fdistr
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_fdistr_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_fdistr_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_correlationtests
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_correlationtests_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_correlationtests_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_studenttdistr
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_studenttdistr_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_studenttdistr_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_jarquebera
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_jarquebera_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_jarquebera_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_mannwhitneyu
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_mannwhitneyu_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_mannwhitneyu_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_poissondistr
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_poissondistr_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_poissondistr_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_stest
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_stest_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_stest_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_studentttests
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_studentttests_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_studentttests_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_variancetests
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_variancetests_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_variancetests_silent
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_wsr
-echo No separate test file for this unit
-echo It is tested somewhere else
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_wsr_short
-EXIT /B 0
-GOTO lbl_207___end
-:lbl_207_wsr_silent
-EXIT /B 0
+:lbl_208
 GOTO lbl_207___end
 :lbl_207___error
-echo unknown unit
+echo unknown compiler
 EXIT /B 1
 :lbl_207___end
-IF "%~1"=="dcc32" GOTO lbl_208_dcc32
-GOTO lbl_208___error
-:lbl_208_dcc32
+IF "%~2"=="dforest" GOTO lbl_209_dforest
+IF "%~2"=="dforest_silent" GOTO lbl_209_dforest_silent
+IF "%~2"=="dforest_short" GOTO lbl_209_dforest_short
+IF "%~2"=="tsort" GOTO lbl_209_tsort
+IF "%~2"=="tsort_silent" GOTO lbl_209_tsort_silent
+IF "%~2"=="tsort_short" GOTO lbl_209_tsort_short
+IF "%~2"=="descriptivestatistics" GOTO lbl_209_descriptivestatistics
+IF "%~2"=="descriptivestatistics_silent" GOTO lbl_209_descriptivestatistics_silent
+IF "%~2"=="descriptivestatistics_short" GOTO lbl_209_descriptivestatistics_short
+IF "%~2"=="bdss" GOTO lbl_209_bdss
+IF "%~2"=="bdss_silent" GOTO lbl_209_bdss_silent
+IF "%~2"=="bdss_short" GOTO lbl_209_bdss_short
+IF "%~2"=="kmeans" GOTO lbl_209_kmeans
+IF "%~2"=="kmeans_silent" GOTO lbl_209_kmeans_silent
+IF "%~2"=="kmeans_short" GOTO lbl_209_kmeans_short
+IF "%~2"=="blas" GOTO lbl_209_blas
+IF "%~2"=="blas_silent" GOTO lbl_209_blas_silent
+IF "%~2"=="blas_short" GOTO lbl_209_blas_short
+IF "%~2"=="lda" GOTO lbl_209_lda
+IF "%~2"=="lda_silent" GOTO lbl_209_lda_silent
+IF "%~2"=="lda_short" GOTO lbl_209_lda_short
+IF "%~2"=="hblas" GOTO lbl_209_hblas
+IF "%~2"=="hblas_silent" GOTO lbl_209_hblas_silent
+IF "%~2"=="hblas_short" GOTO lbl_209_hblas_short
+IF "%~2"=="reflections" GOTO lbl_209_reflections
+IF "%~2"=="reflections_silent" GOTO lbl_209_reflections_silent
+IF "%~2"=="reflections_short" GOTO lbl_209_reflections_short
+IF "%~2"=="creflections" GOTO lbl_209_creflections
+IF "%~2"=="creflections_silent" GOTO lbl_209_creflections_silent
+IF "%~2"=="creflections_short" GOTO lbl_209_creflections_short
+IF "%~2"=="sblas" GOTO lbl_209_sblas
+IF "%~2"=="sblas_silent" GOTO lbl_209_sblas_silent
+IF "%~2"=="sblas_short" GOTO lbl_209_sblas_short
+IF "%~2"=="ablasf" GOTO lbl_209_ablasf
+IF "%~2"=="ablasf_silent" GOTO lbl_209_ablasf_silent
+IF "%~2"=="ablasf_short" GOTO lbl_209_ablasf_short
+IF "%~2"=="ablas" GOTO lbl_209_ablas
+IF "%~2"=="ablas_silent" GOTO lbl_209_ablas_silent
+IF "%~2"=="ablas_short" GOTO lbl_209_ablas_short
+IF "%~2"=="ortfac" GOTO lbl_209_ortfac
+IF "%~2"=="ortfac_silent" GOTO lbl_209_ortfac_silent
+IF "%~2"=="ortfac_short" GOTO lbl_209_ortfac_short
+IF "%~2"=="rotations" GOTO lbl_209_rotations
+IF "%~2"=="rotations_silent" GOTO lbl_209_rotations_silent
+IF "%~2"=="rotations_short" GOTO lbl_209_rotations_short
+IF "%~2"=="hsschur" GOTO lbl_209_hsschur
+IF "%~2"=="hsschur_silent" GOTO lbl_209_hsschur_silent
+IF "%~2"=="hsschur_short" GOTO lbl_209_hsschur_short
+IF "%~2"=="evd" GOTO lbl_209_evd
+IF "%~2"=="evd_silent" GOTO lbl_209_evd_silent
+IF "%~2"=="evd_short" GOTO lbl_209_evd_short
+IF "%~2"=="hqrnd" GOTO lbl_209_hqrnd
+IF "%~2"=="hqrnd_silent" GOTO lbl_209_hqrnd_silent
+IF "%~2"=="hqrnd_short" GOTO lbl_209_hqrnd_short
+IF "%~2"=="matgen" GOTO lbl_209_matgen
+IF "%~2"=="matgen_silent" GOTO lbl_209_matgen_silent
+IF "%~2"=="matgen_short" GOTO lbl_209_matgen_short
+IF "%~2"=="trfac" GOTO lbl_209_trfac
+IF "%~2"=="trfac_silent" GOTO lbl_209_trfac_silent
+IF "%~2"=="trfac_short" GOTO lbl_209_trfac_short
+IF "%~2"=="trlinsolve" GOTO lbl_209_trlinsolve
+IF "%~2"=="trlinsolve_silent" GOTO lbl_209_trlinsolve_silent
+IF "%~2"=="trlinsolve_short" GOTO lbl_209_trlinsolve_short
+IF "%~2"=="safesolve" GOTO lbl_209_safesolve
+IF "%~2"=="safesolve_silent" GOTO lbl_209_safesolve_silent
+IF "%~2"=="safesolve_short" GOTO lbl_209_safesolve_short
+IF "%~2"=="rcond" GOTO lbl_209_rcond
+IF "%~2"=="rcond_silent" GOTO lbl_209_rcond_silent
+IF "%~2"=="rcond_short" GOTO lbl_209_rcond_short
+IF "%~2"=="matinv" GOTO lbl_209_matinv
+IF "%~2"=="matinv_silent" GOTO lbl_209_matinv_silent
+IF "%~2"=="matinv_short" GOTO lbl_209_matinv_short
+IF "%~2"=="linreg" GOTO lbl_209_linreg
+IF "%~2"=="linreg_silent" GOTO lbl_209_linreg_silent
+IF "%~2"=="linreg_short" GOTO lbl_209_linreg_short
+IF "%~2"=="gammafunc" GOTO lbl_209_gammafunc
+IF "%~2"=="gammafunc_silent" GOTO lbl_209_gammafunc_silent
+IF "%~2"=="gammafunc_short" GOTO lbl_209_gammafunc_short
+IF "%~2"=="normaldistr" GOTO lbl_209_normaldistr
+IF "%~2"=="normaldistr_silent" GOTO lbl_209_normaldistr_silent
+IF "%~2"=="normaldistr_short" GOTO lbl_209_normaldistr_short
+IF "%~2"=="igammaf" GOTO lbl_209_igammaf
+IF "%~2"=="igammaf_silent" GOTO lbl_209_igammaf_silent
+IF "%~2"=="igammaf_short" GOTO lbl_209_igammaf_short
+IF "%~2"=="bdsvd" GOTO lbl_209_bdsvd
+IF "%~2"=="bdsvd_silent" GOTO lbl_209_bdsvd_silent
+IF "%~2"=="bdsvd_short" GOTO lbl_209_bdsvd_short
+IF "%~2"=="svd" GOTO lbl_209_svd
+IF "%~2"=="svd_silent" GOTO lbl_209_svd_silent
+IF "%~2"=="svd_short" GOTO lbl_209_svd_short
+IF "%~2"=="logit" GOTO lbl_209_logit
+IF "%~2"=="logit_silent" GOTO lbl_209_logit_silent
+IF "%~2"=="logit_short" GOTO lbl_209_logit_short
+IF "%~2"=="mlpbase" GOTO lbl_209_mlpbase
+IF "%~2"=="mlpbase_silent" GOTO lbl_209_mlpbase_silent
+IF "%~2"=="mlpbase_short" GOTO lbl_209_mlpbase_short
+IF "%~2"=="xblas" GOTO lbl_209_xblas
+IF "%~2"=="xblas_silent" GOTO lbl_209_xblas_silent
+IF "%~2"=="xblas_short" GOTO lbl_209_xblas_short
+IF "%~2"=="densesolver" GOTO lbl_209_densesolver
+IF "%~2"=="densesolver_silent" GOTO lbl_209_densesolver_silent
+IF "%~2"=="densesolver_short" GOTO lbl_209_densesolver_short
+IF "%~2"=="mlpe" GOTO lbl_209_mlpe
+IF "%~2"=="mlpe_silent" GOTO lbl_209_mlpe_silent
+IF "%~2"=="mlpe_short" GOTO lbl_209_mlpe_short
+IF "%~2"=="linmin" GOTO lbl_209_linmin
+IF "%~2"=="linmin_silent" GOTO lbl_209_linmin_silent
+IF "%~2"=="linmin_short" GOTO lbl_209_linmin_short
+IF "%~2"=="minlbfgs" GOTO lbl_209_minlbfgs
+IF "%~2"=="minlbfgs_silent" GOTO lbl_209_minlbfgs_silent
+IF "%~2"=="minlbfgs_short" GOTO lbl_209_minlbfgs_short
+IF "%~2"=="mlptrain" GOTO lbl_209_mlptrain
+IF "%~2"=="mlptrain_silent" GOTO lbl_209_mlptrain_silent
+IF "%~2"=="mlptrain_short" GOTO lbl_209_mlptrain_short
+IF "%~2"=="pca" GOTO lbl_209_pca
+IF "%~2"=="pca_silent" GOTO lbl_209_pca_silent
+IF "%~2"=="pca_short" GOTO lbl_209_pca_short
+IF "%~2"=="odesolver" GOTO lbl_209_odesolver
+IF "%~2"=="odesolver_silent" GOTO lbl_209_odesolver_silent
+IF "%~2"=="odesolver_short" GOTO lbl_209_odesolver_short
+IF "%~2"=="conv" GOTO lbl_209_conv
+IF "%~2"=="conv_silent" GOTO lbl_209_conv_silent
+IF "%~2"=="conv_short" GOTO lbl_209_conv_short
+IF "%~2"=="ftbase" GOTO lbl_209_ftbase
+IF "%~2"=="ftbase_silent" GOTO lbl_209_ftbase_silent
+IF "%~2"=="ftbase_short" GOTO lbl_209_ftbase_short
+IF "%~2"=="fft" GOTO lbl_209_fft
+IF "%~2"=="fft_silent" GOTO lbl_209_fft_silent
+IF "%~2"=="fft_short" GOTO lbl_209_fft_short
+IF "%~2"=="corr" GOTO lbl_209_corr
+IF "%~2"=="corr_silent" GOTO lbl_209_corr_silent
+IF "%~2"=="corr_short" GOTO lbl_209_corr_short
+IF "%~2"=="fht" GOTO lbl_209_fht
+IF "%~2"=="fht_silent" GOTO lbl_209_fht_silent
+IF "%~2"=="fht_short" GOTO lbl_209_fht_short
+IF "%~2"=="autogk" GOTO lbl_209_autogk
+IF "%~2"=="autogk_silent" GOTO lbl_209_autogk_silent
+IF "%~2"=="autogk_short" GOTO lbl_209_autogk_short
+IF "%~2"=="gq" GOTO lbl_209_gq
+IF "%~2"=="gq_silent" GOTO lbl_209_gq_silent
+IF "%~2"=="gq_short" GOTO lbl_209_gq_short
+IF "%~2"=="gkq" GOTO lbl_209_gkq
+IF "%~2"=="gkq_silent" GOTO lbl_209_gkq_silent
+IF "%~2"=="gkq_short" GOTO lbl_209_gkq_short
+IF "%~2"=="lsfit" GOTO lbl_209_lsfit
+IF "%~2"=="lsfit_silent" GOTO lbl_209_lsfit_silent
+IF "%~2"=="lsfit_short" GOTO lbl_209_lsfit_short
+IF "%~2"=="minlm" GOTO lbl_209_minlm
+IF "%~2"=="minlm_silent" GOTO lbl_209_minlm_silent
+IF "%~2"=="minlm_short" GOTO lbl_209_minlm_short
+IF "%~2"=="polint" GOTO lbl_209_polint
+IF "%~2"=="polint_silent" GOTO lbl_209_polint_silent
+IF "%~2"=="polint_short" GOTO lbl_209_polint_short
+IF "%~2"=="ratinterpolation" GOTO lbl_209_ratinterpolation
+IF "%~2"=="ratinterpolation_silent" GOTO lbl_209_ratinterpolation_silent
+IF "%~2"=="ratinterpolation_short" GOTO lbl_209_ratinterpolation_short
+IF "%~2"=="ratint" GOTO lbl_209_ratint
+IF "%~2"=="ratint_silent" GOTO lbl_209_ratint_silent
+IF "%~2"=="ratint_short" GOTO lbl_209_ratint_short
+IF "%~2"=="apserv" GOTO lbl_209_apserv
+IF "%~2"=="apserv_silent" GOTO lbl_209_apserv_silent
+IF "%~2"=="apserv_short" GOTO lbl_209_apserv_short
+IF "%~2"=="spline2d" GOTO lbl_209_spline2d
+IF "%~2"=="spline2d_silent" GOTO lbl_209_spline2d_silent
+IF "%~2"=="spline2d_short" GOTO lbl_209_spline2d_short
+IF "%~2"=="spline3" GOTO lbl_209_spline3
+IF "%~2"=="spline3_silent" GOTO lbl_209_spline3_silent
+IF "%~2"=="spline3_short" GOTO lbl_209_spline3_short
+IF "%~2"=="spline1d" GOTO lbl_209_spline1d
+IF "%~2"=="spline1d_silent" GOTO lbl_209_spline1d_silent
+IF "%~2"=="spline1d_short" GOTO lbl_209_spline1d_short
+IF "%~2"=="idwint" GOTO lbl_209_idwint
+IF "%~2"=="idwint_silent" GOTO lbl_209_idwint_silent
+IF "%~2"=="idwint_short" GOTO lbl_209_idwint_short
+IF "%~2"=="nearestneighbor" GOTO lbl_209_nearestneighbor
+IF "%~2"=="nearestneighbor_silent" GOTO lbl_209_nearestneighbor_silent
+IF "%~2"=="nearestneighbor_short" GOTO lbl_209_nearestneighbor_short
+IF "%~2"=="pspline" GOTO lbl_209_pspline
+IF "%~2"=="pspline_silent" GOTO lbl_209_pspline_silent
+IF "%~2"=="pspline_short" GOTO lbl_209_pspline_short
+IF "%~2"=="matdet" GOTO lbl_209_matdet
+IF "%~2"=="matdet_silent" GOTO lbl_209_matdet_silent
+IF "%~2"=="matdet_short" GOTO lbl_209_matdet_short
+IF "%~2"=="sdet" GOTO lbl_209_sdet
+IF "%~2"=="sdet_silent" GOTO lbl_209_sdet_silent
+IF "%~2"=="sdet_short" GOTO lbl_209_sdet_short
+IF "%~2"=="ldlt" GOTO lbl_209_ldlt
+IF "%~2"=="ldlt_silent" GOTO lbl_209_ldlt_silent
+IF "%~2"=="ldlt_short" GOTO lbl_209_ldlt_short
+IF "%~2"=="spdgevd" GOTO lbl_209_spdgevd
+IF "%~2"=="spdgevd_silent" GOTO lbl_209_spdgevd_silent
+IF "%~2"=="spdgevd_short" GOTO lbl_209_spdgevd_short
+IF "%~2"=="sinverse" GOTO lbl_209_sinverse
+IF "%~2"=="sinverse_silent" GOTO lbl_209_sinverse_silent
+IF "%~2"=="sinverse_short" GOTO lbl_209_sinverse_short
+IF "%~2"=="inverseupdate" GOTO lbl_209_inverseupdate
+IF "%~2"=="inverseupdate_silent" GOTO lbl_209_inverseupdate_silent
+IF "%~2"=="inverseupdate_short" GOTO lbl_209_inverseupdate_short
+IF "%~2"=="srcond" GOTO lbl_209_srcond
+IF "%~2"=="srcond_silent" GOTO lbl_209_srcond_silent
+IF "%~2"=="srcond_short" GOTO lbl_209_srcond_short
+IF "%~2"=="ssolve" GOTO lbl_209_ssolve
+IF "%~2"=="ssolve_silent" GOTO lbl_209_ssolve_silent
+IF "%~2"=="ssolve_short" GOTO lbl_209_ssolve_short
+IF "%~2"=="estnorm" GOTO lbl_209_estnorm
+IF "%~2"=="estnorm_silent" GOTO lbl_209_estnorm_silent
+IF "%~2"=="estnorm_short" GOTO lbl_209_estnorm_short
+IF "%~2"=="schur" GOTO lbl_209_schur
+IF "%~2"=="schur_silent" GOTO lbl_209_schur_silent
+IF "%~2"=="schur_short" GOTO lbl_209_schur_short
+IF "%~2"=="mincg" GOTO lbl_209_mincg
+IF "%~2"=="mincg_silent" GOTO lbl_209_mincg_silent
+IF "%~2"=="mincg_short" GOTO lbl_209_mincg_short
+IF "%~2"=="minasa" GOTO lbl_209_minasa
+IF "%~2"=="minasa_silent" GOTO lbl_209_minasa_silent
+IF "%~2"=="minasa_short" GOTO lbl_209_minasa_short
+IF "%~2"=="airyf" GOTO lbl_209_airyf
+IF "%~2"=="airyf_silent" GOTO lbl_209_airyf_silent
+IF "%~2"=="airyf_short" GOTO lbl_209_airyf_short
+IF "%~2"=="bessel" GOTO lbl_209_bessel
+IF "%~2"=="bessel_silent" GOTO lbl_209_bessel_silent
+IF "%~2"=="bessel_short" GOTO lbl_209_bessel_short
+IF "%~2"=="betaf" GOTO lbl_209_betaf
+IF "%~2"=="betaf_silent" GOTO lbl_209_betaf_silent
+IF "%~2"=="betaf_short" GOTO lbl_209_betaf_short
+IF "%~2"=="chebyshev" GOTO lbl_209_chebyshev
+IF "%~2"=="chebyshev_silent" GOTO lbl_209_chebyshev_silent
+IF "%~2"=="chebyshev_short" GOTO lbl_209_chebyshev_short
+IF "%~2"=="dawson" GOTO lbl_209_dawson
+IF "%~2"=="dawson_silent" GOTO lbl_209_dawson_silent
+IF "%~2"=="dawson_short" GOTO lbl_209_dawson_short
+IF "%~2"=="elliptic" GOTO lbl_209_elliptic
+IF "%~2"=="elliptic_silent" GOTO lbl_209_elliptic_silent
+IF "%~2"=="elliptic_short" GOTO lbl_209_elliptic_short
+IF "%~2"=="expintegrals" GOTO lbl_209_expintegrals
+IF "%~2"=="expintegrals_silent" GOTO lbl_209_expintegrals_silent
+IF "%~2"=="expintegrals_short" GOTO lbl_209_expintegrals_short
+IF "%~2"=="fresnel" GOTO lbl_209_fresnel
+IF "%~2"=="fresnel_silent" GOTO lbl_209_fresnel_silent
+IF "%~2"=="fresnel_short" GOTO lbl_209_fresnel_short
+IF "%~2"=="hermite" GOTO lbl_209_hermite
+IF "%~2"=="hermite_silent" GOTO lbl_209_hermite_silent
+IF "%~2"=="hermite_short" GOTO lbl_209_hermite_short
+IF "%~2"=="ibetaf" GOTO lbl_209_ibetaf
+IF "%~2"=="ibetaf_silent" GOTO lbl_209_ibetaf_silent
+IF "%~2"=="ibetaf_short" GOTO lbl_209_ibetaf_short
+IF "%~2"=="jacobianelliptic" GOTO lbl_209_jacobianelliptic
+IF "%~2"=="jacobianelliptic_silent" GOTO lbl_209_jacobianelliptic_silent
+IF "%~2"=="jacobianelliptic_short" GOTO lbl_209_jacobianelliptic_short
+IF "%~2"=="laguerre" GOTO lbl_209_laguerre
+IF "%~2"=="laguerre_silent" GOTO lbl_209_laguerre_silent
+IF "%~2"=="laguerre_short" GOTO lbl_209_laguerre_short
+IF "%~2"=="legendre" GOTO lbl_209_legendre
+IF "%~2"=="legendre_silent" GOTO lbl_209_legendre_silent
+IF "%~2"=="legendre_short" GOTO lbl_209_legendre_short
+IF "%~2"=="psif" GOTO lbl_209_psif
+IF "%~2"=="psif_silent" GOTO lbl_209_psif_silent
+IF "%~2"=="psif_short" GOTO lbl_209_psif_short
+IF "%~2"=="trigintegrals" GOTO lbl_209_trigintegrals
+IF "%~2"=="trigintegrals_silent" GOTO lbl_209_trigintegrals_silent
+IF "%~2"=="trigintegrals_short" GOTO lbl_209_trigintegrals_short
+IF "%~2"=="binomialdistr" GOTO lbl_209_binomialdistr
+IF "%~2"=="binomialdistr_silent" GOTO lbl_209_binomialdistr_silent
+IF "%~2"=="binomialdistr_short" GOTO lbl_209_binomialdistr_short
+IF "%~2"=="nearunityunit" GOTO lbl_209_nearunityunit
+IF "%~2"=="nearunityunit_silent" GOTO lbl_209_nearunityunit_silent
+IF "%~2"=="nearunityunit_short" GOTO lbl_209_nearunityunit_short
+IF "%~2"=="chisquaredistr" GOTO lbl_209_chisquaredistr
+IF "%~2"=="chisquaredistr_silent" GOTO lbl_209_chisquaredistr_silent
+IF "%~2"=="chisquaredistr_short" GOTO lbl_209_chisquaredistr_short
+IF "%~2"=="correlation" GOTO lbl_209_correlation
+IF "%~2"=="correlation_silent" GOTO lbl_209_correlation_silent
+IF "%~2"=="correlation_short" GOTO lbl_209_correlation_short
+IF "%~2"=="fdistr" GOTO lbl_209_fdistr
+IF "%~2"=="fdistr_silent" GOTO lbl_209_fdistr_silent
+IF "%~2"=="fdistr_short" GOTO lbl_209_fdistr_short
+IF "%~2"=="correlationtests" GOTO lbl_209_correlationtests
+IF "%~2"=="correlationtests_silent" GOTO lbl_209_correlationtests_silent
+IF "%~2"=="correlationtests_short" GOTO lbl_209_correlationtests_short
+IF "%~2"=="studenttdistr" GOTO lbl_209_studenttdistr
+IF "%~2"=="studenttdistr_silent" GOTO lbl_209_studenttdistr_silent
+IF "%~2"=="studenttdistr_short" GOTO lbl_209_studenttdistr_short
+IF "%~2"=="jarquebera" GOTO lbl_209_jarquebera
+IF "%~2"=="jarquebera_silent" GOTO lbl_209_jarquebera_silent
+IF "%~2"=="jarquebera_short" GOTO lbl_209_jarquebera_short
+IF "%~2"=="mannwhitneyu" GOTO lbl_209_mannwhitneyu
+IF "%~2"=="mannwhitneyu_silent" GOTO lbl_209_mannwhitneyu_silent
+IF "%~2"=="mannwhitneyu_short" GOTO lbl_209_mannwhitneyu_short
+IF "%~2"=="poissondistr" GOTO lbl_209_poissondistr
+IF "%~2"=="poissondistr_silent" GOTO lbl_209_poissondistr_silent
+IF "%~2"=="poissondistr_short" GOTO lbl_209_poissondistr_short
+IF "%~2"=="stest" GOTO lbl_209_stest
+IF "%~2"=="stest_silent" GOTO lbl_209_stest_silent
+IF "%~2"=="stest_short" GOTO lbl_209_stest_short
+IF "%~2"=="studentttests" GOTO lbl_209_studentttests
+IF "%~2"=="studentttests_silent" GOTO lbl_209_studentttests_silent
+IF "%~2"=="studentttests_short" GOTO lbl_209_studentttests_short
+IF "%~2"=="variancetests" GOTO lbl_209_variancetests
+IF "%~2"=="variancetests_silent" GOTO lbl_209_variancetests_silent
+IF "%~2"=="variancetests_short" GOTO lbl_209_variancetests_short
+IF "%~2"=="wsr" GOTO lbl_209_wsr
+IF "%~2"=="wsr_silent" GOTO lbl_209_wsr_silent
+IF "%~2"=="wsr_short" GOTO lbl_209_wsr_short
+GOTO lbl_209___error
+:lbl_209_dforest
+COPY _internal\_run_testforestunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testforestunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_dforest_short
+COPY _internal\_run_short_testforestunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testforestunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_dforest_silent
+COPY _internal\_run_silent_testforestunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testforestunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_tsort
+COPY _internal\_run_testtsortunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testtsortunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_tsort_short
+COPY _internal\_run_short_testtsortunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testtsortunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_tsort_silent
+COPY _internal\_run_silent_testtsortunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testtsortunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_descriptivestatistics
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_descriptivestatistics_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_descriptivestatistics_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_bdss
+COPY _internal\_run_testbdssunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testbdssunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_bdss_short
+COPY _internal\_run_short_testbdssunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testbdssunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_bdss_silent
+COPY _internal\_run_silent_testbdssunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testbdssunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_kmeans
+COPY _internal\_run_testkmeansunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testkmeansunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_kmeans_short
+COPY _internal\_run_short_testkmeansunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testkmeansunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_kmeans_silent
+COPY _internal\_run_silent_testkmeansunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testkmeansunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_blas
+COPY _internal\_run_testblasunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testblasunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_blas_short
+COPY _internal\_run_short_testblasunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testblasunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_blas_silent
+COPY _internal\_run_silent_testblasunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testblasunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_lda
+COPY _internal\_run_testldaunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testldaunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_lda_short
+COPY _internal\_run_short_testldaunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testldaunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_lda_silent
+COPY _internal\_run_silent_testldaunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testldaunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_hblas
+COPY _internal\_run_testhblasunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testhblasunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_hblas_short
+COPY _internal\_run_short_testhblasunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testhblasunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_hblas_silent
+COPY _internal\_run_silent_testhblasunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testhblasunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_reflections
+COPY _internal\_run_testreflectionsunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testreflectionsunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_reflections_short
+COPY _internal\_run_short_testreflectionsunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testreflectionsunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_reflections_silent
+COPY _internal\_run_silent_testreflectionsunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testreflectionsunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_creflections
+COPY _internal\_run_testcreflunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testcreflunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_creflections_short
+COPY _internal\_run_short_testcreflunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testcreflunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_creflections_silent
+COPY _internal\_run_silent_testcreflunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testcreflunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_sblas
+COPY _internal\_run_testsblasunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testsblasunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_sblas_short
+COPY _internal\_run_short_testsblasunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testsblasunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_sblas_silent
+COPY _internal\_run_silent_testsblasunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testsblasunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_ablasf
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_ablasf_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_ablasf_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_ablas
+COPY _internal\_run_testablasunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testablasunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_ablas_short
+COPY _internal\_run_short_testablasunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testablasunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_ablas_silent
+COPY _internal\_run_silent_testablasunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testablasunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_ortfac
+COPY _internal\_run_testortfacunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testortfacunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_ortfac_short
+COPY _internal\_run_short_testortfacunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testortfacunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_ortfac_silent
+COPY _internal\_run_silent_testortfacunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testortfacunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_rotations
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_rotations_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_rotations_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_hsschur
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_hsschur_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_hsschur_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_evd
+COPY _internal\_run_testevdunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testevdunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_evd_short
+COPY _internal\_run_short_testevdunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testevdunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_evd_silent
+COPY _internal\_run_silent_testevdunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testevdunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_hqrnd
+COPY _internal\_run_testhqrndunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testhqrndunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_hqrnd_short
+COPY _internal\_run_short_testhqrndunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testhqrndunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_hqrnd_silent
+COPY _internal\_run_silent_testhqrndunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testhqrndunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_matgen
+COPY _internal\_run_testmatgenunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testmatgenunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_matgen_short
+COPY _internal\_run_short_testmatgenunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testmatgenunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_matgen_silent
+COPY _internal\_run_silent_testmatgenunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testmatgenunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_trfac
+COPY _internal\_run_testtrfacunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testtrfacunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_trfac_short
+COPY _internal\_run_short_testtrfacunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testtrfacunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_trfac_silent
+COPY _internal\_run_silent_testtrfacunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testtrfacunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_trlinsolve
+COPY _internal\_run_testsstunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testsstunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_trlinsolve_short
+COPY _internal\_run_short_testsstunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testsstunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_trlinsolve_silent
+COPY _internal\_run_silent_testsstunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testsstunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_safesolve
+COPY _internal\_run_testsafesolveunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testsafesolveunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_safesolve_short
+COPY _internal\_run_short_testsafesolveunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testsafesolveunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_safesolve_silent
+COPY _internal\_run_silent_testsafesolveunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testsafesolveunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_rcond
+COPY _internal\_run_testrcondunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testrcondunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_rcond_short
+COPY _internal\_run_short_testrcondunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testrcondunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_rcond_silent
+COPY _internal\_run_silent_testrcondunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testrcondunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_matinv
+COPY _internal\_run_testmatinvunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testmatinvunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_matinv_short
+COPY _internal\_run_short_testmatinvunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testmatinvunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_matinv_silent
+COPY _internal\_run_silent_testmatinvunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testmatinvunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_linreg
+COPY _internal\_run_testregressunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testregressunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_linreg_short
+COPY _internal\_run_short_testregressunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testregressunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_linreg_silent
+COPY _internal\_run_silent_testregressunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testregressunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_gammafunc
+COPY _internal\_run_testgammaunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testgammaunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_gammafunc_short
+COPY _internal\_run_short_testgammaunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testgammaunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_gammafunc_silent
+COPY _internal\_run_silent_testgammaunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testgammaunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_normaldistr
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_normaldistr_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_normaldistr_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_igammaf
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_igammaf_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_igammaf_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_bdsvd
+COPY _internal\_run_testbdsvdunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testbdsvdunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_bdsvd_short
+COPY _internal\_run_short_testbdsvdunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testbdsvdunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_bdsvd_silent
+COPY _internal\_run_silent_testbdsvdunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testbdsvdunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_svd
+COPY _internal\_run_testsvdunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testsvdunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_svd_short
+COPY _internal\_run_short_testsvdunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testsvdunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_svd_silent
+COPY _internal\_run_silent_testsvdunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testsvdunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_logit
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_logit_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_logit_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_mlpbase
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_mlpbase_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_mlpbase_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_xblas
+COPY _internal\_run_testxblasunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testxblasunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_xblas_short
+COPY _internal\_run_short_testxblasunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testxblasunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_xblas_silent
+COPY _internal\_run_silent_testxblasunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testxblasunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_densesolver
+COPY _internal\_run_testdensesolverunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testdensesolverunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_densesolver_short
+COPY _internal\_run_short_testdensesolverunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testdensesolverunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_densesolver_silent
+COPY _internal\_run_silent_testdensesolverunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testdensesolverunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_mlpe
+COPY _internal\_run_testmlpeunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testmlpeunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_mlpe_short
+COPY _internal\_run_short_testmlpeunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testmlpeunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_mlpe_silent
+COPY _internal\_run_silent_testmlpeunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testmlpeunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_linmin
+COPY _internal\_run_testlinminunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testlinminunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_linmin_short
+COPY _internal\_run_short_testlinminunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testlinminunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_linmin_silent
+COPY _internal\_run_silent_testlinminunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testlinminunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_minlbfgs
+COPY _internal\_run_testminlbfgsunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testminlbfgsunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_minlbfgs_short
+COPY _internal\_run_short_testminlbfgsunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testminlbfgsunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_minlbfgs_silent
+COPY _internal\_run_silent_testminlbfgsunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testminlbfgsunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_mlptrain
+COPY _internal\_run_testmlpunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testmlpunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_mlptrain_short
+COPY _internal\_run_short_testmlpunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testmlpunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_mlptrain_silent
+COPY _internal\_run_silent_testmlpunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testmlpunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_pca
+COPY _internal\_run_testpcaunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testpcaunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_pca_short
+COPY _internal\_run_short_testpcaunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testpcaunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_pca_silent
+COPY _internal\_run_silent_testpcaunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testpcaunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_odesolver
+COPY _internal\_run_testodesolverunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testodesolverunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_odesolver_short
+COPY _internal\_run_short_testodesolverunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testodesolverunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_odesolver_silent
+COPY _internal\_run_silent_testodesolverunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testodesolverunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_conv
+COPY _internal\_run_testconvunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testconvunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_conv_short
+COPY _internal\_run_short_testconvunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testconvunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_conv_silent
+COPY _internal\_run_silent_testconvunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testconvunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_ftbase
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_ftbase_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_ftbase_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_fft
+COPY _internal\_run_testfftunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testfftunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_fft_short
+COPY _internal\_run_short_testfftunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testfftunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_fft_silent
+COPY _internal\_run_silent_testfftunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testfftunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_corr
+COPY _internal\_run_testcorrunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testcorrunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_corr_short
+COPY _internal\_run_short_testcorrunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testcorrunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_corr_silent
+COPY _internal\_run_silent_testcorrunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testcorrunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_fht
+COPY _internal\_run_testfhtunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testfhtunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_fht_short
+COPY _internal\_run_short_testfhtunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testfhtunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_fht_silent
+COPY _internal\_run_silent_testfhtunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testfhtunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_autogk
+COPY _internal\_run_testautogk.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testautogk.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_autogk_short
+COPY _internal\_run_short_testautogk.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testautogk.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_autogk_silent
+COPY _internal\_run_silent_testautogk.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testautogk.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_gq
+COPY _internal\_run_testgq.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testgq.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_gq_short
+COPY _internal\_run_short_testgq.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testgq.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_gq_silent
+COPY _internal\_run_silent_testgq.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testgq.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_gkq
+COPY _internal\_run_testgkq.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testgkq.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_gkq_short
+COPY _internal\_run_short_testgkq.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testgkq.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_gkq_silent
+COPY _internal\_run_silent_testgkq.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testgkq.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_lsfit
+COPY _internal\_run_llstestunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\llstestunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_lsfit_short
+COPY _internal\_run_short_llstestunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\llstestunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_lsfit_silent
+COPY _internal\_run_silent_llstestunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\llstestunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_minlm
+COPY _internal\_run_testminlmunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testminlmunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_minlm_short
+COPY _internal\_run_short_testminlmunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testminlmunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_minlm_silent
+COPY _internal\_run_silent_testminlmunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testminlmunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_polint
+COPY _internal\_run_testpolintunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testpolintunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_polint_short
+COPY _internal\_run_short_testpolintunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testpolintunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_polint_silent
+COPY _internal\_run_silent_testpolintunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testpolintunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_ratinterpolation
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_ratinterpolation_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_ratinterpolation_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_ratint
+COPY _internal\_run_testratinterpolation.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testratinterpolation.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_ratint_short
+COPY _internal\_run_short_testratinterpolation.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testratinterpolation.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_ratint_silent
+COPY _internal\_run_silent_testratinterpolation.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testratinterpolation.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_apserv
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_apserv_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_apserv_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_spline2d
+COPY _internal\_run_testspline2dunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testspline2dunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_spline2d_short
+COPY _internal\_run_short_testspline2dunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testspline2dunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_spline2d_silent
+COPY _internal\_run_silent_testspline2dunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testspline2dunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_spline3
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_spline3_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_spline3_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_spline1d
+COPY _internal\_run_testspline1dunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testspline1dunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_spline1d_short
+COPY _internal\_run_short_testspline1dunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testspline1dunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_spline1d_silent
+COPY _internal\_run_silent_testspline1dunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testspline1dunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_idwint
+COPY _internal\_run_testidwunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testidwunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_idwint_short
+COPY _internal\_run_short_testidwunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testidwunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_idwint_silent
+COPY _internal\_run_silent_testidwunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testidwunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_nearestneighbor
+COPY _internal\_run_testnearestneighborunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testnearestneighborunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_nearestneighbor_short
+COPY _internal\_run_short_testnearestneighborunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testnearestneighborunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_nearestneighbor_silent
+COPY _internal\_run_silent_testnearestneighborunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testnearestneighborunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_pspline
+COPY _internal\_run_testpsplineunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testpsplineunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_pspline_short
+COPY _internal\_run_short_testpsplineunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testpsplineunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_pspline_silent
+COPY _internal\_run_silent_testpsplineunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testpsplineunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_matdet
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_matdet_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_matdet_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_sdet
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_sdet_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_sdet_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_ldlt
+COPY _internal\_run_testldltunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testldltunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_ldlt_short
+COPY _internal\_run_short_testldltunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testldltunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_ldlt_silent
+COPY _internal\_run_silent_testldltunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testldltunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_spdgevd
+COPY _internal\_run_testspdgevdunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testspdgevdunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_spdgevd_short
+COPY _internal\_run_short_testspdgevdunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testspdgevdunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_spdgevd_silent
+COPY _internal\_run_silent_testspdgevdunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testspdgevdunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_sinverse
+COPY _internal\_run_testinvldltunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testinvldltunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_sinverse_short
+COPY _internal\_run_short_testinvldltunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testinvldltunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_sinverse_silent
+COPY _internal\_run_silent_testinvldltunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testinvldltunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_inverseupdate
+COPY _internal\_run_testinverseupdateunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testinverseupdateunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_inverseupdate_short
+COPY _internal\_run_short_testinverseupdateunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testinverseupdateunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_inverseupdate_silent
+COPY _internal\_run_silent_testinverseupdateunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testinverseupdateunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_srcond
+COPY _internal\_run_testrcondldltunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testrcondldltunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_srcond_short
+COPY _internal\_run_short_testrcondldltunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testrcondldltunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_srcond_silent
+COPY _internal\_run_silent_testrcondldltunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testrcondldltunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_ssolve
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_ssolve_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_ssolve_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_estnorm
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_estnorm_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_estnorm_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_schur
+COPY _internal\_run_testschurunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testschurunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_schur_short
+COPY _internal\_run_short_testschurunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testschurunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_schur_silent
+COPY _internal\_run_silent_testschurunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testschurunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_mincg
+COPY _internal\_run_testmincgunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testmincgunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_mincg_short
+COPY _internal\_run_short_testmincgunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testmincgunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_mincg_silent
+COPY _internal\_run_silent_testmincgunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testmincgunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_minasa
+COPY _internal\_run_testasa.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testasa.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_minasa_short
+COPY _internal\_run_short_testasa.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testasa.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_minasa_silent
+COPY _internal\_run_silent_testasa.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testasa.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_airyf
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_airyf_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_airyf_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_bessel
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_bessel_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_bessel_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_betaf
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_betaf_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_betaf_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_chebyshev
+COPY _internal\_run_testchebyshevunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testchebyshevunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_chebyshev_short
+COPY _internal\_run_short_testchebyshevunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testchebyshevunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_chebyshev_silent
+COPY _internal\_run_silent_testchebyshevunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testchebyshevunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_dawson
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_dawson_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_dawson_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_elliptic
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_elliptic_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_elliptic_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_expintegrals
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_expintegrals_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_expintegrals_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_fresnel
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_fresnel_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_fresnel_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_hermite
+COPY _internal\_run_testhermiteunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testhermiteunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_hermite_short
+COPY _internal\_run_short_testhermiteunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testhermiteunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_hermite_silent
+COPY _internal\_run_silent_testhermiteunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testhermiteunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_ibetaf
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_ibetaf_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_ibetaf_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_jacobianelliptic
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_jacobianelliptic_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_jacobianelliptic_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_laguerre
+COPY _internal\_run_testlaguerreunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testlaguerreunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_laguerre_short
+COPY _internal\_run_short_testlaguerreunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testlaguerreunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_laguerre_silent
+COPY _internal\_run_silent_testlaguerreunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testlaguerreunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_legendre
+COPY _internal\_run_testlegendreunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testlegendreunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_legendre_short
+COPY _internal\_run_short_testlegendreunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testlegendreunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_legendre_silent
+COPY _internal\_run_silent_testlegendreunit.pas _tmp\_test.pas > NUL 2> NUL
+COPY tests\testlegendreunit.* _tmp > NUL 2> NUL
+GOTO lbl_209___end
+:lbl_209_psif
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_psif_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_psif_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_trigintegrals
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_trigintegrals_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_trigintegrals_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_binomialdistr
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_binomialdistr_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_binomialdistr_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_nearunityunit
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_nearunityunit_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_nearunityunit_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_chisquaredistr
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_chisquaredistr_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_chisquaredistr_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_correlation
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_correlation_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_correlation_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_fdistr
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_fdistr_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_fdistr_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_correlationtests
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_correlationtests_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_correlationtests_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_studenttdistr
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_studenttdistr_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_studenttdistr_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_jarquebera
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_jarquebera_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_jarquebera_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_mannwhitneyu
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_mannwhitneyu_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_mannwhitneyu_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_poissondistr
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_poissondistr_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_poissondistr_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_stest
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_stest_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_stest_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_studentttests
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_studentttests_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_studentttests_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_variancetests
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_variancetests_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_variancetests_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_wsr
+echo No separate test file for this unit
+echo It is tested somewhere else
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_wsr_short
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209_wsr_silent
+EXIT /B 0
+GOTO lbl_209___end
+:lbl_209___error
+echo unknown unit
+EXIT /B 1
+:lbl_209___end
+IF "%~1"=="dcc32" GOTO lbl_210_dcc32
+GOTO lbl_210___error
+:lbl_210_dcc32
 CHDIR _tmp
 dcc32 -$C+ -CC -$Q+ -$R+ -$X+ %~3 _test.pas >> ../log.txt 2>&1 2>&1
-IF NOT ERRORLEVEL 1 GOTO lbl_209
+IF NOT ERRORLEVEL 1 GOTO lbl_211
 echo Error while compiling (see ../log.txt for more info)
 CHDIR ..
 EXIT /B 1
-:lbl_209
+:lbl_211
 CHDIR ..
 pushd _tmp
 .\_test
 popd
-GOTO lbl_208___end
-:lbl_208___error
+GOTO lbl_210___end
+:lbl_210___error
 echo unknown compiler
 EXIT /B 1
-:lbl_208___end
+:lbl_210___end
 EXIT /B 0

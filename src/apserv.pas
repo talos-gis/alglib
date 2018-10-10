@@ -17,7 +17,7 @@ http://www.fsf.org/licensing/licenses
 
 >>> END OF LICENSE >>>
 *************************************************************************)
-unit taskgen;
+unit apserv;
 interface
 uses Math, Sysutils, Ap;
 
@@ -41,6 +41,13 @@ procedure TaskGenInt1DCheb2(A : Double;
      N : AlglibInteger;
      var X : TReal1DArray;
      var Y : TReal1DArray);
+function APSERVAreDistinct(X : TReal1DArray; N : AlglibInteger):Boolean;
+function SafePythag2(X : Double; Y : Double):Double;
+function SafePythag3(X : Double; Y : Double; Z : Double):Double;
+procedure APPeriodicMap(var X : Double;
+     A : Double;
+     B : Double;
+     var K : Double);
 
 implementation
 
@@ -222,6 +229,159 @@ begin
         X[0] := 0.5*(A+B);
         Y[0] := 2*RandomReal-1;
     end;
+end;
+
+
+(*************************************************************************
+This function checks that all values from X[] are distinct. It does more
+than just usual floating point comparison:
+* first, it calculates max(X) and min(X)
+* second, it maps X[] from [min,max] to [1,2]
+* only at this stage actual comparison is done
+
+The meaning of such check is to ensure that all values are "distinct enough"
+and will not cause interpolation subroutine to fail.
+
+NOTE:
+    X[] must be sorted by ascending (subroutine ASSERT's it)
+
+  -- ALGLIB --
+     Copyright 02.12.2009 by Bochkanov Sergey
+*************************************************************************)
+function APSERVAreDistinct(X : TReal1DArray; N : AlglibInteger):Boolean;
+var
+    IsSorted : Boolean;
+    A : Double;
+    B : Double;
+    I : AlglibInteger;
+begin
+    X := DynamicArrayCopy(X);
+    Assert(N>=1, 'APSERVIsDistinct: internal error!');
+    if N=1 then
+    begin
+        
+        //
+        // everything is alright, it is up to caller to decide whether it
+        // can interpolate something with just one point
+        //
+        Result := True;
+        Exit;
+    end;
+    A := X[0];
+    B := X[0];
+    I:=1;
+    while I<=N-1 do
+    begin
+        A := Min(A, X[I]);
+        B := Max(B, X[I]);
+        Assert(AP_FP_Greater_Eq(X[I],X[I-1]), 'APSERVIsDistinct: internal error!');
+        Inc(I);
+    end;
+    I:=0;
+    while I<=N-1 do
+    begin
+        X[I] := (X[I]-A)/(B-A)+1;
+        Inc(I);
+    end;
+    I:=1;
+    while I<=N-1 do
+    begin
+        if AP_FP_Eq(X[I],X[I-1]) then
+        begin
+            Result := False;
+            Exit;
+        end;
+        Inc(I);
+    end;
+    Result := True;
+end;
+
+
+(*************************************************************************
+Safe sqrt(x^2+y^2)
+
+  -- ALGLIB --
+     Copyright by Bochkanov Sergey
+*************************************************************************)
+function SafePythag2(X : Double; Y : Double):Double;
+var
+    W : Double;
+    XABS : Double;
+    YABS : Double;
+    Z : Double;
+begin
+    XABS := AbsReal(X);
+    YABS := AbsReal(Y);
+    W := Max(XABS, YABS);
+    Z := Min(XABS, YABS);
+    if AP_FP_Eq(Z,0) then
+    begin
+        Result := W;
+    end
+    else
+    begin
+        Result := W*SQRT(1+AP_Sqr(Z/W));
+    end;
+end;
+
+
+(*************************************************************************
+Safe sqrt(x^2+y^2)
+
+  -- ALGLIB --
+     Copyright by Bochkanov Sergey
+*************************************************************************)
+function SafePythag3(X : Double; Y : Double; Z : Double):Double;
+var
+    W : Double;
+begin
+    W := Max(AbsReal(X), Max(AbsReal(Y), AbsReal(Z)));
+    if AP_FP_Eq(W,0) then
+    begin
+        Result := 0;
+        Exit;
+    end;
+    X := X/W;
+    Y := Y/W;
+    Z := Z/W;
+    Result := W*Sqrt(AP_Sqr(X)+AP_Sqr(Y)+AP_Sqr(Z));
+end;
+
+
+(*************************************************************************
+This function makes periodic mapping of X to [A,B].
+
+It accepts X, A, B (A>B). It returns T which lies in  [A,B] and integer K,
+such that X = T + K*(B-A).
+
+NOTES:
+* K is represented as real value, although actually it is integer
+* T is guaranteed to be in [A,B]
+* T replaces X
+
+  -- ALGLIB --
+     Copyright by Bochkanov Sergey
+*************************************************************************)
+procedure APPeriodicMap(var X : Double;
+     A : Double;
+     B : Double;
+     var K : Double);
+begin
+    Assert(AP_FP_Less(A,B), 'APPeriodicMap: internal error!');
+    K := Floor((X-A)/(B-A));
+    X := X-K*(B-A);
+    while AP_FP_Less(X,A) do
+    begin
+        X := X+(B-A);
+        K := K-1;
+    end;
+    while AP_FP_Greater(X,B) do
+    begin
+        X := X-(B-A);
+        K := K+1;
+    end;
+    X := Max(X, A);
+    X := Min(X, B);
 end;
 
 

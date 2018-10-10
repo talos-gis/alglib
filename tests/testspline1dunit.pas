@@ -1,6 +1,6 @@
 unit testspline1dunit;
 interface
-uses Math, Sysutils, Ap, spline3, blas, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, hblas, sblas, ortfac, rotations, bdsvd, svd, xblas, densesolver, linmin, minlbfgs, minlm, lsfit, spline1d;
+uses Math, Sysutils, Ap, spline3, blas, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, hblas, sblas, ortfac, rotations, bdsvd, svd, xblas, densesolver, linmin, minlbfgs, minlm, lsfit, apserv, spline1d;
 
 function TestSplineInterpolation(Silent : Boolean):Boolean;
 function testspline1dunit_test_silent():Boolean;
@@ -28,6 +28,7 @@ function Is1DSolution(N : AlglibInteger;
 function TestSplineInterpolation(Silent : Boolean):Boolean;
 var
     WasErrors : Boolean;
+    CRSErrors : Boolean;
     CSErrors : Boolean;
     HSErrors : Boolean;
     ASErrors : Boolean;
@@ -44,16 +45,18 @@ var
     LStep : Double;
     H : Double;
     MaxN : AlglibInteger;
+    BLType : AlglibInteger;
+    BRType : AlglibInteger;
+    PeriodicCond : Boolean;
     N : AlglibInteger;
     M : AlglibInteger;
     I : AlglibInteger;
     K : AlglibInteger;
     Pass : AlglibInteger;
-    BLType : AlglibInteger;
-    BRType : AlglibInteger;
     SType : AlglibInteger;
     X : TReal1DArray;
     Y : TReal1DArray;
+    YP : TReal1DArray;
     W : TReal1DArray;
     W2 : TReal1DArray;
     Y2 : TReal1DArray;
@@ -95,15 +98,14 @@ var
     VM : Double;
     VR : Double;
     Err : Double;
+    Tension : Double;
+    IntAB : Double;
     Rep : Spline1DFitReport;
     Rep2 : Spline1DFitReport;
     RefRMS : Double;
     RefAvg : Double;
     RefAvgRel : Double;
     RefMax : Double;
-    RA : TReal1DArray;
-    RA2 : TReal1DArray;
-    RALen : AlglibInteger;
 begin
     WasErrors := False;
     PassCount := 20;
@@ -114,6 +116,7 @@ begin
     NonStrictThreshold := 0.00001;
     LSErrors := False;
     CSErrors := False;
+    CRSErrors := False;
     HSErrors := False;
     ASErrors := False;
     DSErrors := False;
@@ -131,13 +134,17 @@ begin
     begin
         SetLength(X, N-1+1);
         SetLength(Y, N-1+1);
+        SetLength(YP, N-1+1);
         SetLength(D, N-1+1);
         Pass:=1;
         while Pass<=PassCount do
         begin
             
             //
-            // Prepare task
+            // Prepare task:
+            // * X contains abscissas from [A,B]
+            // * Y contains function values
+            // * YP contains periodic function values
             //
             A := -1-RandomReal;
             B := +1+RandomReal;
@@ -156,9 +163,11 @@ begin
                     X[I] := B;
                 end;
                 Y[I] := Cos(1.3*Pi*X[I]+0.4);
+                YP[I] := Y[I];
                 D[I] := -1.3*Pi*Sin(1.3*Pi*X[I]+0.4);
                 Inc(I);
             end;
+            YP[N-1] := YP[0];
             I:=0;
             while I<=N-1 do
             begin
@@ -171,6 +180,9 @@ begin
                     T := Y[I];
                     Y[I] := Y[K];
                     Y[K] := T;
+                    T := YP[I];
+                    YP[I] := YP[K];
+                    YP[K] := T;
                     T := D[I];
                     D[I] := D[K];
                     D[K] := T;
@@ -206,22 +218,95 @@ begin
             // * continuous function
             // * continuous first derivative
             // * continuous second derivative
+            // * periodicity properties
             //
-            BLType:=0;
+            BLType:=-1;
             while BLType<=2 do
             begin
-                BRType:=0;
+                BRType:=-1;
                 while BRType<=2 do
                 begin
-                    Spline1DBuildCubic(X, Y, N, BLType, BL, BRType, BR, C);
-                    Err := 0;
-                    I:=0;
-                    while I<=N-1 do
+                    
+                    //
+                    // skip meaningless combination of boundary conditions
+                    // (one condition is periodic, another is not)
+                    //
+                    PeriodicCond := (BLType=-1) or (BRType=-1);
+                    if PeriodicCond and (BLType<>BRType) then
                     begin
-                        Err := Max(Err, AbsReal(Y[I]-Spline1DCalc(C, X[I])));
-                        Inc(I);
+                        Inc(BRType);
+                        Continue;
+                    end;
+                    
+                    //
+                    // build
+                    //
+                    if PeriodicCond then
+                    begin
+                        Spline1DBuildCubic(X, YP, N, BLType, BL, BRType, BR, C);
+                    end
+                    else
+                    begin
+                        Spline1DBuildCubic(X, Y, N, BLType, BL, BRType, BR, C);
+                    end;
+                    
+                    //
+                    // interpolation properties
+                    //
+                    Err := 0;
+                    if PeriodicCond then
+                    begin
+                        
+                        //
+                        // * check values at nodes; spline is periodic so
+                        //   we add random number of periods to nodes
+                        // * we also test for periodicity of derivatives
+                        //
+                        I:=0;
+                        while I<=N-1 do
+                        begin
+                            V := X[I];
+                            VM := V+(B-A)*(RandomInteger(5)-2);
+                            T := YP[I]-Spline1DCalc(C, VM);
+                            Err := Max(Err, AbsReal(T));
+                            Spline1DDiff(C, V, S, DS, D2S);
+                            Spline1DDiff(C, VM, S2, DS2, D2S2);
+                            Err := Max(Err, AbsReal(S-S2));
+                            Err := Max(Err, AbsReal(DS-DS2));
+                            Err := Max(Err, AbsReal(D2S-D2S2));
+                            Inc(I);
+                        end;
+                        
+                        //
+                        // periodicity between nodes
+                        //
+                        V := A+(B-A)*RandomReal;
+                        VM := V+(B-A)*(RandomInteger(5)-2);
+                        Err := Max(Err, AbsReal(Spline1DCalc(C, V)-Spline1DCalc(C, VM)));
+                        Spline1DDiff(C, V, S, DS, D2S);
+                        Spline1DDiff(C, VM, S2, DS2, D2S2);
+                        Err := Max(Err, AbsReal(S-S2));
+                        Err := Max(Err, AbsReal(DS-DS2));
+                        Err := Max(Err, AbsReal(D2S-D2S2));
+                    end
+                    else
+                    begin
+                        
+                        //
+                        // * check values at nodes
+                        //
+                        I:=0;
+                        while I<=N-1 do
+                        begin
+                            Err := Max(Err, AbsReal(Y[I]-Spline1DCalc(C, X[I])));
+                            Inc(I);
+                        end;
                     end;
                     CSErrors := CSErrors or AP_FP_Greater(Err,Threshold);
+                    
+                    //
+                    // check boundary conditions
+                    //
                     Err := 0;
                     if BLType=0 then
                     begin
@@ -257,13 +342,167 @@ begin
                         T := (Spline1DCalc(C, B+H)-2*Spline1DCalc(C, B)+Spline1DCalc(C, B-H))/AP_Sqr(H);
                         Err := Max(Err, AbsReal(BR-T));
                     end;
+                    if (BLType=-1) or (BRType=-1) then
+                    begin
+                        Spline1DDiff(C, A+100*MachineEpsilon, S, DS, D2S);
+                        Spline1DDiff(C, B-100*MachineEpsilon, S2, DS2, D2S2);
+                        Err := Max(Err, AbsReal(S-S2));
+                        Err := Max(Err, AbsReal(DS-DS2));
+                        Err := Max(Err, AbsReal(D2S-D2S2));
+                    end;
                     CSErrors := CSErrors or AP_FP_Greater(Err,1.0E-3);
+                    
+                    //
+                    // Check Lipschitz continuity
+                    //
                     LConst(A, B, C, LStep, L10, L11, L12);
                     LConst(A, B, C, LStep/3, L20, L21, L22);
-                    CSErrors := CSErrors or AP_FP_Greater(L20/L10,1.2) and AP_FP_Greater(L10,1.0E-6);
-                    CSErrors := CSErrors or AP_FP_Greater(L21/L11,1.2) and AP_FP_Greater(L11,1.0E-6);
-                    CSErrors := CSErrors or AP_FP_Greater(L22/L12,1.2) and AP_FP_Greater(L12,1.0E-6);
+                    if AP_FP_Greater(L10,1.0E-6) then
+                    begin
+                        CSErrors := CSErrors or AP_FP_Greater(L20/L10,1.2);
+                    end;
+                    if AP_FP_Greater(L11,1.0E-6) then
+                    begin
+                        CSErrors := CSErrors or AP_FP_Greater(L21/L11,1.2);
+                    end;
+                    if AP_FP_Greater(L12,1.0E-6) then
+                    begin
+                        CSErrors := CSErrors or AP_FP_Greater(L22/L12,1.2);
+                    end;
                     Inc(BRType);
+                end;
+                Inc(BLType);
+            end;
+            
+            //
+            // Build Catmull-Rom spline.
+            // Test for interpolation scheme properties:
+            // * values at nodes
+            // * boundary conditions
+            // * continuous function
+            // * continuous first derivative
+            // * periodicity properties
+            //
+            BLType:=-1;
+            while BLType<=0 do
+            begin
+                PeriodicCond := BLType=-1;
+                
+                //
+                // select random tension value, then build
+                //
+                if AP_FP_Greater(RandomReal,0.5) then
+                begin
+                    if AP_FP_Greater(RandomReal,0.5) then
+                    begin
+                        Tension := 0;
+                    end
+                    else
+                    begin
+                        Tension := 1;
+                    end;
+                end
+                else
+                begin
+                    Tension := RandomReal;
+                end;
+                if PeriodicCond then
+                begin
+                    Spline1DBuildCatmullRom(X, YP, N, BLType, Tension, C);
+                end
+                else
+                begin
+                    Spline1DBuildCatmullRom(X, Y, N, BLType, Tension, C);
+                end;
+                
+                //
+                // interpolation properties
+                //
+                Err := 0;
+                if PeriodicCond then
+                begin
+                    
+                    //
+                    // * check values at nodes; spline is periodic so
+                    //   we add random number of periods to nodes
+                    // * we also test for periodicity of first derivative
+                    //
+                    I:=0;
+                    while I<=N-1 do
+                    begin
+                        V := X[I];
+                        VM := V+(B-A)*(RandomInteger(5)-2);
+                        T := YP[I]-Spline1DCalc(C, VM);
+                        Err := Max(Err, AbsReal(T));
+                        Spline1DDiff(C, V, S, DS, D2S);
+                        Spline1DDiff(C, VM, S2, DS2, D2S2);
+                        Err := Max(Err, AbsReal(S-S2));
+                        Err := Max(Err, AbsReal(DS-DS2));
+                        Inc(I);
+                    end;
+                    
+                    //
+                    // periodicity between nodes
+                    //
+                    V := A+(B-A)*RandomReal;
+                    VM := V+(B-A)*(RandomInteger(5)-2);
+                    Err := Max(Err, AbsReal(Spline1DCalc(C, V)-Spline1DCalc(C, VM)));
+                    Spline1DDiff(C, V, S, DS, D2S);
+                    Spline1DDiff(C, VM, S2, DS2, D2S2);
+                    Err := Max(Err, AbsReal(S-S2));
+                    Err := Max(Err, AbsReal(DS-DS2));
+                end
+                else
+                begin
+                    
+                    //
+                    // * check values at nodes
+                    //
+                    I:=0;
+                    while I<=N-1 do
+                    begin
+                        Err := Max(Err, AbsReal(Y[I]-Spline1DCalc(C, X[I])));
+                        Inc(I);
+                    end;
+                end;
+                CRSErrors := CRSErrors or AP_FP_Greater(Err,Threshold);
+                
+                //
+                // check boundary conditions
+                //
+                Err := 0;
+                if BLType=0 then
+                begin
+                    Spline1DDiff(C, A-H, S, DS, D2S);
+                    Spline1DDiff(C, A+H, S2, DS2, D2S2);
+                    T := (D2S2-D2S)/(2*H);
+                    Err := Max(Err, AbsReal(T));
+                    Spline1DDiff(C, B-H, S, DS, D2S);
+                    Spline1DDiff(C, B+H, S2, DS2, D2S2);
+                    T := (D2S2-D2S)/(2*H);
+                    Err := Max(Err, AbsReal(T));
+                end;
+                if BLType=-1 then
+                begin
+                    Spline1DDiff(C, A+100*MachineEpsilon, S, DS, D2S);
+                    Spline1DDiff(C, B-100*MachineEpsilon, S2, DS2, D2S2);
+                    Err := Max(Err, AbsReal(S-S2));
+                    Err := Max(Err, AbsReal(DS-DS2));
+                end;
+                CRSErrors := CRSErrors or AP_FP_Greater(Err,1.0E-3);
+                
+                //
+                // Check Lipschitz continuity
+                //
+                LConst(A, B, C, LStep, L10, L11, L12);
+                LConst(A, B, C, LStep/3, L20, L21, L22);
+                if AP_FP_Greater(L10,1.0E-6) then
+                begin
+                    CRSErrors := CRSErrors or AP_FP_Greater(L20/L10,1.2);
+                end;
+                if AP_FP_Greater(L11,1.0E-6) then
+                begin
+                    CRSErrors := CRSErrors or AP_FP_Greater(L21/L11,1.2);
                 end;
                 Inc(BLType);
             end;
@@ -449,7 +688,7 @@ begin
     end;
     
     //
-    // Differentiation, copy/serialize/unpack test
+    // Differentiation, copy/unpack test
     //
     N:=2;
     while N<=MaxN do
@@ -495,25 +734,6 @@ begin
         //
         UnsetSpline1D(C2);
         Spline1DCopy(C, C2);
-        Err := 0;
-        Pass:=1;
-        while Pass<=PassCount do
-        begin
-            T := A+(B-A)*RandomReal;
-            Err := Max(Err, AbsReal(Spline1DCalc(C, T)-Spline1DCalc(C2, T)));
-            Inc(Pass);
-        end;
-        CPErrors := CPErrors or AP_FP_Greater(Err,Threshold);
-        
-        //
-        // Test serialize/deserialize
-        //
-        UnsetSpline1D(C2);
-        Unset1D(RA2);
-        Spline1DSerialize(C, RA, RALen);
-        SetLength(RA2, RALen);
-        APVMove(@RA2[0], 0, RALen-1, @RA[0], 0, RALen-1);
-        Spline1DUnserialize(RA2, C2);
         Err := 0;
         Pass:=1;
         while Pass<=PassCount do
@@ -572,10 +792,22 @@ begin
     end;
     
     //
-    // Testing integration. Two tests are performed:
+    // Testing integration.
+    // Three tests are performed:
+    //
     // * approximate test (well behaved smooth function, many points,
-    //   integration inside [a,b])
-    // * exact test (integration of parabola, outside of [a,b]
+    //   integration inside [a,b]), non-periodic spline
+    //
+    // * exact test (integration of parabola, outside of [a,b], non-periodic spline
+    //
+    // * approximate test for periodic splines. F(x)=cos(2*pi*x)+1.
+    //   Period length is equals to 1.0, so all operations with
+    //   multiples of period are done exactly. For each value of PERIOD
+    //   we calculate and test integral at four points:
+    //   -   0 < t0 < PERIOD
+    //   -   t1 = PERIOD-eps
+    //   -   t2 = PERIOD
+    //   -   t3 = PERIOD+eps
     //
     Err := 0;
     N:=20;
@@ -645,6 +877,32 @@ begin
         Inc(Pass);
     end;
     IErrors := IErrors or AP_FP_Greater(Err,Threshold);
+    N := 100;
+    SetLength(X, N);
+    SetLength(Y, N);
+    I:=0;
+    while I<=N-1 do
+    begin
+        X[I] := AP_Double(I)/(N-1);
+        Y[I] := Cos(2*Pi*X[I])+1;
+        Inc(I);
+    end;
+    Y[0] := 2;
+    Y[N-1] := 2;
+    Spline1DBuildCubic(X, Y, N, -1, 0.0, -1, 0.0, C);
+    IntAB := Spline1DIntegrate(C, 1.0);
+    V := RandomReal;
+    VR := Spline1DIntegrate(C, V);
+    IErrors := IErrors or AP_FP_Greater(AbsReal(IntAB-1),0.001);
+    I:=-10;
+    while I<=10 do
+    begin
+        IErrors := IErrors or AP_FP_Greater(AbsReal(Spline1DIntegrate(C, I+V)-(I*IntAB+VR)),0.001);
+        IErrors := IErrors or AP_FP_Greater(AbsReal(Spline1DIntegrate(C, I-1000*MachineEpsilon)-I*IntAB),0.001);
+        IErrors := IErrors or AP_FP_Greater(AbsReal(Spline1DIntegrate(C, I)-I*IntAB),0.001);
+        IErrors := IErrors or AP_FP_Greater(AbsReal(Spline1DIntegrate(C, I+1000*MachineEpsilon)-I*IntAB),0.001);
+        Inc(I);
+    end;
     
     //
     // Test fitting.
@@ -1223,7 +1481,7 @@ begin
     //
     // report
     //
-    WasErrors := LSErrors or CSErrors or HSErrors or ASErrors or DSErrors or CPErrors or UPErrors or LTErrors or IErrors or FitErrors;
+    WasErrors := LSErrors or CSErrors or CRSErrors or HSErrors or ASErrors or DSErrors or CPErrors or UPErrors or LTErrors or IErrors or FitErrors;
     if  not Silent then
     begin
         Write(Format('TESTING SPLINE INTERPOLATION'#13#10'',[]));
@@ -1242,6 +1500,15 @@ begin
         end;
         Write(Format('CUBIC SPLINE TEST:                       ',[]));
         if CSErrors then
+        begin
+            Write(Format('FAILED'#13#10'',[]));
+        end
+        else
+        begin
+            Write(Format('OK'#13#10'',[]));
+        end;
+        Write(Format('CATMULL-ROM SPLINE TEST:                 ',[]));
+        if CRSErrors then
         begin
             Write(Format('FAILED'#13#10'',[]));
         end

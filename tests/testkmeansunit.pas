@@ -14,6 +14,8 @@ procedure SimpleTest1(NVars : AlglibInteger;
      var ConvErrors : Boolean;
      var OtherErrors : Boolean;
      var SimpleErrors : Boolean);forward;
+procedure RestartsTest(var ConvErrors : Boolean;
+     var RestartsErrors : Boolean);forward;
 function RNormal():Double;forward;
 function RSphere(var XY : TReal2DArray;
      N : AlglibInteger;
@@ -33,6 +35,7 @@ var
     SimpleErrors : Boolean;
     ComplexErrors : Boolean;
     OtherErrors : Boolean;
+    RestartsErrors : Boolean;
 begin
     
     //
@@ -46,6 +49,7 @@ begin
     OtherErrors := False;
     SimpleErrors := False;
     ComplexErrors := False;
+    RestartsErrors := False;
     
     //
     //
@@ -61,11 +65,12 @@ begin
         end;
         Inc(NF);
     end;
+    RestartsTest(ConvErrors, RestartsErrors);
     
     //
     // Final report
     //
-    WasErrors := ConvErrors or OtherErrors or SimpleErrors or ComplexErrors;
+    WasErrors := ConvErrors or OtherErrors or SimpleErrors or ComplexErrors or RestartsErrors;
     if  not Silent then
     begin
         Write(Format('K-MEANS TEST'#13#10'',[]));
@@ -107,6 +112,15 @@ begin
         end;
         Write(Format('* OTHER PROPERTIES:                      ',[]));
         if  not OtherErrors then
+        begin
+            Write(Format('OK'#13#10'',[]));
+        end
+        else
+        begin
+            Write(Format('FAILED'#13#10'',[]));
+        end;
+        Write(Format('* RESTARTS PROPERTIES:                   ',[]));
+        if  not RestartsErrors then
         begin
             Write(Format('OK'#13#10'',[]));
         end
@@ -266,6 +280,151 @@ begin
         end;
         Inc(Pass);
     end;
+end;
+
+
+(*************************************************************************
+This non-deterministic test checks that Restarts>1 significantly  improves
+quality of results.
+
+Subroutine generates random task 3 unit balls in 2D, each with 20  points,
+separated by 5 units wide gaps, and solves it  with  Restarts=1  and  with
+Restarts=5. Potential functions are compared,  outcome  of  the  trial  is
+either 0 or 1 (depending on what is better).
+
+Sequence of 1000 such tasks is  solved.  If  Restarts>1  actually  improve
+quality of solution, sum of outcome will be non-binomial.  If  it  doesn't
+matter, it will be binomially distributed.
+
+P.S. This test was added after report from Gianluca  Borello  who  noticed
+error in the handling of multiple restarts.
+*************************************************************************)
+procedure RestartsTest(var ConvErrors : Boolean; var RestartsErrors : Boolean);
+var
+    NPoints : AlglibInteger;
+    NVars : AlglibInteger;
+    NClusters : AlglibInteger;
+    ClusterSize : AlglibInteger;
+    Restarts : AlglibInteger;
+    PassCount : AlglibInteger;
+    SigmaThreshold : Double;
+    P : Double;
+    S : Double;
+    XY : TReal2DArray;
+    CA : TReal2DArray;
+    CB : TReal2DArray;
+    XYCA : TInteger1DArray;
+    XYCB : TInteger1DArray;
+    Tmp : TReal1DArray;
+    I : AlglibInteger;
+    J : AlglibInteger;
+    Info : AlglibInteger;
+    Pass : AlglibInteger;
+    EA : Double;
+    EB : Double;
+    V : Double;
+    i_ : AlglibInteger;
+begin
+    Restarts := 5;
+    PassCount := 1000;
+    ClusterSize := 20;
+    NClusters := 3;
+    NVars := 2;
+    NPoints := NClusters*ClusterSize;
+    SigmaThreshold := 5;
+    SetLength(XY, NPoints, NVars);
+    SetLength(Tmp, NVars);
+    P := 0;
+    Pass:=1;
+    while Pass<=PassCount do
+    begin
+        
+        //
+        // Fill
+        //
+        I:=0;
+        while I<=NPoints-1 do
+        begin
+            RSphere(XY, NVars, I);
+            J:=0;
+            while J<=NVars-1 do
+            begin
+                XY[I,J] := XY[I,J]+AP_Double(I)/ClusterSize*5;
+                Inc(J);
+            end;
+            Inc(I);
+        end;
+        
+        //
+        // Test: Restarts=1
+        //
+        KMeansGenerate(XY, NPoints, NVars, NClusters, 1, Info, CA, XYCA);
+        if Info<0 then
+        begin
+            ConvErrors := True;
+            Exit;
+        end;
+        EA := 0;
+        I:=0;
+        while I<=NPoints-1 do
+        begin
+            APVMove(@Tmp[0], 0, NVars-1, @XY[I][0], 0, NVars-1);
+            for i_ := 0 to NVars-1 do
+            begin
+                Tmp[i_] := Tmp[i_] - CA[i_,XYCA[I]];
+            end;
+            V := APVDotProduct(@Tmp[0], 0, NVars-1, @Tmp[0], 0, NVars-1);
+            EA := EA+V;
+            Inc(I);
+        end;
+        
+        //
+        // Test: Restarts>1
+        //
+        KMeansGenerate(XY, NPoints, NVars, NClusters, Restarts, Info, CB, XYCB);
+        if Info<0 then
+        begin
+            ConvErrors := True;
+            Exit;
+        end;
+        EB := 0;
+        I:=0;
+        while I<=NPoints-1 do
+        begin
+            APVMove(@Tmp[0], 0, NVars-1, @XY[I][0], 0, NVars-1);
+            for i_ := 0 to NVars-1 do
+            begin
+                Tmp[i_] := Tmp[i_] - CB[i_,XYCB[I]];
+            end;
+            V := APVDotProduct(@Tmp[0], 0, NVars-1, @Tmp[0], 0, NVars-1);
+            EB := EB+V;
+            Inc(I);
+        end;
+        
+        //
+        // Calculate statistic.
+        //
+        if AP_FP_Less(EA,EB) then
+        begin
+            P := P+1;
+        end;
+        if AP_FP_Eq(EA,EB) then
+        begin
+            P := P+0.5;
+        end;
+        Inc(Pass);
+    end;
+    
+    //
+    // If Restarts doesn't influence quality of centers found, P must be
+    // binomially distributed random value with mean 0.5*PassCount and
+    // standard deviation Sqrt(PassCount/4).
+    //
+    // If Restarts do influence quality of solution, P must be significantly
+    // lower than 0.5*PassCount.
+    //
+    S := (P-0.5*PassCount)/Sqrt(AP_Double(PassCount)/4);
+    RestartsErrors := RestartsErrors or AP_FP_Greater(S,-SigmaThreshold);
 end;
 
 

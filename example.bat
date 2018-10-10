@@ -62,12 +62,13 @@ IF "%~2"=="minlm" GOTO lbl_4_minlm
 IF "%~2"=="polint" GOTO lbl_4_polint
 IF "%~2"=="ratinterpolation" GOTO lbl_4_ratinterpolation
 IF "%~2"=="ratint" GOTO lbl_4_ratint
-IF "%~2"=="taskgen" GOTO lbl_4_taskgen
+IF "%~2"=="apserv" GOTO lbl_4_apserv
 IF "%~2"=="spline2d" GOTO lbl_4_spline2d
 IF "%~2"=="spline3" GOTO lbl_4_spline3
 IF "%~2"=="spline1d" GOTO lbl_4_spline1d
 IF "%~2"=="idwint" GOTO lbl_4_idwint
 IF "%~2"=="nearestneighbor" GOTO lbl_4_nearestneighbor
+IF "%~2"=="pspline" GOTO lbl_4_pspline
 IF "%~2"=="matdet" GOTO lbl_4_matdet
 IF "%~2"=="sdet" GOTO lbl_4_sdet
 IF "%~2"=="ldlt" GOTO lbl_4_ldlt
@@ -284,7 +285,7 @@ GOTO lbl_4___end
 :lbl_4_ratint
 echo ratint_fit          Rational fitting
 GOTO lbl_4___end
-:lbl_4_taskgen
+:lbl_4_apserv
 echo No examples for this unit
 GOTO lbl_4___end
 :lbl_4_spline2d
@@ -305,6 +306,9 @@ GOTO lbl_4___end
 echo No examples for this unit
 GOTO lbl_4___end
 :lbl_4_nearestneighbor
+echo No examples for this unit
+GOTO lbl_4___end
+:lbl_4_pspline
 echo No examples for this unit
 GOTO lbl_4___end
 :lbl_4_matdet

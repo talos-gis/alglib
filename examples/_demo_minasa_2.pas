@@ -38,7 +38,7 @@ begin
     MinASASetCond(State, 0.0, 0.0, 0.00001, 0);
     MinASASetXRep(State, True);
     MinASASetStpMax(State, 0.2);
-    Write(Format(''#13#10''#13#10'F = x+2y+3z subject to 0<=x<=1, 0<=y<=1, 0<=z<=1'#13#10'',[]));
+    Write(Format(''#13#10''#13#10'F = x+4y+9z subject to 0<=x<=1, 0<=y<=1, 0<=z<=1'#13#10'',[]));
     Write(Format('OPTIMIZATION STARTED'#13#10'',[]));
     while MinASAIteration(State) do
     begin

@@ -19,13 +19,14 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit spline1d;
 interface
-uses Math, Sysutils, Ap, spline3, blas, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, hblas, sblas, ortfac, rotations, bdsvd, svd, xblas, densesolver, linmin, minlbfgs, minlm, lsfit;
+uses Math, Sysutils, Ap, spline3, blas, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, hblas, sblas, ortfac, rotations, bdsvd, svd, xblas, densesolver, linmin, minlbfgs, minlm, lsfit, apserv;
 
 type
 (*************************************************************************
 1-dimensional spline inteprolant
 *************************************************************************)
 Spline1DInterpolant = record
+    Periodic : Boolean;
     N : AlglibInteger;
     K : AlglibInteger;
     X : TReal1DArray;
@@ -62,6 +63,12 @@ procedure Spline1DBuildCubic(X : TReal1DArray;
      BoundL : Double;
      BoundRType : AlglibInteger;
      BoundR : Double;
+     var C : Spline1DInterpolant);
+procedure Spline1DBuildCatmullRom(X : TReal1DArray;
+     Y : TReal1DArray;
+     N : AlglibInteger;
+     BoundType : AlglibInteger;
+     Tension : Double;
      var C : Spline1DInterpolant);
 procedure Spline1DBuildHermite(X : TReal1DArray;
      Y : TReal1DArray;
@@ -118,11 +125,6 @@ procedure Spline1DDiff(const C : Spline1DInterpolant;
      var D2S : Double);
 procedure Spline1DCopy(const C : Spline1DInterpolant;
      var CC : Spline1DInterpolant);
-procedure Spline1DSerialize(const C : Spline1DInterpolant;
-     var RA : TReal1DArray;
-     var RALen : AlglibInteger);
-procedure Spline1DUnserialize(const RA : TReal1DArray;
-     var C : Spline1DInterpolant);
 procedure Spline1DUnpack(const C : Spline1DInterpolant;
      var N : AlglibInteger;
      var Tbl : TReal2DArray);
@@ -165,6 +167,12 @@ procedure SolveTridiagonal(A : TReal1DArray;
      D : TReal1DArray;
      N : AlglibInteger;
      var X : TReal1DArray);forward;
+procedure SolveCyclicTridiagonal(const A : TReal1DArray;
+     B : TReal1DArray;
+     const C : TReal1DArray;
+     const D : TReal1DArray;
+     N : AlglibInteger;
+     var X : TReal1DArray);forward;
 function DiffThreePoint(T : Double;
      X0 : Double;
      F0 : Double;
@@ -184,6 +192,11 @@ INPUT PARAMETERS:
     
 OUTPUT PARAMETERS:
     C   -   spline interpolant
+
+
+ORDER OF POINTS
+
+Subroutine automatically sorts points, so caller may pass unsorted array.
 
   -- ALGLIB PROJECT --
      Copyright 24.06.2007 by Bochkanov Sergey
@@ -207,6 +220,7 @@ begin
     //
     // Build
     //
+    C.Periodic := False;
     C.N := N;
     C.K := 3;
     SetLength(C.X, N);
@@ -233,8 +247,8 @@ end;
 This subroutine builds cubic spline interpolant.
 
 INPUT PARAMETERS:
-    X           -   spline nodes, array[0..N-1]
-    Y           -   function values, array[0..N-1]
+    X           -   spline nodes, array[0..N-1].
+    Y           -   function values, array[0..N-1].
     N           -   points count, N>=2
     BoundLType  -   boundary condition type for the left boundary
     BoundL      -   left boundary condition (first or second derivative,
@@ -245,12 +259,30 @@ INPUT PARAMETERS:
 
 OUTPUT PARAMETERS:
     C           -   spline interpolant
-                    
+
+
+ORDER OF POINTS
+
+Subroutine automatically sorts points, so caller may pass unsorted array.
+
+SETTING BOUNDARY VALUES:
+
 The BoundLType/BoundRType parameters can have the following values:
-    * 0, which  corresponds  to  the  parabolically   terminated  spline
-         (BoundL/BoundR are ignored).
-    * 1, which corresponds to the first derivative boundary condition
-    * 2, which corresponds to the second derivative boundary condition
+    * -1, which corresonds to the periodic (cyclic) boundary conditions.
+          In this case:
+          * both BoundLType and BoundRType must be equal to -1.
+          * BoundL/BoundR are ignored
+          * Y[last] is ignored (it is assumed to be equal to Y[first]).
+    *  0, which  corresponds  to  the  parabolically   terminated  spline
+          (BoundL and/or BoundR are ignored).
+    *  1, which corresponds to the first derivative boundary condition
+    *  2, which corresponds to the second derivative boundary condition
+
+PROBLEMS WITH PERIODIC BOUNDARY CONDITIONS:
+
+Problems with periodic boundary conditions have Y[first_point]=Y[last_point].
+However, this subroutine doesn't require you to specify equal  values  for
+the first and last points - it automatically forces them to be equal.
 
   -- ALGLIB PROJECT --
      Copyright 23.06.2007 by Bochkanov Sergey
@@ -269,22 +301,21 @@ var
     A3 : TReal1DArray;
     B : TReal1DArray;
     D : TReal1DArray;
+    DT : TReal1DArray;
     I : AlglibInteger;
+    V : Double;
 begin
     X := DynamicArrayCopy(X);
     Y := DynamicArrayCopy(Y);
-    Assert(N>=2, 'BuildCubicSpline: N<2!');
-    Assert((BoundLType=0) or (BoundLType=1) or (BoundLType=2), 'BuildCubicSpline: incorrect BoundLType!');
-    Assert((BoundRType=0) or (BoundRType=1) or (BoundRType=2), 'BuildCubicSpline: incorrect BoundRType!');
-    SetLength(A1, N);
-    SetLength(A2, N);
-    SetLength(A3, N);
-    SetLength(B, N);
+    Assert(N>=2, 'Spline1DBuildCubic: N<2!');
+    Assert((BoundLType=-1) or (BoundLType=0) or (BoundLType=1) or (BoundLType=2), 'Spline1DBuildCubic: incorrect BoundLType!');
+    Assert((BoundRType=-1) or (BoundRType=0) or (BoundRType=1) or (BoundRType=2), 'Spline1DBuildCubic: incorrect BoundRType!');
+    Assert((BoundRType=-1) and (BoundLType=-1) or (BoundRType<>-1) and (BoundLType<>-1), 'Spline1DBuildCubic: incorrect BoundLType/BoundRType!');
     
     //
-    // Special case:
-    // * N=2
-    // * parabolic terminated boundary condition on both ends
+    // Special cases:
+    // * N=2, parabolic terminated boundary condition on both ends
+    // * N=2, periodic boundary condition
     //
     if (N=2) and (BoundLType=0) and (BoundRType=0) then
     begin
@@ -297,85 +328,302 @@ begin
         BoundRType := 2;
         BoundR := 0;
     end;
-    
-    //
-    //
-    // Sort points
-    //
-    HeapSortPoints(X, Y, N);
-    
-    //
-    // Left boundary conditions
-    //
-    if BoundLType=0 then
+    if (N=2) and (BoundLType=-1) and (BoundRType=-1) then
     begin
-        A1[0] := 0;
-        A2[0] := 1;
-        A3[0] := 1;
-        B[0] := 2*(Y[1]-Y[0])/(X[1]-X[0]);
-    end;
-    if BoundLType=1 then
-    begin
-        A1[0] := 0;
-        A2[0] := 1;
-        A3[0] := 0;
-        B[0] := BoundL;
-    end;
-    if BoundLType=2 then
-    begin
-        A1[0] := 0;
-        A2[0] := 2;
-        A3[0] := 1;
-        B[0] := 3*(Y[1]-Y[0])/(X[1]-X[0])-0.5*BoundL*(X[1]-X[0]);
+        
+        //
+        // Change task type
+        //
+        BoundLType := 1;
+        BoundL := 0;
+        BoundRType := 1;
+        BoundR := 0;
+        Y[1] := Y[0];
     end;
     
     //
-    // Central conditions
+    // Periodic and non-periodic boundary conditions are
+    // two separate classes
     //
-    I:=1;
-    while I<=N-2 do
+    if (BoundRType=-1) and (BoundLType=-1) then
     begin
-        A1[I] := X[I+1]-X[I];
-        A2[I] := 2*(X[I+1]-X[I-1]);
-        A3[I] := X[I]-X[I-1];
-        B[I] := 3*(Y[I]-Y[I-1])/(X[I]-X[I-1])*(X[I+1]-X[I])+3*(Y[I+1]-Y[I])/(X[I+1]-X[I])*(X[I]-X[I-1]);
-        Inc(I);
+        
+        //
+        // Periodic boundary conditions
+        //
+        SetLength(A1, N-1);
+        SetLength(A2, N-1);
+        SetLength(A3, N-1);
+        SetLength(B, N-1);
+        
+        //
+        // Sort points.
+        //
+        HeapSortPoints(X, Y, N);
+        Y[N-1] := Y[0];
+        
+        //
+        // Boundary conditions at N-1 points
+        // (one point less because last point is the same as first point).
+        //
+        A1[0] := X[1]-X[0];
+        A2[0] := 2*(X[1]-X[0]+X[N-1]-X[N-2]);
+        A3[0] := X[N-1]-X[N-2];
+        B[0] := 3*(Y[N-1]-Y[N-2])/(X[N-1]-X[N-2])*(X[1]-X[0])+3*(Y[1]-Y[0])/(X[1]-X[0])*(X[N-1]-X[N-2]);
+        I:=1;
+        while I<=N-2 do
+        begin
+            
+            //
+            // Altough last point is [N-2], we use X[N-1] and Y[N-1]
+            // (because of periodicity)
+            //
+            A1[I] := X[I+1]-X[I];
+            A2[I] := 2*(X[I+1]-X[I-1]);
+            A3[I] := X[I]-X[I-1];
+            B[I] := 3*(Y[I]-Y[I-1])/(X[I]-X[I-1])*(X[I+1]-X[I])+3*(Y[I+1]-Y[I])/(X[I+1]-X[I])*(X[I]-X[I-1]);
+            Inc(I);
+        end;
+        
+        //
+        // Solve, add last point (with index N-1)
+        //
+        SolveCyclicTridiagonal(A1, A2, A3, B, N-1, DT);
+        SetLength(D, N);
+        APVMove(@D[0], 0, N-2, @DT[0], 0, N-2);
+        D[N-1] := D[0];
+        
+        //
+        // Now problem is reduced to the cubic Hermite spline
+        //
+        Spline1DBuildHermite(X, Y, D, N, C);
+        C.Periodic := True;
+    end
+    else
+    begin
+        
+        //
+        // Non-periodic boundary condition
+        //
+        SetLength(A1, N);
+        SetLength(A2, N);
+        SetLength(A3, N);
+        SetLength(B, N);
+        
+        //
+        // Sort points.
+        //
+        HeapSortPoints(X, Y, N);
+        
+        //
+        // Left boundary conditions
+        //
+        if BoundLType=0 then
+        begin
+            A1[0] := 0;
+            A2[0] := 1;
+            A3[0] := 1;
+            B[0] := 2*(Y[1]-Y[0])/(X[1]-X[0]);
+        end;
+        if BoundLType=1 then
+        begin
+            A1[0] := 0;
+            A2[0] := 1;
+            A3[0] := 0;
+            B[0] := BoundL;
+        end;
+        if BoundLType=2 then
+        begin
+            A1[0] := 0;
+            A2[0] := 2;
+            A3[0] := 1;
+            B[0] := 3*(Y[1]-Y[0])/(X[1]-X[0])-0.5*BoundL*(X[1]-X[0]);
+        end;
+        
+        //
+        // Central conditions
+        //
+        I:=1;
+        while I<=N-2 do
+        begin
+            A1[I] := X[I+1]-X[I];
+            A2[I] := 2*(X[I+1]-X[I-1]);
+            A3[I] := X[I]-X[I-1];
+            B[I] := 3*(Y[I]-Y[I-1])/(X[I]-X[I-1])*(X[I+1]-X[I])+3*(Y[I+1]-Y[I])/(X[I+1]-X[I])*(X[I]-X[I-1]);
+            Inc(I);
+        end;
+        
+        //
+        // Right boundary conditions
+        //
+        if BoundRType=0 then
+        begin
+            A1[N-1] := 1;
+            A2[N-1] := 1;
+            A3[N-1] := 0;
+            B[N-1] := 2*(Y[N-1]-Y[N-2])/(X[N-1]-X[N-2]);
+        end;
+        if BoundRType=1 then
+        begin
+            A1[N-1] := 0;
+            A2[N-1] := 1;
+            A3[N-1] := 0;
+            B[N-1] := BoundR;
+        end;
+        if BoundRType=2 then
+        begin
+            A1[N-1] := 1;
+            A2[N-1] := 2;
+            A3[N-1] := 0;
+            B[N-1] := 3*(Y[N-1]-Y[N-2])/(X[N-1]-X[N-2])+0.5*BoundR*(X[N-1]-X[N-2]);
+        end;
+        
+        //
+        // Solve
+        //
+        SolveTridiagonal(A1, A2, A3, B, N, D);
+        
+        //
+        // Now problem is reduced to the cubic Hermite spline
+        //
+        Spline1DBuildHermite(X, Y, D, N, C);
+    end;
+end;
+
+
+(*************************************************************************
+This subroutine builds Catmull-Rom spline interpolant.
+
+INPUT PARAMETERS:
+    X           -   spline nodes, array[0..N-1].
+    Y           -   function values, array[0..N-1].
+    N           -   points count, N>=2
+    BoundType   -   boundary condition type:
+                    * -1 for periodic boundary condition
+                    *  0 for parabolically terminated spline
+    Tension     -   tension parameter:
+                    * tension=0   corresponds to classic Catmull-Rom spline
+                    * 0<tension<1 corresponds to more general form - cardinal spline
+
+OUTPUT PARAMETERS:
+    C           -   spline interpolant
+
+
+ORDER OF POINTS
+
+Subroutine automatically sorts points, so caller may pass unsorted array.
+
+PROBLEMS WITH PERIODIC BOUNDARY CONDITIONS:
+
+Problems with periodic boundary conditions have Y[first_point]=Y[last_point].
+However, this subroutine doesn't require you to specify equal  values  for
+the first and last points - it automatically forces them to be equal.
+
+  -- ALGLIB PROJECT --
+     Copyright 23.06.2007 by Bochkanov Sergey
+*************************************************************************)
+procedure Spline1DBuildCatmullRom(X : TReal1DArray;
+     Y : TReal1DArray;
+     N : AlglibInteger;
+     BoundType : AlglibInteger;
+     Tension : Double;
+     var C : Spline1DInterpolant);
+var
+    A1 : TReal1DArray;
+    A2 : TReal1DArray;
+    A3 : TReal1DArray;
+    B : TReal1DArray;
+    D : TReal1DArray;
+    DT : TReal1DArray;
+    I : AlglibInteger;
+    V : Double;
+begin
+    X := DynamicArrayCopy(X);
+    Y := DynamicArrayCopy(Y);
+    Assert(N>=2, 'Spline1DBuildCatmullRom: N<2!');
+    Assert((BoundType=-1) or (BoundType=0), 'Spline1DBuildCatmullRom: incorrect BoundType!');
+    
+    //
+    // Special cases:
+    // * N=2, parabolic terminated boundary condition on both ends
+    // * N=2, periodic boundary condition
+    //
+    if (N=2) and (BoundType=0) then
+    begin
+        
+        //
+        // Just linear spline
+        //
+        Spline1DBuildLinear(X, Y, N, C);
+        Exit;
+    end;
+    if (N=2) and (BoundType=-1) then
+    begin
+        
+        //
+        // Same as cubic spline with periodic conditions
+        //
+        Spline1DBuildCubic(X, Y, N, -1, 0.0, -1, 0.0, C);
+        Exit;
     end;
     
     //
-    // Right boundary conditions
+    // Periodic or non-periodic boundary conditions
     //
-    if BoundRType=0 then
+    if BoundType=-1 then
     begin
-        A1[N-1] := 1;
-        A2[N-1] := 1;
-        A3[N-1] := 0;
-        B[N-1] := 2*(Y[N-1]-Y[N-2])/(X[N-1]-X[N-2]);
-    end;
-    if BoundRType=1 then
+        
+        //
+        // Sort points.
+        //
+        HeapSortPoints(X, Y, N);
+        Y[N-1] := Y[0];
+        
+        //
+        // Periodic boundary conditions
+        //
+        SetLength(D, N);
+        D[0] := (Y[1]-Y[N-2])/(2*(X[1]-X[0]+X[N-1]-X[N-2]));
+        I:=1;
+        while I<=N-2 do
+        begin
+            D[I] := (1-Tension)*(Y[I+1]-Y[I-1])/(X[I+1]-X[I-1]);
+            Inc(I);
+        end;
+        D[N-1] := D[0];
+        
+        //
+        // Now problem is reduced to the cubic Hermite spline
+        //
+        Spline1DBuildHermite(X, Y, D, N, C);
+        C.Periodic := True;
+    end
+    else
     begin
-        A1[N-1] := 0;
-        A2[N-1] := 1;
-        A3[N-1] := 0;
-        B[N-1] := BoundR;
+        
+        //
+        // Sort points.
+        //
+        HeapSortPoints(X, Y, N);
+        
+        //
+        // Non-periodic boundary conditions
+        //
+        SetLength(D, N);
+        I:=1;
+        while I<=N-2 do
+        begin
+            D[I] := (1-Tension)*(Y[I+1]-Y[I-1])/(X[I+1]-X[I-1]);
+            Inc(I);
+        end;
+        D[0] := 2*(Y[1]-Y[0])/(X[1]-X[0])-D[1];
+        D[N-1] := 2*(Y[N-1]-Y[N-2])/(X[N-1]-X[N-2])-D[N-2];
+        
+        //
+        // Now problem is reduced to the cubic Hermite spline
+        //
+        Spline1DBuildHermite(X, Y, D, N, C);
     end;
-    if BoundRType=2 then
-    begin
-        A1[N-1] := 1;
-        A2[N-1] := 2;
-        A3[N-1] := 0;
-        B[N-1] := 3*(Y[N-1]-Y[N-2])/(X[N-1]-X[N-2])+0.5*BoundR*(X[N-1]-X[N-2]);
-    end;
-    
-    //
-    // Solve
-    //
-    SolveTridiagonal(A1, A2, A3, B, N, D);
-    
-    //
-    // Now problem is reduced to the cubic Hermite spline
-    //
-    Spline1DBuildHermite(X, Y, D, N, C);
 end;
 
 
@@ -390,6 +638,11 @@ INPUT PARAMETERS:
 
 OUTPUT PARAMETERS:
     C           -   spline interpolant.
+
+
+ORDER OF POINTS
+
+Subroutine automatically sorts points, so caller may pass unsorted array.
 
   -- ALGLIB PROJECT --
      Copyright 23.06.2007 by Bochkanov Sergey
@@ -420,6 +673,7 @@ begin
     //
     SetLength(C.X, N);
     SetLength(C.C, 4*(N-1));
+    C.Periodic := False;
     C.K := 3;
     C.N := N;
     I:=0;
@@ -453,6 +707,11 @@ INPUT PARAMETERS:
 
 OUTPUT PARAMETERS:
     C           -   spline interpolant
+
+
+ORDER OF POINTS
+
+Subroutine automatically sorts points, so caller may pass unsorted array.
 
   -- ALGLIB PROJECT --
      Copyright 24.06.2007 by Bochkanov Sergey
@@ -582,6 +841,11 @@ OUTPUT PARAMETERS:
 IMPORTANT:
     this subroitine doesn't calculate task's condition number for K<>0.
 
+
+ORDER OF POINTS
+
+Subroutine automatically sorts points, so caller may pass unsorted array.
+
 SETTING CONSTRAINTS - DANGERS AND OPPORTUNITIES:
 
 Setting constraints can lead  to undesired  results,  like ill-conditioned
@@ -692,6 +956,11 @@ IMPORTANT:
 
 IMPORTANT:
     this subroitine supports only even M's
+
+
+ORDER OF POINTS
+
+Subroutine automatically sorts points, so caller may pass unsorted array.
 
 SETTING CONSTRAINTS - DANGERS AND OPPORTUNITIES:
 
@@ -835,8 +1104,17 @@ var
     L : AlglibInteger;
     R : AlglibInteger;
     M : AlglibInteger;
+    T : Double;
 begin
     Assert(C.K=3, 'Spline1DCalc: internal error');
+    
+    //
+    // correct if periodic
+    //
+    if C.Periodic then
+    begin
+        APPeriodicMap(X, C.X[0], C.X[C.N-1], T);
+    end;
     
     //
     // Binary search in the [ x[0], ..., x[n-2] ] (x[n-1] is not included)
@@ -889,8 +1167,17 @@ var
     L : AlglibInteger;
     R : AlglibInteger;
     M : AlglibInteger;
+    T : Double;
 begin
     Assert(C.K=3, 'Spline1DCalc: internal error');
+    
+    //
+    // correct if periodic
+    //
+    if C.Periodic then
+    begin
+        APPeriodicMap(X, C.X[0], C.X[C.N-1], T);
+    end;
     
     //
     // Binary search
@@ -936,66 +1223,13 @@ Result:
 procedure Spline1DCopy(const C : Spline1DInterpolant;
      var CC : Spline1DInterpolant);
 begin
+    CC.Periodic := C.Periodic;
     CC.N := C.N;
     CC.K := C.K;
     SetLength(CC.X, CC.N);
     APVMove(@CC.X[0], 0, CC.N-1, @C.X[0], 0, CC.N-1);
     SetLength(CC.C, (CC.K+1)*(CC.N-1));
     APVMove(@CC.C[0], 0, (CC.K+1)*(CC.N-1)-1, @C.C[0], 0, (CC.K+1)*(CC.N-1)-1);
-end;
-
-
-(*************************************************************************
-Serialization of the spline interpolant
-
-INPUT PARAMETERS:
-    B   -   spline interpolant
-
-OUTPUT PARAMETERS:
-    RA      -   array of real numbers which contains interpolant,
-                array[0..RLen-1]
-    RLen    -   RA lenght
-
-  -- ALGLIB --
-     Copyright 17.08.2009 by Bochkanov Sergey
-*************************************************************************)
-procedure Spline1DSerialize(const C : Spline1DInterpolant;
-     var RA : TReal1DArray;
-     var RALen : AlglibInteger);
-begin
-    RALen := 2+2+C.N+(C.K+1)*(C.N-1);
-    SetLength(RA, RALen);
-    RA[0] := RALen;
-    RA[1] := Spline1DVNum;
-    RA[2] := C.N;
-    RA[3] := C.K;
-    APVMove(@RA[0], 4, 4+C.N-1, @C.X[0], 0, C.N-1);
-    APVMove(@RA[0], 4+C.N, 4+C.N+(C.K+1)*(C.N-1)-1, @C.C[0], 0, (C.K+1)*(C.N-1)-1);
-end;
-
-
-(*************************************************************************
-Unserialization of the spline interpolant
-
-INPUT PARAMETERS:
-    RA  -   array of real numbers which contains interpolant,
-
-OUTPUT PARAMETERS:
-    B   -   spline interpolant
-
-  -- ALGLIB --
-     Copyright 17.08.2009 by Bochkanov Sergey
-*************************************************************************)
-procedure Spline1DUnserialize(const RA : TReal1DArray;
-     var C : Spline1DInterpolant);
-begin
-    Assert(Round(RA[1])=Spline1DVNum, 'Spline1DUnserialize: corrupted array!');
-    C.N := Round(RA[2]);
-    C.K := Round(RA[3]);
-    SetLength(C.X, C.N);
-    SetLength(C.C, (C.K+1)*(C.N-1));
-    APVMove(@C.X[0], 0, C.N-1, @RA[0], 4, 4+C.N-1);
-    APVMove(@C.C[0], 0, (C.K+1)*(C.N-1)-1, @RA[0], 4+C.N, 4+C.N+(C.K+1)*(C.N-1)-1);
 end;
 
 
@@ -1164,7 +1398,8 @@ This subroutine integrates the spline.
 
 INPUT PARAMETERS:
     C   -   spline interpolant.
-    X   -   right bound of the integration interval [a, x]
+    X   -   right bound of the integration interval [a, x],
+            here 'a' denotes min(x[])
 Result:
     integral(S(t)dt,a,x)
 
@@ -1181,8 +1416,56 @@ var
     M : AlglibInteger;
     W : Double;
     V : Double;
+    T : Double;
+    IntAB : Double;
+    AdditionalTerm : Double;
 begin
     N := C.N;
+    
+    //
+    // Periodic splines require special treatment. We make
+    // following transformation:
+    //
+    //     integral(S(t)dt,A,X) = integral(S(t)dt,A,Z)+AdditionalTerm
+    //
+    // here X may lie outside of [A,B], Z lies strictly in [A,B],
+    // AdditionalTerm is equals to integral(S(t)dt,A,B) times some
+    // integer number (may be zero).
+    //
+    if C.Periodic and (AP_FP_Less(X,C.X[0]) or AP_FP_Greater(X,C.X[C.N-1])) then
+    begin
+        
+        //
+        // compute integral(S(x)dx,A,B)
+        //
+        IntAB := 0;
+        I:=0;
+        while I<=C.N-2 do
+        begin
+            W := C.X[I+1]-C.X[I];
+            M := (C.K+1)*I;
+            IntAB := IntAB+C.C[M]*W;
+            V := W;
+            J:=1;
+            while J<=C.K do
+            begin
+                V := V*W;
+                IntAB := IntAB+C.C[M+J]*V/(J+1);
+                Inc(J);
+            end;
+            Inc(I);
+        end;
+        
+        //
+        // map X into [A,B]
+        //
+        APPeriodicMap(X, C.X[0], C.X[C.N-1], T);
+        AdditionalTerm := T*IntAB;
+    end
+    else
+    begin
+        AdditionalTerm := 0;
+    end;
     
     //
     // Binary search in the [ x[0], ..., x[n-2] ] (x[n-1] is not included)
@@ -1233,6 +1516,7 @@ begin
         Result := Result+C.C[M+J]*V/(J+1);
         Inc(J);
     end;
+    Result := Result+AdditionalTerm;
 end;
 
 
@@ -1891,7 +2175,16 @@ end;
 
 
 (*************************************************************************
-Internal subroutine. Tridiagonal solver.
+Internal subroutine. Tridiagonal solver. Solves
+
+( B[0] C[0]                      )
+( A[1] B[1] C[1]                 )
+(      A[2] B[2] C[2]            )
+(            ..........          ) * X = D
+(            ..........          )
+(           A[N-2] B[N-2] C[N-2] )
+(                  A[N-1] B[N-1] )
+
 *************************************************************************)
 procedure SolveTridiagonal(A : TReal1DArray;
      B : TReal1DArray;
@@ -1924,6 +2217,60 @@ begin
     begin
         X[K] := (D[K]-C[K]*X[K+1])/B[K];
         Dec(K);
+    end;
+end;
+
+
+(*************************************************************************
+Internal subroutine. Cyclic tridiagonal solver. Solves
+
+( B[0] C[0]                 A[0] )
+( A[1] B[1] C[1]                 )
+(      A[2] B[2] C[2]            )
+(            ..........          ) * X = D
+(            ..........          )
+(           A[N-2] B[N-2] C[N-2] )
+( C[N-1]           A[N-1] B[N-1] )
+*************************************************************************)
+procedure SolveCyclicTridiagonal(const A : TReal1DArray;
+     B : TReal1DArray;
+     const C : TReal1DArray;
+     const D : TReal1DArray;
+     N : AlglibInteger;
+     var X : TReal1DArray);
+var
+    K : AlglibInteger;
+    T : Double;
+    Alpha : Double;
+    Beta : Double;
+    Gamma : Double;
+    Y : TReal1DArray;
+    Z : TReal1DArray;
+    U : TReal1DArray;
+begin
+    B := DynamicArrayCopy(B);
+    Beta := A[0];
+    Alpha := C[N-1];
+    Gamma := -B[0];
+    B[0] := 2*B[0];
+    B[N-1] := B[N-1]-Alpha*Beta/Gamma;
+    SetLength(U, N);
+    K:=0;
+    while K<=N-1 do
+    begin
+        U[K] := 0;
+        Inc(K);
+    end;
+    U[0] := Gamma;
+    U[N-1] := Alpha;
+    SolveTridiagonal(A, B, C, D, N, Y);
+    SolveTridiagonal(A, B, C, U, N, Z);
+    SetLength(X, N);
+    K:=0;
+    while K<=N-1 do
+    begin
+        X[K] := Y[K]-(Y[0]+Beta/Gamma*Y[N-1])/(1+Z[0]+Beta/Gamma*Z[N-1])*Z[K];
+        Inc(K);
     end;
 end;
 

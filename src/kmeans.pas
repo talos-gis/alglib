@@ -55,7 +55,7 @@ INPUT PARAMETERS:
 
 OUTPUT PARAMETERS:
     Info        -   return code:
-                    * -3, if taskis degenerate (number of distinct points is
+                    * -3, if task is degenerate (number of distinct points is
                           less than K)
                     * -1, if incorrect NPoints/NFeatures/K/Restarts was passed
                     *  1, if subroutine finished successfully
@@ -80,6 +80,7 @@ var
     J : AlglibInteger;
     CT : TReal2DArray;
     CTBest : TReal2DArray;
+    XYCBest : TInteger1DArray;
     E : Double;
     EBest : Double;
     X : TReal1DArray;
@@ -115,14 +116,15 @@ begin
     //
     // Multiple passes of k-means++ algorithm
     //
-    SetLength(CT, K-1+1, NVars-1+1);
-    SetLength(CTBest, K-1+1, NVars-1+1);
-    SetLength(XYC, NPoints-1+1);
-    SetLength(D2, NPoints-1+1);
-    SetLength(P, NPoints-1+1);
-    SetLength(Tmp, NVars-1+1);
-    SetLength(CSizes, K-1+1);
-    SetLength(CBusy, K-1+1);
+    SetLength(CT, K, NVars);
+    SetLength(CTBest, K, NVars);
+    SetLength(XYC, NPoints);
+    SetLength(XYCBest, NPoints);
+    SetLength(D2, NPoints);
+    SetLength(P, NPoints);
+    SetLength(Tmp, NVars);
+    SetLength(CSizes, K);
+    SetLength(CBusy, K);
     EBest := MaxRealNumber;
     Pass:=1;
     while Pass<=Restarts do
@@ -272,9 +274,16 @@ begin
         begin
             
             //
-            // store partition
+            // store partition.
             //
+            EBest := E;
             CopyMatrix(CT, 0, K-1, 0, NVars-1, CTBest, 0, K-1, 0, NVars-1);
+            I:=0;
+            while I<=NPoints-1 do
+            begin
+                XYCBest[I] := XYC[I];
+                Inc(I);
+            end;
         end;
         Inc(Pass);
     end;
@@ -284,6 +293,12 @@ begin
     //
     SetLength(C, NVars-1+1, K-1+1);
     CopyAndTranspose(CTBest, 0, K-1, 0, NVars-1, C, 0, NVars-1, 0, K-1);
+    I:=0;
+    while I<=NPoints-1 do
+    begin
+        XYC[I] := XYCBest[I];
+        Inc(I);
+    end;
 end;
 
 
