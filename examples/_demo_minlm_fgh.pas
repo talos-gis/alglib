@@ -2,8 +2,8 @@
 program _demo;
 Array[0]
 var
-    State : LMState;
-    Rep : LMReport;
+    State : MinLMState;
+    Rep : MinLMReport;
     S : TReal1DArray;
     X : Double;
     Y : Double;
@@ -19,7 +19,8 @@ begin
     SetLength(S, 2);
     S[0] := RandomReal-0.5;
     S[1] := RandomReal-0.5;
-    MinLMFGH(2, S, 0.0, 0.001, 0, State);
+    MinLMCreateFGH(2, S, State);
+    MinLMSetCond(State, 0.0, 0.0, 0.001, 0);
     while MinLMIteration(State) do
     begin
         X := State.X[0];

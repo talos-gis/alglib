@@ -1,10 +1,10 @@
-unit testinterpolation2dunit;
+unit testspline2dunit;
 interface
-uses Math, Sysutils, Ap, spline3, blas, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, hblas, sblas, ortfac, rotations, bdsvd, svd, xblas, densesolver, lbfgs, minlm, lsfit, spline1d, spline2d;
+uses Math, Sysutils, Ap, spline3, blas, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, hblas, sblas, ortfac, rotations, bdsvd, svd, xblas, densesolver, linmin, minlbfgs, minlm, lsfit, spline1d, spline2d;
 
 function Test2DInterpolation(Silent : Boolean):Boolean;
-function testinterpolation2dunit_test_silent():Boolean;
-function testinterpolation2dunit_test():Boolean;
+function testspline2dunit_test_silent():Boolean;
+function testspline2dunit_test():Boolean;
 
 implementation
 
@@ -968,7 +968,7 @@ end;
 (*************************************************************************
 Silent unit test
 *************************************************************************)
-function testinterpolation2dunit_test_silent():Boolean;
+function testspline2dunit_test_silent():Boolean;
 begin
     Result := Test2DInterpolation(True);
 end;
@@ -977,7 +977,7 @@ end;
 (*************************************************************************
 Unit test
 *************************************************************************)
-function testinterpolation2dunit_test():Boolean;
+function testspline2dunit_test():Boolean;
 begin
     Result := Test2DInterpolation(False);
 end;

@@ -1,10 +1,10 @@
-unit testsplineinterpolationunit;
+unit testspline1dunit;
 interface
-uses Math, Sysutils, Ap, spline3, blas, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, hblas, sblas, ortfac, rotations, bdsvd, svd, xblas, densesolver, lbfgs, minlm, lsfit, spline1d;
+uses Math, Sysutils, Ap, spline3, blas, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, hblas, sblas, ortfac, rotations, bdsvd, svd, xblas, densesolver, linmin, minlbfgs, minlm, lsfit, spline1d;
 
 function TestSplineInterpolation(Silent : Boolean):Boolean;
-function testsplineinterpolationunit_test_silent():Boolean;
-function testsplineinterpolationunit_test():Boolean;
+function testspline1dunit_test_silent():Boolean;
+function testspline1dunit_test():Boolean;
 
 implementation
 
@@ -1514,7 +1514,7 @@ end;
 (*************************************************************************
 Silent unit test
 *************************************************************************)
-function testsplineinterpolationunit_test_silent():Boolean;
+function testspline1dunit_test_silent():Boolean;
 begin
     Result := TestSplineInterpolation(True);
 end;
@@ -1523,7 +1523,7 @@ end;
 (*************************************************************************
 Unit test
 *************************************************************************)
-function testsplineinterpolationunit_test():Boolean;
+function testspline1dunit_test():Boolean;
 begin
     Result := TestSplineInterpolation(False);
 end;

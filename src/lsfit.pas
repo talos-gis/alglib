@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit lsfit;
 interface
-uses Math, Sysutils, Ap, blas, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, hblas, sblas, ortfac, rotations, bdsvd, svd, xblas, densesolver, lbfgs, minlm;
+uses Math, Sysutils, Ap, blas, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, hblas, sblas, ortfac, rotations, bdsvd, svd, xblas, densesolver, linmin, minlbfgs, minlm;
 
 type
 (*************************************************************************
@@ -46,6 +46,7 @@ LSFitState = record
     EpsF : Double;
     EpsX : Double;
     MaxIts : AlglibInteger;
+    StpMax : Double;
     TaskX : TReal2DArray;
     TaskY : TReal1DArray;
     W : TReal1DArray;
@@ -65,8 +66,8 @@ LSFitState = record
     RepAvgError : Double;
     RepAvgRelError : Double;
     RepMaxError : Double;
-    OptState : LMState;
-    OptRep : LMReport;
+    OptState : MinLMState;
+    OptRep : MinLMReport;
     RState : RCommState;
 end;
 
@@ -113,9 +114,6 @@ procedure LSFitNonlinearWFG(const X : TReal2DArray;
      N : AlglibInteger;
      M : AlglibInteger;
      K : AlglibInteger;
-     const EpsF : Double;
-     const EpsX : Double;
-     const MaxIts : AlglibInteger;
      CheapFG : Boolean;
      var State : LSFitState);
 procedure LSFitNonlinearFG(const X : TReal2DArray;
@@ -124,9 +122,6 @@ procedure LSFitNonlinearFG(const X : TReal2DArray;
      N : AlglibInteger;
      M : AlglibInteger;
      K : AlglibInteger;
-     const EpsF : Double;
-     const EpsX : Double;
-     const MaxIts : AlglibInteger;
      CheapFG : Boolean;
      var State : LSFitState);
 procedure LSFitNonlinearWFGH(const X : TReal2DArray;
@@ -136,9 +131,6 @@ procedure LSFitNonlinearWFGH(const X : TReal2DArray;
      N : AlglibInteger;
      M : AlglibInteger;
      K : AlglibInteger;
-     const EpsF : Double;
-     const EpsX : Double;
-     const MaxIts : AlglibInteger;
      var State : LSFitState);
 procedure LSFitNonlinearFGH(const X : TReal2DArray;
      const Y : TReal1DArray;
@@ -146,10 +138,12 @@ procedure LSFitNonlinearFGH(const X : TReal2DArray;
      N : AlglibInteger;
      M : AlglibInteger;
      K : AlglibInteger;
-     const EpsF : Double;
-     const EpsX : Double;
-     const MaxIts : AlglibInteger;
      var State : LSFitState);
+procedure LSFitNonlinearSetCond(var State : LSFitState;
+     EpsF : Double;
+     EpsX : Double;
+     MaxIts : AlglibInteger);
+procedure LSFitNonlinearSetStpMax(var State : LSFitState; StpMax : Double);
 function LSFitNonlinearIteration(var State : LSFitState):Boolean;
 procedure LSFitNonlinearResults(const State : LSFitState;
      var Info : AlglibInteger;
@@ -513,21 +507,14 @@ INPUT PARAMETERS:
     N       -   number of points, N>1
     M       -   dimension of space
     K       -   number of parameters being fitted
-    EpsF    -   stopping criterion. Algorithm stops if
-                |F(k+1)-F(k)| <= EpsF*max{|F(k)|, |F(k+1)|, 1}
-    EpsX    -   stopping criterion. Algorithm stops if
-                |X(k+1)-X(k)| <= EpsX*(1+|X(k)|)
-    MaxIts  -   stopping criterion. Algorithm stops after MaxIts iterations.
-                MaxIts=0 means no stopping criterion.
     CheapFG -   boolean flag, which is:
                 * True  if both function and gradient calculation complexity
                         are less than O(M^2).  An improved  algorithm  can
-                        be  used  which allows to save O(N*M^2) operations
-                        per iteration with  additional cost of N function/
-                        /gradient calculations.
+                        be  used  which corresponds  to  FGJ  scheme  from
+                        MINLM unit.
                 * False otherwise.
                         Standard Jacibian-bases  Levenberg-Marquardt  algo
-                        will be used.
+                        will be used (FJ scheme).
 
 OUTPUT PARAMETERS:
     State   -   structure which stores algorithm state between subsequent
@@ -542,11 +529,6 @@ See also:
     LSFitNonlinearWFGH (fitting using Hessian)
     LSFitNonlinearFGH (fitting using Hessian, without weights)
 
-NOTE
-
-Passing EpsF=0, EpsX=0 and MaxIts=0 (simultaneously) will lead to automatic
-stopping criterion selection (small EpsX).
-
 
   -- ALGLIB --
      Copyright 17.08.2009 by Bochkanov Sergey
@@ -558,9 +540,6 @@ procedure LSFitNonlinearWFG(const X : TReal2DArray;
      N : AlglibInteger;
      M : AlglibInteger;
      K : AlglibInteger;
-     const EpsF : Double;
-     const EpsX : Double;
-     const MaxIts : AlglibInteger;
      CheapFG : Boolean;
      var State : LSFitState);
 var
@@ -569,9 +548,8 @@ begin
     State.N := N;
     State.M := M;
     State.K := K;
-    State.EpsF := EpsF;
-    State.EpsX := EpsX;
-    State.MaxIts := MaxIts;
+    LSFitNonLinearSetCond(State, 0.0, 0.0, 0);
+    LSFitNonLinearSetStpMax(State, 0.0);
     State.CheapFG := CheapFG;
     State.HaveHess := False;
     if (N>=1) and (M>=1) and (K>=1) then
@@ -609,9 +587,6 @@ procedure LSFitNonlinearFG(const X : TReal2DArray;
      N : AlglibInteger;
      M : AlglibInteger;
      K : AlglibInteger;
-     const EpsF : Double;
-     const EpsX : Double;
-     const MaxIts : AlglibInteger;
      CheapFG : Boolean;
      var State : LSFitState);
 var
@@ -620,9 +595,8 @@ begin
     State.N := N;
     State.M := M;
     State.K := K;
-    State.EpsF := EpsF;
-    State.EpsX := EpsX;
-    State.MaxIts := MaxIts;
+    LSFitNonLinearSetCond(State, 0.0, 0.0, 0);
+    LSFitNonLinearSetStpMax(State, 0.0);
     State.CheapFG := CheapFG;
     State.HaveHess := False;
     if (N>=1) and (M>=1) and (K>=1) then
@@ -676,9 +650,6 @@ procedure LSFitNonlinearWFGH(const X : TReal2DArray;
      N : AlglibInteger;
      M : AlglibInteger;
      K : AlglibInteger;
-     const EpsF : Double;
-     const EpsX : Double;
-     const MaxIts : AlglibInteger;
      var State : LSFitState);
 var
     I : AlglibInteger;
@@ -686,9 +657,8 @@ begin
     State.N := N;
     State.M := M;
     State.K := K;
-    State.EpsF := EpsF;
-    State.EpsX := EpsX;
-    State.MaxIts := MaxIts;
+    LSFitNonLinearSetCond(State, 0.0, 0.0, 0);
+    LSFitNonLinearSetStpMax(State, 0.0);
     State.CheapFG := True;
     State.HaveHess := True;
     if (N>=1) and (M>=1) and (K>=1) then
@@ -727,9 +697,6 @@ procedure LSFitNonlinearFGH(const X : TReal2DArray;
      N : AlglibInteger;
      M : AlglibInteger;
      K : AlglibInteger;
-     const EpsF : Double;
-     const EpsX : Double;
-     const MaxIts : AlglibInteger;
      var State : LSFitState);
 var
     I : AlglibInteger;
@@ -737,9 +704,8 @@ begin
     State.N := N;
     State.M := M;
     State.K := K;
-    State.EpsF := EpsF;
-    State.EpsX := EpsX;
-    State.MaxIts := MaxIts;
+    LSFitNonLinearSetCond(State, 0.0, 0.0, 0);
+    LSFitNonLinearSetStpMax(State, 0.0);
     State.CheapFG := True;
     State.HaveHess := True;
     if (N>=1) and (M>=1) and (K>=1) then
@@ -761,6 +727,73 @@ begin
     SetLength(State.RState.IA, 4+1);
     SetLength(State.RState.RA, 1+1);
     State.RState.Stage := -1;
+end;
+
+
+(*************************************************************************
+Stopping conditions for nonlinear least squares fitting.
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be initialized
+                with LSFitNonLinearCreate???()
+    EpsF    -   stopping criterion. Algorithm stops if
+                |F(k+1)-F(k)| <= EpsF*max{|F(k)|, |F(k+1)|, 1}
+    EpsX    -   stopping criterion. Algorithm stops if
+                |X(k+1)-X(k)| <= EpsX*(1+|X(k)|)
+    MaxIts  -   stopping criterion. Algorithm stops after MaxIts iterations.
+                MaxIts=0 means no stopping criterion.
+
+NOTE
+
+Passing EpsF=0, EpsX=0 and MaxIts=0 (simultaneously) will lead to automatic
+stopping criterion selection (according to the scheme used by MINLM unit).
+
+
+  -- ALGLIB --
+     Copyright 17.08.2009 by Bochkanov Sergey
+*************************************************************************)
+procedure LSFitNonlinearSetCond(var State : LSFitState;
+     EpsF : Double;
+     EpsX : Double;
+     MaxIts : AlglibInteger);
+begin
+    Assert(AP_FP_Greater_Eq(EpsF,0), 'LSFitNonlinearSetCond: negative EpsF!');
+    Assert(AP_FP_Greater_Eq(EpsX,0), 'LSFitNonlinearSetCond: negative EpsX!');
+    Assert(MaxIts>=0, 'LSFitNonlinearSetCond: negative MaxIts!');
+    State.EpsF := EpsF;
+    State.EpsX := EpsX;
+    State.MaxIts := MaxIts;
+end;
+
+
+(*************************************************************************
+This function sets maximum step length
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be
+                initialized with LSFitNonLinearCreate???()
+    StpMax  -   maximum step length, >=0. Set StpMax to 0.0,  if you don't
+                want to limit step length.
+
+Use this subroutine when you optimize target function which contains exp()
+or  other  fast  growing  functions,  and optimization algorithm makes too
+large  steps  which  leads  to overflow. This function allows us to reject
+steps  that  are  too  large  (and  therefore  expose  us  to the possible
+overflow) without actually calculating function value at the x+stp*d.
+
+NOTE: non-zero StpMax leads to moderate  performance  degradation  because
+intermediate  step  of  preconditioned L-BFGS optimization is incompatible
+with limits on step size.
+
+  -- ALGLIB --
+     Copyright 02.04.2010 by Bochkanov Sergey
+*************************************************************************)
+procedure LSFitNonlinearSetStpMax(var State : LSFitState; StpMax : Double);
+begin
+    Assert(AP_FP_Greater_Eq(StpMax,0), 'LSFitNonlinearSetStpMax: StpMax<0!');
+    State.StpMax := StpMax;
 end;
 
 
@@ -898,7 +931,7 @@ begin
         // use Hessian.
         // transform stopping conditions.
         //
-        MinLMFGH(K, State.C, AP_Sqr(State.EpsF)*N, State.EpsX, State.MaxIts, State.OptState);
+        MinLMCreateFGH(K, State.C, State.OptState);
     end
     else
     begin
@@ -909,13 +942,15 @@ begin
         //
         if State.CheapFG then
         begin
-            MinLMFGJ(K, N, State.C, AP_Sqr(State.EpsF)*N, State.EpsX, State.MaxIts, State.OptState);
+            MinLMCreateFGJ(K, N, State.C, State.OptState);
         end
         else
         begin
-            MinLMFJ(K, N, State.C, AP_Sqr(State.EpsF)*N, State.EpsX, State.MaxIts, State.OptState);
+            MinLMCreateFJ(K, N, State.C, State.OptState);
         end;
     end;
+    MinLMSetCond(State.OptState, 0.0, State.EpsF, State.EpsX, State.MaxIts);
+    MinLMSetStpMax(State.OptState, State.StpMax);
     
     //
     // Optimize

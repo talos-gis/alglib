@@ -397,7 +397,9 @@ As there is no operator overloading in Object Pascal (and it is often subjected 
 <tr align=left valign=top><td><a href='#unit_trfac' class=toc>trfac</a></td><td width=15>&nbsp;</td><td>LU and Cholesky decompositions</td></tr>
 <tr align=left valign=top><td colspan=2>&nbsp;</td></tr>
 <tr align=left valign=top><td colspan=3 bgcolor=#E8E8E8><b><code>Optimization</code> package</b></td></tr>
-<tr align=left valign=top><td><a href='#unit_lbfgs' class=toc>lbfgs</a></td><td width=15>&nbsp;</td><td>Limited memory BFGS optimizer</td></tr>
+<tr align=left valign=top><td><a href='#unit_minasa' class=toc>minasa</a></td><td width=15>&nbsp;</td><td>ASA bound constrained optimizer</td></tr>
+<tr align=left valign=top><td><a href='#unit_mincg' class=toc>mincg</a></td><td width=15>&nbsp;</td><td>Conjugate gradient optimizer</td></tr>
+<tr align=left valign=top><td><a href='#unit_minlbfgs' class=toc>minlbfgs</a></td><td width=15>&nbsp;</td><td>Limited memory BFGS optimizer</td></tr>
 <tr align=left valign=top><td><a href='#unit_minlm' class=toc>minlm</a></td><td width=15>&nbsp;</td><td>Improved Levenberg-Marquardt optimizer</td></tr>
 <tr align=left valign=top><td colspan=2>&nbsp;</td></tr>
 <tr align=left valign=top><td colspan=3 bgcolor=#E8E8E8><b><code>Other</code> package</b></td></tr>
@@ -6063,6 +6065,7 @@ Copyright 1984, 1996, 2000 by Stephen L. Moshier
 <a href='#struct_idwinterpolant' class=toc>idwinterpolant</a><br>
 <h3>Subroutines</h3>
 <a href='#sub_idwbuildmodifiedshepard' class=toc>idwbuildmodifiedshepard</a><br>
+<a href='#sub_idwbuildmodifiedshepardr' class=toc>idwbuildmodifiedshepardr</a><br>
 <a href='#sub_idwbuildnoisy' class=toc>idwbuildnoisy</a><br>
 <a href='#sub_idwcalc' class=toc>idwcalc</a><br>
 <a name='struct_idwinterpolant'></a><h3><code>idwinterpolant</code> structure</h3>
@@ -6074,8 +6077,10 @@ IDW interpolant.
     N : AlglibInteger;
     NX : AlglibInteger;
     D : AlglibInteger;
+    R : Double;
     NW : AlglibInteger;
     Tree : KDTree;
+    ModelType : AlglibInteger;
     Q : TReal2DArray;
     XBuf : TReal1DArray;
     TBuf : TInteger1DArray;
@@ -6089,7 +6094,8 @@ IDW interpolant.
 <a name='sub_idwbuildmodifiedshepard'></a><h3><code>idwbuildmodifiedshepard</code> subroutine</h3>
 <pre>
 <div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
-IDW interpolant using modified Shepard method
+IDW interpolant using modified Shepard method for uniform point
+distributions.
 
 INPUT PARAMETERS:
     XY  -   X and Y values, array[0..N-1,0..NX].
@@ -6109,10 +6115,9 @@ INPUT PARAMETERS:
                     than constant model. But it is less robust (especially
                     in the presence of noise).
     NQ  -   number of points used to calculate  nodal  functions  (ignored
-            for  constant  models).  NQ  should  be  LARGER than 1.5 times
-            the number of coefficients in a nodal function:
-            * 1.5*(1+NX) for linear model,
-            * 3/4*(NX+2)*(NX+1) for quadratic model.
+            for constant models). NQ should be LARGER than:
+            * max(1.5*(1+NX),2^NX+1) for linear model,
+            * max(3/4*(NX+2)*(NX+1),2^NX+1) for quadratic model.
             Values less than this threshold will be silently increased.
     NW  -   number of points used to calculate weights and to interpolate.
             Required: &gt;=2^NX+1, values less than this  threshold  will  be
@@ -6134,6 +6139,10 @@ NOTES:
     passed).
   * see  'Multivariate  Interpolation  of Large Sets of Scattered Data' by
     Robert J. Renka for more information on this algorithm.
+  * this subroutine assumes that point distribution is uniform at the small
+    scales.  If  it  isn't  -  for  example,  points are concentrated along
+    &quot;lines&quot;, but &quot;lines&quot; distribution is uniform at the larger scale - then
+    you should use IDWBuildModifiedShepardR()
 
 
   -- ALGLIB PROJECT --
@@ -6145,6 +6154,41 @@ NOTES:
      D : AlglibInteger;
      NQ : AlglibInteger;
      NW : AlglibInteger;
+     <b>var</b> Z : IDWInterpolant);
+</div></pre>
+<a name='sub_idwbuildmodifiedshepardr'></a><h3><code>idwbuildmodifiedshepardr</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+IDW interpolant using modified Shepard method for non-uniform datasets.
+
+This type of model uses  constant  nodal  functions and interpolates using
+all nodes which are closer than user-specified radius R. It  may  be  used
+when points distribution is non-uniform at the small scale, but it  is  at
+the distances as large as R.
+
+INPUT PARAMETERS:
+    XY  -   X and Y values, array[0..N-1,0..NX].
+            First NX columns contain X-values, last column contain
+            Y-values.
+    N   -   number of nodes, N&gt;0.
+    NX  -   space dimension, NX&gt;=1.
+    R   -   radius, R&gt;0
+
+OUTPUT PARAMETERS:
+    Z   -   IDW interpolant.
+
+NOTES:
+* if there is less than IDWKMin points within  R-ball,  algorithm  selects
+  IDWKMin closest ones, so that continuity properties of  interpolant  are
+  preserved even far from points.
+
+  -- ALGLIB PROJECT --
+     Copyright 11.04.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> IDWBuildModifiedShepardR(<b>const</b> XY : TReal2DArray;
+     N : AlglibInteger;
+     NX : AlglibInteger;
+     R : Double;
      <b>var</b> Z : IDWInterpolant);
 </div></pre>
 <a name='sub_idwbuildnoisy'></a><h3><code>idwbuildnoisy</code> subroutine</h3>
@@ -6659,183 +6703,7 @@ Result:
      <b>const</b> n : AlglibInteger;
      <b>const</b> x : Double):Double;
 </div></pre>
-<a name=unit_lbfgs></a><h2><code>lbfgs</code> unit</h2>
-<h3>Subroutines</h3>
-<a href='#sub_minlbfgs' class=toc>minlbfgs</a><br>
-<a href='#sub_minlbfgsiteration' class=toc>minlbfgsiteration</a><br>
-<a href='#sub_minlbfgsresults' class=toc>minlbfgsresults</a><br>
-<h3>Examples</h3>
-<a href='#example_lbfgs_min' class=toc>lbfgs_min</a><br>
-<a name='sub_minlbfgs'></a><h3><code>minlbfgs</code> subroutine</h3>
-<pre>
-<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
-        LIMITED MEMORY BFGS METHOD FOR LARGE SCALE OPTIMIZATION
-
-The subroutine minimizes function F(x) of N arguments by  using  a  quasi-
-Newton method (LBFGS scheme) which is optimized to use  a  minimum  amount
-of memory.
-
-The subroutine generates the approximation of an inverse Hessian matrix by
-using information about the last M steps of the algorithm  (instead of N).
-It lessens a required amount of memory from a value  of  order  N^2  to  a
-value of order 2*N*M.
-
-Input parameters:
-    N   -   problem dimension. N&gt;0
-    M   -   number of corrections in the BFGS scheme of Hessian
-            approximation update. Recommended value:  3&lt;=M&lt;=7. The smaller
-            value causes worse convergence, the bigger will  not  cause  a
-            considerably better convergence, but will cause a fall in  the
-            performance. M&lt;=N.
-    X   -   initial solution approximation, array[0..N-1].
-    EpsG -  positive number which  defines  a  precision  of  search.  The
-            subroutine finishes its work if the condition ||G|| &lt; EpsG  is
-            satisfied, where ||.|| means Euclidian norm, G - gradient, X -
-            current approximation.
-    EpsF -  positive number which  defines  a  precision  of  search.  The
-            subroutine finishes its work if on iteration  number  k+1  the
-            condition |F(k+1)-F(k)| &lt;= EpsF*max{|F(k)|, |F(k+1)|, 1}    is
-            satisfied.
-    EpsX -  positive number which  defines  a  precision  of  search.  The
-            subroutine finishes its work if on iteration number k+1    the
-            condition |X(k+1)-X(k)| &lt;= EpsX is fulfilled.
-    MaxIts- maximum number of iterations. If MaxIts=0, the number of
-            iterations is unlimited.
-    Flags - additional settings:
-            * Flags = 0     means no additional settings
-            * Flags = 1     &quot;do not allocate memory&quot;. used when solving
-                            a many subsequent tasks with  same N/M  values.
-                            First  call MUST  be without this flag bit set,
-                            subsequent calls of MinLBFGS with same LBFGSState
-                            structure can set Flags to 1.
-
-Output parameters:
-    State - structure used for reverse communication.
-    
-See also MinLBFGSIteration, MinLBFGSResults
-
-NOTE:
-
-Passing EpsG=0, EpsF=0, EpsX=0 and MaxIts=0 (simultaneously) will lead to
-automatic stopping criterion selection (small EpsX).
-
-  -- ALGLIB --
-     Copyright 14.11.2007 by Bochkanov Sergey
-*************************************************************************)
-</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinLBFGS(N : AlglibInteger;
-     M : AlglibInteger;
-     <b>const</b> X : TReal1DArray;
-     EpsG : Double;
-     EpsF : Double;
-     EpsX : Double;
-     MaxIts : AlglibInteger;
-     Flags : AlglibInteger;
-     <b>var</b> State : LBFGSState);
-</div></pre>
-<p align=left><span class=inlineheader>Examples:</span>&nbsp;&nbsp;&nbsp;<a href='#example_lbfgs_min' class=nav>lbfgs_min</a>&nbsp;&nbsp;</p>
-<a name='sub_minlbfgsiteration'></a><h3><code>minlbfgsiteration</code> subroutine</h3>
-<pre>
-<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
-One L-BFGS iteration
-
-Called after initialization with MinLBFGS.
-See HTML documentation for examples.
-
-Input parameters:
-    State   -   structure which stores algorithm state between calls and
-                which is used for reverse communication. Must be initialized
-                with MinLBFGS.
-
-If suborutine returned False, iterative proces has converged.
-
-If subroutine returned True, caller should calculate function value
-State.F an gradient State.G[0..N-1] at State.X[0..N-1] and call
-MinLBFGSIteration again.
-
-  -- ALGLIB --
-     Copyright 20.04.2009 by Bochkanov Sergey
-*************************************************************************)
-</div><div style='margin-top: 0; margin-bottom: 0;'><b>function</b> MinLBFGSIteration(<b>var</b> State : LBFGSState):Boolean;
-</div></pre>
-<p align=left><span class=inlineheader>Examples:</span>&nbsp;&nbsp;&nbsp;<a href='#example_lbfgs_min' class=nav>lbfgs_min</a>&nbsp;&nbsp;</p>
-<a name='sub_minlbfgsresults'></a><h3><code>minlbfgsresults</code> subroutine</h3>
-<pre>
-<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
-L-BFGS algorithm results
-
-Called after MinLBFGSIteration returned False.
-
-Input parameters:
-    State   -   algorithm state (used by MinLBFGSIteration).
-
-Output parameters:
-    X       -   array[0..N-1], solution
-    Rep     -   optimization report:
-                * Rep.TerminationType completetion code:
-                    * -2    rounding errors prevent further improvement.
-                            X contains best point found.
-                    * -1    incorrect parameters were specified
-                    *  1    relative function improvement is no more than
-                            EpsF.
-                    *  2    relative step is no more than EpsX.
-                    *  4    gradient norm is no more than EpsG
-                    *  5    MaxIts steps was taken
-                * Rep.IterationsCount contains iterations count
-                * NFEV countains number of function calculations
-
-  -- ALGLIB --
-     Copyright 14.11.2007 by Bochkanov Sergey
-*************************************************************************)
-</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinLBFGSResults(<b>const</b> State : LBFGSState;
-     <b>var</b> X : TReal1DArray;
-     <b>var</b> Rep : LBFGSReport);
-</div></pre>
-<p align=left><span class=inlineheader>Examples:</span>&nbsp;&nbsp;&nbsp;<a href='#example_lbfgs_min' class=nav>lbfgs_min</a>&nbsp;&nbsp;</p>
-<a name='example_lbfgs_min'></a><h3>lbfgs_min example</h3>
-<pre>
-<b>var</b>
-    N : AlglibInteger;
-    M : AlglibInteger;
-    State : LBFGSState;
-    Rep : LBFGSReport;
-    S : TReal1DArray;
-    X : Double;
-    Y : Double;
-<b>begin</b>
-    
-<font color=navy>    //</font>
-<font color=navy>    // Function minimized:</font>
-<font color=navy>    //     F = exp(x-1) + exp(1-x) + (y-x)^2</font>
-<font color=navy>    // N = 2 - task dimension</font>
-<font color=navy>    // M = 1 - build tank-1 model</font>
-<font color=navy>    //</font>
-    N := 2;
-    M := 1;
-    SetLength(S, 2);
-    S[0] := RandomReal-0.5;
-    S[1] := RandomReal-0.5;
-    MinLBFGS(N, M, S, 0.0, 0.0, 0.0001, 0, 0, State);
-    <b>while</b> MinLBFGSIteration(State) <b>do</b>
-    <b>begin</b>
-        X := State.X[0];
-        Y := State.X[1];
-        State.F := Exp(X-1)+Exp(1-X)+AP_Sqr(Y-X);
-        State.G[0] := Exp(X-1)-Exp(1-X)+2*(X-Y);
-        State.G[1] := 2*(Y-X);
-    <b>end</b>;
-    MinLBFGSResults(State, S, Rep);
-    
-<font color=navy>    //</font>
-<font color=navy>    // output results</font>
-<font color=navy>    //</font>
-    Write(Format(<font color=blue>'F = exp(x-1) + exp(1-x) + (y-x)^2'</font>#13#10<font color=blue>''</font>,[]));
-    Write(Format(<font color=blue>'X = %4.2f (should be 1.00)'</font>#13#10<font color=blue>''</font>,[
-        S[0]]));
-    Write(Format(<font color=blue>'Y = %4.2f (should be 1.00)'</font>#13#10<font color=blue>''</font>,[
-        S[1]]));
-<b>end</b>.
-
-</pre><a name=unit_lda></a><h2><code>lda</code> unit</h2>
+<a name=unit_lda></a><h2><code>lda</code> unit</h2>
 <h3>Subroutines</h3>
 <a href='#sub_fisherlda' class=toc>fisherlda</a><br>
 <a href='#sub_fisherldan' class=toc>fisherldan</a><br>
@@ -7703,6 +7571,8 @@ OUTPUT PARAMETERS:
 <a href='#sub_lsfitnonlinearfgh' class=toc>lsfitnonlinearfgh</a><br>
 <a href='#sub_lsfitnonlineariteration' class=toc>lsfitnonlineariteration</a><br>
 <a href='#sub_lsfitnonlinearresults' class=toc>lsfitnonlinearresults</a><br>
+<a href='#sub_lsfitnonlinearsetcond' class=toc>lsfitnonlinearsetcond</a><br>
+<a href='#sub_lsfitnonlinearsetstpmax' class=toc>lsfitnonlinearsetstpmax</a><br>
 <a href='#sub_lsfitnonlinearwfg' class=toc>lsfitnonlinearwfg</a><br>
 <a href='#sub_lsfitnonlinearwfgh' class=toc>lsfitnonlinearwfgh</a><br>
 <h3>Examples</h3>
@@ -7902,9 +7772,6 @@ See LSFitNonlinearWFG for more information.
      N : AlglibInteger;
      M : AlglibInteger;
      K : AlglibInteger;
-     <b>const</b> EpsF : Double;
-     <b>const</b> EpsX : Double;
-     <b>const</b> MaxIts : AlglibInteger;
      CheapFG : Boolean;
      <b>var</b> State : LSFitState);
 </div></pre>
@@ -7925,9 +7792,6 @@ weights. See LSFitNonlinearWFGH() for more information.
      N : AlglibInteger;
      M : AlglibInteger;
      K : AlglibInteger;
-     <b>const</b> EpsF : Double;
-     <b>const</b> EpsX : Double;
-     <b>const</b> MaxIts : AlglibInteger;
      <b>var</b> State : LSFitState);
 </div></pre>
 <p align=left><span class=inlineheader>Examples:</span>&nbsp;&nbsp;&nbsp;<a href='#example_lsfit_nonlinear2' class=nav>lsfit_nonlinear2</a>&nbsp;&nbsp;</p>
@@ -8006,6 +7870,63 @@ OUTPUT PARAMETERS:
      <b>var</b> Rep : LSFitReport);
 </div></pre>
 <p align=left><span class=inlineheader>Examples:</span>&nbsp;&nbsp;&nbsp;<a href='#example_lsfit_nonlinear' class=nav>lsfit_nonlinear</a>&nbsp;&nbsp;<a href='#example_lsfit_nonlinear2' class=nav>lsfit_nonlinear2</a>&nbsp;&nbsp;</p>
+<a name='sub_lsfitnonlinearsetcond'></a><h3><code>lsfitnonlinearsetcond</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+Stopping conditions for nonlinear least squares fitting.
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be initialized
+                with LSFitNonLinearCreate???()
+    EpsF    -   stopping criterion. Algorithm stops if
+                |F(k+1)-F(k)| &lt;= EpsF*max{|F(k)|, |F(k+1)|, 1}
+    EpsX    -   stopping criterion. Algorithm stops if
+                |X(k+1)-X(k)| &lt;= EpsX*(1+|X(k)|)
+    MaxIts  -   stopping criterion. Algorithm stops after MaxIts iterations.
+                MaxIts=0 means no stopping criterion.
+
+NOTE
+
+Passing EpsF=0, EpsX=0 and MaxIts=0 (simultaneously) will lead to automatic
+stopping criterion selection (according to the scheme used by MINLM unit).
+
+
+  -- ALGLIB --
+     Copyright 17.08.2009 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> LSFitNonlinearSetCond(<b>var</b> State : LSFitState;
+     EpsF : Double;
+     EpsX : Double;
+     MaxIts : AlglibInteger);
+</div></pre>
+<a name='sub_lsfitnonlinearsetstpmax'></a><h3><code>lsfitnonlinearsetstpmax</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function sets maximum step length
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be
+                initialized with LSFitNonLinearCreate???()
+    StpMax  -   maximum step length, &gt;=0. Set StpMax to 0.0,  if you don't
+                want to limit step length.
+
+Use this subroutine when you optimize target function which contains exp()
+or  other  fast  growing  functions,  and optimization algorithm makes too
+large  steps  which  leads  to overflow. This function allows us to reject
+steps  that  are  too  large  (and  therefore  expose  us  to the possible
+overflow) without actually calculating function value at the x+stp*d.
+
+NOTE: non-zero StpMax leads to moderate  performance  degradation  because
+intermediate  step  of  preconditioned L-BFGS optimization is incompatible
+with limits on step size.
+
+  -- ALGLIB --
+     Copyright 02.04.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> LSFitNonlinearSetStpMax(<b>var</b> State : LSFitState; StpMax : Double);
+</div></pre>
 <a name='sub_lsfitnonlinearwfg'></a><h3><code>lsfitnonlinearwfg</code> subroutine</h3>
 <pre>
 <div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
@@ -8032,21 +7953,14 @@ INPUT PARAMETERS:
     N       -   number of points, N&gt;1
     M       -   dimension of space
     K       -   number of parameters being fitted
-    EpsF    -   stopping criterion. Algorithm stops if
-                |F(k+1)-F(k)| &lt;= EpsF*max{|F(k)|, |F(k+1)|, 1}
-    EpsX    -   stopping criterion. Algorithm stops if
-                |X(k+1)-X(k)| &lt;= EpsX*(1+|X(k)|)
-    MaxIts  -   stopping criterion. Algorithm stops after MaxIts iterations.
-                MaxIts=0 means no stopping criterion.
     CheapFG -   boolean flag, which is:
                 * True  if both function and gradient calculation complexity
                         are less than O(M^2).  An improved  algorithm  can
-                        be  used  which allows to save O(N*M^2) operations
-                        per iteration with  additional cost of N function/
-                        /gradient calculations.
+                        be  used  which corresponds  to  FGJ  scheme  from
+                        MINLM unit.
                 * False otherwise.
                         Standard Jacibian-bases  Levenberg-Marquardt  algo
-                        will be used.
+                        will be used (FJ scheme).
 
 OUTPUT PARAMETERS:
     State   -   structure which stores algorithm state between subsequent
@@ -8061,11 +7975,6 @@ See also:
     LSFitNonlinearWFGH (fitting using Hessian)
     LSFitNonlinearFGH (fitting using Hessian, without weights)
 
-NOTE
-
-Passing EpsF=0, EpsX=0 and MaxIts=0 (simultaneously) will lead to automatic
-stopping criterion selection (small EpsX).
-
 
   -- ALGLIB --
      Copyright 17.08.2009 by Bochkanov Sergey
@@ -8077,9 +7986,6 @@ stopping criterion selection (small EpsX).
      N : AlglibInteger;
      M : AlglibInteger;
      K : AlglibInteger;
-     <b>const</b> EpsF : Double;
-     <b>const</b> EpsX : Double;
-     <b>const</b> MaxIts : AlglibInteger;
      CheapFG : Boolean;
      <b>var</b> State : LSFitState);
 </div></pre>
@@ -8115,9 +8021,6 @@ parameters.
      N : AlglibInteger;
      M : AlglibInteger;
      K : AlglibInteger;
-     <b>const</b> EpsF : Double;
-     <b>const</b> EpsX : Double;
-     <b>const</b> MaxIts : AlglibInteger;
      <b>var</b> State : LSFitState);
 </div></pre>
 <p align=left><span class=inlineheader>Examples:</span>&nbsp;&nbsp;&nbsp;<a href='#example_lsfit_nonlinear2' class=nav>lsfit_nonlinear2</a>&nbsp;&nbsp;</p>
@@ -8319,7 +8222,8 @@ parameters.
 <font color=navy>    //</font>
 <font color=navy>    // Solve</font>
 <font color=navy>    //</font>
-    LSFitNonlinearFG(X, Y, C, N, M, K, EpsF, EpsX, MaxIts, True, State);
+    LSFitNonlinearFG(X, Y, C, N, M, K, True, State);
+    LSFitNonlinearSetCond(State, EpsF, EpsX, MaxIts);
     <b>while</b> LSFitNonlinearIteration(State) <b>do</b>
     <b>begin</b>
         <b>if</b> State.NeedF then
@@ -8414,7 +8318,8 @@ parameters.
 <font color=navy>    //</font>
 <font color=navy>    // Solve</font>
 <font color=navy>    //</font>
-    LSFitNonlinearFGH(X, Y, C, N, M, K, EpsF, EpsX, MaxIts, State);
+    LSFitNonlinearFGH(X, Y, C, N, M, K, State);
+    LSFitNonlinearSetCond(State, EpsF, EpsX, MaxIts);
     <b>while</b> LSFitNonlinearIteration(State) <b>do</b>
     <b>begin</b>
         
@@ -9291,19 +9196,1128 @@ Output parameters:
      <b>var</b> Info : AlglibInteger;
      <b>var</b> Rep : MatInvReport);
 </div></pre>
-<a name=unit_minlm></a><h2><code>minlm</code> unit</h2>
+<a name=unit_minasa></a><h2><code>minasa</code> unit</h2>
 <h3>Subroutines</h3>
-<a href='#sub_minlmfgh' class=toc>minlmfgh</a><br>
-<a href='#sub_minlmfgj' class=toc>minlmfgj</a><br>
-<a href='#sub_minlmfj' class=toc>minlmfj</a><br>
+<a href='#sub_minasacreate' class=toc>minasacreate</a><br>
+<a href='#sub_minasaiteration' class=toc>minasaiteration</a><br>
+<a href='#sub_minasaresults' class=toc>minasaresults</a><br>
+<a href='#sub_minasasetalgorithm' class=toc>minasasetalgorithm</a><br>
+<a href='#sub_minasasetcond' class=toc>minasasetcond</a><br>
+<a href='#sub_minasasetstpmax' class=toc>minasasetstpmax</a><br>
+<a href='#sub_minasasetxrep' class=toc>minasasetxrep</a><br>
+<h3>Examples</h3>
+<a href='#example_minasa_1' class=toc>minasa_1</a><br>
+<a href='#example_minasa_2' class=toc>minasa_2</a><br>
+<a name='sub_minasacreate'></a><h3><code>minasacreate</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+              NONLINEAR BOUND CONSTRAINED OPTIMIZATION USING
+                               MODIFIED
+                   WILLIAM W. HAGER AND HONGCHAO ZHANG
+                         ACTIVE SET ALGORITHM
+
+The  subroutine  minimizes  function  F(x)  of  N  arguments  with   bound
+constraints: BndL[i] &lt;= x[i] &lt;= BndU[i]
+
+This method is  globally  convergent  as  long  as  grad(f)  is  Lipschitz
+continuous on a level set: L = { x : f(x)&lt;=f(x0) }.
+
+INPUT PARAMETERS:
+    N       -   problem dimension. N&gt;0
+    X       -   initial solution approximation, array[0..N-1].
+    BndL    -   lower bounds, array[0..N-1].
+                all elements MUST be specified,  i.e.  all  variables  are
+                bounded. However, if some (all) variables  are  unbounded,
+                you may specify very small number as bound: -1000,  -1.0E6
+                or -1.0E300, or something like that.
+    BndU    -   upper bounds, array[0..N-1].
+                all elements MUST be specified,  i.e.  all  variables  are
+                bounded. However, if some (all) variables  are  unbounded,
+                you may specify very large number as bound: +1000,  +1.0E6
+                or +1.0E300, or something like that.
+    EpsG    -   positive number which  defines  a  precision  of  search.  The
+                subroutine finishes its work if the condition ||G|| &lt; EpsG  is
+                satisfied, where ||.|| means Euclidian norm, G - gradient, X -
+                current approximation.
+    EpsF    -   positive number which  defines  a  precision  of  search.  The
+                subroutine finishes its work if on iteration  number  k+1  the
+                condition |F(k+1)-F(k)| &lt;= EpsF*max{|F(k)|, |F(k+1)|, 1}    is
+                satisfied.
+    EpsX    -   positive number which  defines  a  precision  of  search.  The
+                subroutine finishes its work if on iteration number k+1    the
+                condition |X(k+1)-X(k)| &lt;= EpsX is fulfilled.
+    MaxIts  -   maximum number of iterations. If MaxIts=0, the number of
+                iterations is unlimited.
+
+OUTPUT PARAMETERS:
+    State - structure used for reverse communication.
+
+This function  initializes  State   structure  with  default  optimization
+parameters (stopping conditions, step size, etc.).  Use  MinASASet??????()
+functions to tune optimization parameters.
+
+After   all   optimization   parameters   are   tuned,   you   should  use
+MinASAIteration() function to advance algorithm iterations.
+
+NOTES:
+
+1. you may tune stopping conditions with MinASASetCond() function
+2. if target function contains exp() or other fast growing functions,  and
+   optimization algorithm makes too large steps which leads  to  overflow,
+   use MinASASetStpMax() function to bound algorithm's steps.
+
+  -- ALGLIB --
+     Copyright 25.03.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinASACreate(N : AlglibInteger;
+     <b>const</b> X : TReal1DArray;
+     <b>const</b> BndL : TReal1DArray;
+     <b>const</b> BndU : TReal1DArray;
+     <b>var</b> State : MinASAState);
+</div></pre>
+<p align=left><span class=inlineheader>Examples:</span>&nbsp;&nbsp;&nbsp;<a href='#example_minasa_1' class=nav>minasa_1</a>&nbsp;&nbsp;<a href='#example_minasa_2' class=nav>minasa_2</a>&nbsp;&nbsp;</p>
+<a name='sub_minasaiteration'></a><h3><code>minasaiteration</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+One ASA iteration
+
+Called after initialization with MinASACreate.
+See HTML documentation for examples.
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be initialized
+                with MinASACreate.
+RESULT:
+* if function returned False, iterative proces has converged.
+  Use MinLBFGSResults() to obtain optimization results.
+* if subroutine returned True, then, depending on structure fields, we
+  have one of the following situations
+
+
+=== FUNC/GRAD REQUEST ===
+State.NeedFG is True =&gt; function value/gradient are needed.
+Caller should calculate function value State.F and gradient
+State.G[0..N-1] at State.X[0..N-1] and call MinLBFGSIteration() again.
+
+=== NEW INTERATION IS REPORTED ===
+State.XUpdated is True =&gt; one more iteration was made.
+State.X contains current position, State.F contains function value at X.
+You can read info from these fields, but never modify  them  because  they
+contain the only copy of optimization algorithm state.
+
+One and only one of these fields (NeedFG, XUpdated) is true on return. New
+iterations are reported only when reports  are  explicitly  turned  on  by
+MinLBFGSSetXRep() function, so if you never called it, you can expect that
+NeedFG is always True.
+
+
+  -- ALGLIB --
+     Copyright 20.03.2009 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>function</b> MinASAIteration(<b>var</b> State : MinASAState):Boolean;
+</div></pre>
+<p align=left><span class=inlineheader>Examples:</span>&nbsp;&nbsp;&nbsp;<a href='#example_minasa_1' class=nav>minasa_1</a>&nbsp;&nbsp;<a href='#example_minasa_2' class=nav>minasa_2</a>&nbsp;&nbsp;</p>
+<a name='sub_minasaresults'></a><h3><code>minasaresults</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+Conjugate gradient results
+
+Called after MinASA returned False.
+
+INPUT PARAMETERS:
+    State   -   algorithm state (used by MinASAIteration).
+
+OUTPUT PARAMETERS:
+    X       -   array[0..N-1], solution
+    Rep     -   optimization report:
+                * Rep.TerminationType completetion code:
+                    * -2    rounding errors prevent further improvement.
+                            X contains best point found.
+                    * -1    incorrect parameters were specified
+                    *  1    relative function improvement is no more than
+                            EpsF.
+                    *  2    relative step is no more than EpsX.
+                    *  4    gradient norm is no more than EpsG
+                    *  5    MaxIts steps was taken
+                    *  7    stopping conditions are too stringent,
+                            further improvement is impossible
+                * Rep.IterationsCount contains iterations count
+                * NFEV countains number of function calculations
+                * ActiveConstraints contains number of active constraints
+
+  -- ALGLIB --
+     Copyright 20.03.2009 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinASAResults(<b>const</b> State : MinASAState;
+     <b>var</b> X : TReal1DArray;
+     <b>var</b> Rep : MinASAReport);
+</div></pre>
+<p align=left><span class=inlineheader>Examples:</span>&nbsp;&nbsp;&nbsp;<a href='#example_minasa_1' class=nav>minasa_1</a>&nbsp;&nbsp;<a href='#example_minasa_2' class=nav>minasa_2</a>&nbsp;&nbsp;</p>
+<a name='sub_minasasetalgorithm'></a><h3><code>minasasetalgorithm</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function sets optimization algorithm.
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be
+                initialized with MinASACreate()
+    UAType  -   algorithm type:
+                * -1    automatic selection of the best algorithm
+                * 0     DY (Dai and Yuan) algorithm
+                * 1     Hybrid DY-HS algorithm
+
+  -- ALGLIB --
+     Copyright 02.04.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinASASetAlgorithm(<b>var</b> State : MinASAState;
+     AlgoType : AlglibInteger);
+</div></pre>
+<a name='sub_minasasetcond'></a><h3><code>minasasetcond</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function sets stopping conditions for the ASA optimization algorithm.
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be initialized
+                with MinASACreate()
+    EpsG    -   &gt;=0
+                The  subroutine  finishes  its  work   if   the  condition
+                ||G||&lt;EpsG is satisfied, where ||.|| means Euclidian norm,
+                G - gradient.
+    EpsF    -   &gt;=0
+                The  subroutine  finishes  its work if on k+1-th iteration
+                the  condition  |F(k+1)-F(k)|&lt;=EpsF*max{|F(k)|,|F(k+1)|,1}
+                is satisfied.
+    EpsX    -   &gt;=0
+                The subroutine finishes its work if  on  k+1-th  iteration
+                the condition |X(k+1)-X(k)| &lt;= EpsX is fulfilled.
+    MaxIts  -   maximum number of iterations. If MaxIts=0, the  number  of
+                iterations is unlimited.
+
+Passing EpsG=0, EpsF=0, EpsX=0 and MaxIts=0 (simultaneously) will lead to
+automatic stopping criterion selection (small EpsX).
+
+  -- ALGLIB --
+     Copyright 02.04.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinASASetCond(<b>var</b> State : MinASAState;
+     EpsG : Double;
+     EpsF : Double;
+     EpsX : Double;
+     MaxIts : AlglibInteger);
+</div></pre>
+<a name='sub_minasasetstpmax'></a><h3><code>minasasetstpmax</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function sets maximum step length
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be
+                initialized with MinCGCreate()
+    StpMax  -   maximum step length, &gt;=0. Set StpMax to 0.0,  if you don't
+                want to limit step length.
+
+Use this subroutine when you optimize target function which contains exp()
+or  other  fast  growing  functions,  and optimization algorithm makes too
+large  steps  which  leads  to overflow. This function allows us to reject
+steps  that  are  too  large  (and  therefore  expose  us  to the possible
+overflow) without actually calculating function value at the x+stp*d.
+
+  -- ALGLIB --
+     Copyright 02.04.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinASASetStpMax(<b>var</b> State : MinASAState; StpMax : Double);
+</div></pre>
+<a name='sub_minasasetxrep'></a><h3><code>minasasetxrep</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function turns on/off reporting.
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be
+                initialized with MinASACreate()
+    NeedXRep-   whether iteration reports are needed or not
+
+Usually  algorithm  returns from  MinASAIteration()  only  when  it  needs
+function/gradient. However, with this function we can let  it  stop  after
+each  iteration  (one  iteration  may  include   more  than  one  function
+evaluation), which is indicated by XUpdated field.
+
+  -- ALGLIB --
+     Copyright 02.04.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinASASetXRep(<b>var</b> State : MinASAState; NeedXRep : Boolean);
+</div></pre>
+<a name='example_minasa_1'></a><h3>minasa_1 example</h3>
+<pre>
+<b>var</b>
+    N : AlglibInteger;
+    I : AlglibInteger;
+    State : MinASAState;
+    Rep : MinASAReport;
+    S : TReal1DArray;
+    BndL : TReal1DArray;
+    BndU : TReal1DArray;
+    X : Double;
+    Y : Double;
+    Z : Double;
+<b>begin</b>
+    
+<font color=navy>    //</font>
+<font color=navy>    // Function being minimized:</font>
+<font color=navy>    //     F = x+2y+3z subject to 0&lt;=x&lt;=1, 0&lt;=y&lt;=1, 0&lt;=z&lt;=1.</font>
+<font color=navy>    //</font>
+    N := 3;
+    SetLength(S, N);
+    SetLength(BndL, N);
+    SetLength(BndU, N);
+    I:=0;
+    <b>while</b> I&lt;=N-1 <b>do</b>
+    <b>begin</b>
+        S[I] := 1;
+        BndL[I] := 0;
+        BndU[I] := 1;
+        Inc(I);
+    <b>end</b>;
+    MinASACreate(N, S, BndL, BndU, State);
+    MinASASetCond(State, 0.0, 0.0, 0.00001, 0);
+    MinASASetXRep(State, True);
+    Write(Format(<font color=blue>''</font>#13#10<font color=blue>''</font>#13#10<font color=blue>'F = x+2y+3z subject <b>to</b> 0&lt;=x&lt;=1, 0&lt;=y&lt;=1, 0&lt;=z&lt;=1'</font>#13#10<font color=blue>''</font>,[]));
+    Write(Format(<font color=blue>'OPTIMIZATION STARTED'</font>#13#10<font color=blue>''</font>,[]));
+    <b>while</b> MinASAIteration(State) <b>do</b>
+    <b>begin</b>
+        <b>if</b> State.NeedFG then
+        <b>begin</b>
+            X := State.X[0];
+            Y := State.X[1];
+            Z := State.X[2];
+            State.F := X+2*Y+3*Z;
+            State.G[0] := 1;
+            State.G[1] := 2;
+            State.G[2] := 3;
+        <b>end</b>;
+        <b>if</b> State.XUpdated then
+        <b>begin</b>
+            Write(Format(<font color=blue>'    F(%4.2f,%4.2f,%4.2f)=%0.3f'</font>#13#10<font color=blue>''</font>,[
+                State.X[0],
+                State.X[1],
+                State.X[2],
+                State.F]));
+        <b>end</b>;
+    <b>end</b>;
+    Write(Format(<font color=blue>'OPTIMIZATION STOPPED'</font>#13#10<font color=blue>''</font>,[]));
+    MinASAResults(State, S, Rep);
+    
+<font color=navy>    //</font>
+<font color=navy>    // output results</font>
+<font color=navy>    //</font>
+    Write(Format(<font color=blue>'X = %4.2f (should be 0.00)'</font>#13#10<font color=blue>''</font>,[
+        S[0]]));
+    Write(Format(<font color=blue>'Y = %4.2f (should be 0.00)'</font>#13#10<font color=blue>''</font>,[
+        S[1]]));
+    Write(Format(<font color=blue>'Z = %4.2f (should be 0.00)'</font>#13#10<font color=blue>''</font>#13#10<font color=blue>''</font>#13#10<font color=blue>''</font>,[
+        S[2]]));
+<b>end</b>.
+
+</pre><a name='example_minasa_2'></a><h3>minasa_2 example</h3>
+<pre>
+<b>var</b>
+    N : AlglibInteger;
+    I : AlglibInteger;
+    State : MinASAState;
+    Rep : MinASAReport;
+    S : TReal1DArray;
+    BndL : TReal1DArray;
+    BndU : TReal1DArray;
+    X : Double;
+    Y : Double;
+    Z : Double;
+<b>begin</b>
+    
+<font color=navy>    //</font>
+<font color=navy>    // Function being minimized:</font>
+<font color=navy>    //     F = x+4y+9z subject to 0&lt;=x&lt;=1, 0&lt;=y&lt;=1, 0&lt;=z&lt;=1.</font>
+<font color=navy>    //</font>
+<font color=navy>    // Take a look at MinASASetStpMax() - it restricts step length by</font>
+<font color=navy>    // a small value, so we can see the current point traveling through</font>
+<font color=navy>    // a feasible set, sticking to its bounds.</font>
+<font color=navy>    //</font>
+    N := 3;
+    SetLength(S, N);
+    SetLength(BndL, N);
+    SetLength(BndU, N);
+    I:=0;
+    <b>while</b> I&lt;=N-1 <b>do</b>
+    <b>begin</b>
+        S[I] := 1;
+        BndL[I] := 0;
+        BndU[I] := 1;
+        Inc(I);
+    <b>end</b>;
+    MinASACreate(N, S, BndL, BndU, State);
+    MinASASetCond(State, 0.0, 0.0, 0.00001, 0);
+    MinASASetXRep(State, True);
+    MinASASetStpMax(State, 0.2);
+    Write(Format(<font color=blue>''</font>#13#10<font color=blue>''</font>#13#10<font color=blue>'F = x+2y+3z subject <b>to</b> 0&lt;=x&lt;=1, 0&lt;=y&lt;=1, 0&lt;=z&lt;=1'</font>#13#10<font color=blue>''</font>,[]));
+    Write(Format(<font color=blue>'OPTIMIZATION STARTED'</font>#13#10<font color=blue>''</font>,[]));
+    <b>while</b> MinASAIteration(State) <b>do</b>
+    <b>begin</b>
+        <b>if</b> State.NeedFG then
+        <b>begin</b>
+            X := State.X[0];
+            Y := State.X[1];
+            Z := State.X[2];
+            State.F := X+4*Y+9*Z;
+            State.G[0] := 1;
+            State.G[1] := 4;
+            State.G[2] := 9;
+        <b>end</b>;
+        <b>if</b> State.XUpdated then
+        <b>begin</b>
+            Write(Format(<font color=blue>'    F(%4.2f, %4.2f, %4.2f) = %0.3f'</font>#13#10<font color=blue>''</font>,[
+                State.X[0],
+                State.X[1],
+                State.X[2],
+                State.F]));
+        <b>end</b>;
+    <b>end</b>;
+    Write(Format(<font color=blue>'OPTIMIZATION STOPPED'</font>#13#10<font color=blue>''</font>,[]));
+    MinASAResults(State, S, Rep);
+    
+<font color=navy>    //</font>
+<font color=navy>    // output results</font>
+<font color=navy>    //</font>
+    Write(Format(<font color=blue>'X = %4.2f (should be 0.00)'</font>#13#10<font color=blue>''</font>,[
+        S[0]]));
+    Write(Format(<font color=blue>'Y = %4.2f (should be 0.00)'</font>#13#10<font color=blue>''</font>,[
+        S[1]]));
+    Write(Format(<font color=blue>'Z = %4.2f (should be 0.00)'</font>#13#10<font color=blue>''</font>#13#10<font color=blue>''</font>#13#10<font color=blue>''</font>,[
+        S[2]]));
+<b>end</b>.
+
+</pre><a name=unit_mincg></a><h2><code>mincg</code> unit</h2>
+<h3>Subroutines</h3>
+<a href='#sub_mincgcreate' class=toc>mincgcreate</a><br>
+<a href='#sub_mincgiteration' class=toc>mincgiteration</a><br>
+<a href='#sub_mincgresults' class=toc>mincgresults</a><br>
+<a href='#sub_mincgsetcgtype' class=toc>mincgsetcgtype</a><br>
+<a href='#sub_mincgsetcond' class=toc>mincgsetcond</a><br>
+<a href='#sub_mincgsetstpmax' class=toc>mincgsetstpmax</a><br>
+<a href='#sub_mincgsetxrep' class=toc>mincgsetxrep</a><br>
+<h3>Examples</h3>
+<a href='#example_mincg_1' class=toc>mincg_1</a><br>
+<a href='#example_mincg_2' class=toc>mincg_2</a><br>
+<a name='sub_mincgcreate'></a><h3><code>mincgcreate</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+        NONLINEAR CONJUGATE GRADIENT METHOD
+
+The subroutine minimizes function F(x) of N arguments by using one of  the
+nonlinear conjugate gradient methods.
+
+These CG methods are globally convergent (even on non-convex functions) as
+long as grad(f) is Lipschitz continuous in  a  some  neighborhood  of  the
+L = { x : f(x)&lt;=f(x0) }.
+
+INPUT PARAMETERS:
+    N       -   problem dimension. N&gt;0
+    X       -   initial solution approximation, array[0..N-1].
+    EpsG    -   positive number which  defines  a  precision  of  search.  The
+                subroutine finishes its work if the condition ||G|| &lt; EpsG  is
+                satisfied, where ||.|| means Euclidian norm, G - gradient, X -
+                current approximation.
+    EpsF    -   positive number which  defines  a  precision  of  search.  The
+                subroutine finishes its work if on iteration  number  k+1  the
+                condition |F(k+1)-F(k)| &lt;= EpsF*max{|F(k)|, |F(k+1)|, 1}    is
+                satisfied.
+    EpsX    -   positive number which  defines  a  precision  of  search.  The
+                subroutine finishes its work if on iteration number k+1    the
+                condition |X(k+1)-X(k)| &lt;= EpsX is fulfilled.
+    MaxIts  -   maximum number of iterations. If MaxIts=0, the number of
+                iterations is unlimited.
+
+OUTPUT PARAMETERS:
+    State - structure used for reverse communication.
+
+See also MinCGIteration, MinCGResults
+
+NOTE:
+
+Passing EpsG=0, EpsF=0, EpsX=0 and MaxIts=0 (simultaneously) will lead to
+automatic stopping criterion selection (small EpsX).
+
+  -- ALGLIB --
+     Copyright 25.03.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinCGCreate(N : AlglibInteger;
+     <b>const</b> X : TReal1DArray;
+     <b>var</b> State : MinCGState);
+</div></pre>
+<p align=left><span class=inlineheader>Examples:</span>&nbsp;&nbsp;&nbsp;<a href='#example_mincg_2' class=nav>mincg_2</a>&nbsp;&nbsp;<a href='#example_mincg_1' class=nav>mincg_1</a>&nbsp;&nbsp;</p>
+<a name='sub_mincgiteration'></a><h3><code>mincgiteration</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+One conjugate gradient iteration
+
+Called after initialization with MinCG.
+See HTML documentation for examples.
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be initialized
+                with MinCG.
+
+RESULT:
+* if function returned False, iterative proces has converged.
+  Use MinLBFGSResults() to obtain optimization results.
+* if subroutine returned True, then, depending on structure fields, we
+  have one of the following situations
+
+
+=== FUNC/GRAD REQUEST ===
+State.NeedFG is True =&gt; function value/gradient are needed.
+Caller should calculate function value State.F and gradient
+State.G[0..N-1] at State.X[0..N-1] and call MinLBFGSIteration() again.
+
+=== NEW INTERATION IS REPORTED ===
+State.XUpdated is True =&gt; one more iteration was made.
+State.X contains current position, State.F contains function value at X.
+You can read info from these fields, but never modify  them  because  they
+contain the only copy of optimization algorithm state.
+
+One and only one of these fields (NeedFG, XUpdated) is true on return. New
+iterations are reported only when reports  are  explicitly  turned  on  by
+MinLBFGSSetXRep() function, so if you never called it, you can expect that
+NeedFG is always True.
+
+
+  -- ALGLIB --
+     Copyright 20.04.2009 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>function</b> MinCGIteration(<b>var</b> State : MinCGState):Boolean;
+</div></pre>
+<p align=left><span class=inlineheader>Examples:</span>&nbsp;&nbsp;&nbsp;<a href='#example_mincg_2' class=nav>mincg_2</a>&nbsp;&nbsp;<a href='#example_mincg_1' class=nav>mincg_1</a>&nbsp;&nbsp;</p>
+<a name='sub_mincgresults'></a><h3><code>mincgresults</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+Conjugate gradient results
+
+Called after MinCG returned False.
+
+INPUT PARAMETERS:
+    State   -   algorithm state (used by MinCGIteration).
+
+OUTPUT PARAMETERS:
+    X       -   array[0..N-1], solution
+    Rep     -   optimization report:
+                * Rep.TerminationType completetion code:
+                    * -2    rounding errors prevent further improvement.
+                            X contains best point found.
+                    * -1    incorrect parameters were specified
+                    *  1    relative function improvement is no more than
+                            EpsF.
+                    *  2    relative step is no more than EpsX.
+                    *  4    gradient norm is no more than EpsG
+                    *  5    MaxIts steps was taken
+                    *  7    stopping conditions are too stringent,
+                            further improvement is impossible
+                * Rep.IterationsCount contains iterations count
+                * NFEV countains number of function calculations
+
+  -- ALGLIB --
+     Copyright 20.04.2009 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinCGResults(<b>const</b> State : MinCGState;
+     <b>var</b> X : TReal1DArray;
+     <b>var</b> Rep : MinCGReport);
+</div></pre>
+<p align=left><span class=inlineheader>Examples:</span>&nbsp;&nbsp;&nbsp;<a href='#example_mincg_2' class=nav>mincg_2</a>&nbsp;&nbsp;<a href='#example_mincg_1' class=nav>mincg_1</a>&nbsp;&nbsp;</p>
+<a name='sub_mincgsetcgtype'></a><h3><code>mincgsetcgtype</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function sets CG algorithm.
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be
+                initialized with MinCGCreate()
+    CGType  -   algorithm type:
+                * -1    automatic selection of the best algorithm
+                * 0     DY (Dai and Yuan) algorithm
+                * 1     Hybrid DY-HS algorithm
+
+  -- ALGLIB --
+     Copyright 02.04.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinCGSetCGType(<b>var</b> State : MinCGState; CGType : AlglibInteger);
+</div></pre>
+<a name='sub_mincgsetcond'></a><h3><code>mincgsetcond</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function sets stopping conditions for CG optimization algorithm.
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be initialized
+                with MinCGCreate()
+    EpsG    -   &gt;=0
+                The  subroutine  finishes  its  work   if   the  condition
+                ||G||&lt;EpsG is satisfied, where ||.|| means Euclidian norm,
+                G - gradient.
+    EpsF    -   &gt;=0
+                The  subroutine  finishes  its work if on k+1-th iteration
+                the  condition  |F(k+1)-F(k)|&lt;=EpsF*max{|F(k)|,|F(k+1)|,1}
+                is satisfied.
+    EpsX    -   &gt;=0
+                The subroutine finishes its work if  on  k+1-th  iteration
+                the condition |X(k+1)-X(k)| &lt;= EpsX is fulfilled.
+    MaxIts  -   maximum number of iterations. If MaxIts=0, the  number  of
+                iterations is unlimited.
+
+Passing EpsG=0, EpsF=0, EpsX=0 and MaxIts=0 (simultaneously) will lead to
+automatic stopping criterion selection (small EpsX).
+
+  -- ALGLIB --
+     Copyright 02.04.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinCGSetCond(<b>var</b> State : MinCGState;
+     EpsG : Double;
+     EpsF : Double;
+     EpsX : Double;
+     MaxIts : AlglibInteger);
+</div></pre>
+<a name='sub_mincgsetstpmax'></a><h3><code>mincgsetstpmax</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function sets maximum step length
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be
+                initialized with MinCGCreate()
+    StpMax  -   maximum step length, &gt;=0. Set StpMax to 0.0,  if you don't
+                want to limit step length.
+
+Use this subroutine when you optimize target function which contains exp()
+or  other  fast  growing  functions,  and optimization algorithm makes too
+large  steps  which  leads  to overflow. This function allows us to reject
+steps  that  are  too  large  (and  therefore  expose  us  to the possible
+overflow) without actually calculating function value at the x+stp*d.
+
+  -- ALGLIB --
+     Copyright 02.04.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinCGSetStpMax(<b>var</b> State : MinCGState; StpMax : Double);
+</div></pre>
+<a name='sub_mincgsetxrep'></a><h3><code>mincgsetxrep</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function turns on/off reporting.
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be
+                initialized with MinCGCreate()
+    NeedXRep-   whether iteration reports are needed or not
+
+Usually  algorithm  returns  from  MinCGIteration()  only  when  it  needs
+function/gradient. However, with this function we can let  it  stop  after
+each  iteration  (one  iteration  may  include   more  than  one  function
+evaluation), which is indicated by XUpdated field.
+
+  -- ALGLIB --
+     Copyright 02.04.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinCGSetXRep(<b>var</b> State : MinCGState; NeedXRep : Boolean);
+</div></pre>
+<a name='example_mincg_1'></a><h3>mincg_1 example</h3>
+<pre>
+<b>var</b>
+    N : AlglibInteger;
+    State : MinCGState;
+    Rep : MinCGReport;
+    S : TReal1DArray;
+    X : Double;
+    Y : Double;
+<b>begin</b>
+    
+<font color=navy>    //</font>
+<font color=navy>    // Function minimized:</font>
+<font color=navy>    //     F = (x-1)^4 + (y-x)^2</font>
+<font color=navy>    // N = 2 - task dimension.</font>
+<font color=navy>    //</font>
+    N := 2;
+    SetLength(S, 2);
+    S[0] := 10;
+    S[1] := 11;
+    MinCGCreate(N, S, State);
+    MinCGSetCond(State, 0.0, 0.0, 0.00001, 0);
+    MinCGSetXRep(State, True);
+    Write(Format(<font color=blue>''</font>#13#10<font color=blue>''</font>#13#10<font color=blue>'F = (x-1)^4 + (y-x)^2'</font>#13#10<font color=blue>''</font>,[]));
+    Write(Format(<font color=blue>'OPTIMIZATION STARTED'</font>#13#10<font color=blue>''</font>,[]));
+    <b>while</b> MinCGIteration(State) <b>do</b>
+    <b>begin</b>
+        <b>if</b> State.NeedFG then
+        <b>begin</b>
+            X := State.X[0];
+            Y := State.X[1];
+            State.F := AP_Sqr(AP_Sqr(X-1))+AP_Sqr(Y-X);
+            State.G[0] := 4*AP_Sqr(X-1)*(X-1)+2*(X-Y);
+            State.G[1] := 2*(Y-X);
+        <b>end</b>;
+        <b>if</b> State.XUpdated then
+        <b>begin</b>
+            Write(Format(<font color=blue>'    F(%8.5f,%8.5f)=%0.5f'</font>#13#10<font color=blue>''</font>,[
+                State.X[0],
+                State.X[1],
+                State.F]));
+        <b>end</b>;
+    <b>end</b>;
+    Write(Format(<font color=blue>'OPTIMIZATION STOPPED'</font>#13#10<font color=blue>''</font>,[]));
+    MinCGResults(State, S, Rep);
+    
+<font color=navy>    //</font>
+<font color=navy>    // output results</font>
+<font color=navy>    //</font>
+    Write(Format(<font color=blue>'X = %4.2f (should be 1.00)'</font>#13#10<font color=blue>''</font>,[
+        S[0]]));
+    Write(Format(<font color=blue>'Y = %4.2f (should be 1.00)'</font>#13#10<font color=blue>''</font>#13#10<font color=blue>''</font>#13#10<font color=blue>''</font>,[
+        S[1]]));
+<b>end</b>.
+
+</pre><a name='example_mincg_2'></a><h3>mincg_2 example</h3>
+<pre>
+<b>var</b>
+    N : AlglibInteger;
+    State : MinCGState;
+    Rep : MinCGReport;
+    S : TReal1DArray;
+    X : Double;
+    Y : Double;
+<b>begin</b>
+    
+<font color=navy>    //</font>
+<font color=navy>    // Function minimized:</font>
+<font color=navy>    //     F = exp(x-1) + exp(1-x) + (y-x)^2</font>
+<font color=navy>    // N = 2 - task dimension.</font>
+<font color=navy>    //</font>
+<font color=navy>    // Take a look at MinCGSetStpMax() call - it prevents us</font>
+<font color=navy>    // from overflow (which may be result of too large step).</font>
+<font color=navy>    // Try to comment it and see what will happen.</font>
+<font color=navy>    //</font>
+    N := 2;
+    SetLength(S, 2);
+    S[0] := 10;
+    S[1] := RandomReal-0.5;
+    MinCGCreate(N, S, State);
+    MinCGSetCond(State, 0.0, 0.0, 0.0001, 0);
+    MinCGSetXRep(State, True);
+    MinCGSetStpMax(State, 1.0);
+    Write(Format(<font color=blue>''</font>#13#10<font color=blue>''</font>#13#10<font color=blue>'F = exp(x-1) + exp(1-x) + (y-x)^2'</font>#13#10<font color=blue>''</font>,[]));
+    Write(Format(<font color=blue>'OPTIMIZATION STARTED'</font>#13#10<font color=blue>''</font>,[]));
+    <b>while</b> MinCGIteration(State) <b>do</b>
+    <b>begin</b>
+        <b>if</b> State.NeedFG then
+        <b>begin</b>
+            X := State.X[0];
+            Y := State.X[1];
+            State.F := Exp(X-1)+Exp(1-X)+AP_Sqr(Y-X);
+            State.G[0] := Exp(X-1)-Exp(1-X)+2*(X-Y);
+            State.G[1] := 2*(Y-X);
+        <b>end</b>;
+        <b>if</b> State.XUpdated then
+        <b>begin</b>
+            Write(Format(<font color=blue>'    F(%8.5f,%8.5f)=%0.5f'</font>#13#10<font color=blue>''</font>,[
+                State.X[0],
+                State.X[1],
+                State.F]));
+        <b>end</b>;
+    <b>end</b>;
+    Write(Format(<font color=blue>'OPTIMIZATION STOPPED'</font>#13#10<font color=blue>''</font>,[]));
+    MinCGResults(State, S, Rep);
+    
+<font color=navy>    //</font>
+<font color=navy>    // output results</font>
+<font color=navy>    //</font>
+    Write(Format(<font color=blue>'X = %4.2f (should be 1.00)'</font>#13#10<font color=blue>''</font>,[
+        S[0]]));
+    Write(Format(<font color=blue>'Y = %4.2f (should be 1.00)'</font>#13#10<font color=blue>''</font>#13#10<font color=blue>''</font>#13#10<font color=blue>''</font>,[
+        S[1]]));
+<b>end</b>.
+
+</pre><a name=unit_minlbfgs></a><h2><code>minlbfgs</code> unit</h2>
+<h3>Subroutines</h3>
+<a href='#sub_minlbfgscreate' class=toc>minlbfgscreate</a><br>
+<a href='#sub_minlbfgscreatex' class=toc>minlbfgscreatex</a><br>
+<a href='#sub_minlbfgsiteration' class=toc>minlbfgsiteration</a><br>
+<a href='#sub_minlbfgsresults' class=toc>minlbfgsresults</a><br>
+<a href='#sub_minlbfgssetcond' class=toc>minlbfgssetcond</a><br>
+<a href='#sub_minlbfgssetstpmax' class=toc>minlbfgssetstpmax</a><br>
+<a href='#sub_minlbfgssetxrep' class=toc>minlbfgssetxrep</a><br>
+<h3>Examples</h3>
+<a href='#example_minlbfgs_1' class=toc>minlbfgs_1</a><br>
+<a href='#example_minlbfgs_2' class=toc>minlbfgs_2</a><br>
+<a name='sub_minlbfgscreate'></a><h3><code>minlbfgscreate</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+        LIMITED MEMORY BFGS METHOD FOR LARGE SCALE OPTIMIZATION
+
+The subroutine minimizes function F(x) of N arguments by  using  a  quasi-
+Newton method (LBFGS scheme) which is optimized to use  a  minimum  amount
+of memory.
+
+The subroutine generates the approximation of an inverse Hessian matrix by
+using information about the last M steps of the algorithm  (instead of N).
+It lessens a required amount of memory from a value  of  order  N^2  to  a
+value of order 2*N*M.
+
+INPUT PARAMETERS:
+    N       -   problem dimension. N&gt;0
+    M       -   number of corrections in the BFGS scheme of Hessian
+                approximation update. Recommended value:  3&lt;=M&lt;=7. The smaller
+                value causes worse convergence, the bigger will  not  cause  a
+                considerably better convergence, but will cause a fall in  the
+                performance. M&lt;=N.
+    X       -   initial solution approximation, array[0..N-1].
+
+OUTPUT PARAMETERS:
+    State   -   structure used for reverse communication.
+    
+This function  initializes  State   structure  with  default  optimization
+parameters (stopping conditions, step size, etc.). Use MinLBFGSSet??????()
+functions to tune optimization parameters.
+
+After   all   optimization   parameters   are   tuned,   you   should  use
+MinLBFGSIteration() function to advance algorithm iterations.
+
+NOTES:
+
+1. you may tune stopping conditions with MinLBFGSSetCond() function
+2. if target function contains exp() or other fast growing functions,  and
+   optimization algorithm makes too large steps which leads  to  overflow,
+   use MinLBFGSSetStpMax() function to bound algorithm's  steps.  However,
+   L-BFGS rarely needs such a tuning.
+
+
+  -- ALGLIB --
+     Copyright 02.04.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinLBFGSCreate(N : AlglibInteger;
+     M : AlglibInteger;
+     <b>const</b> X : TReal1DArray;
+     <b>var</b> State : MinLBFGSState);
+</div></pre>
+<p align=left><span class=inlineheader>Examples:</span>&nbsp;&nbsp;&nbsp;<a href='#example_minlbfgs_1' class=nav>minlbfgs_1</a>&nbsp;&nbsp;<a href='#example_minlbfgs_2' class=nav>minlbfgs_2</a>&nbsp;&nbsp;</p>
+<a name='sub_minlbfgscreatex'></a><h3><code>minlbfgscreatex</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+Extended subroutine for internal use only.
+
+Accepts additional parameters:
+
+    Flags - additional settings:
+            * Flags = 0     means no additional settings
+            * Flags = 1     &quot;do not allocate memory&quot;. used when solving
+                            a many subsequent tasks with  same N/M  values.
+                            First  call MUST  be without this flag bit set,
+                            subsequent  calls   of   MinLBFGS   with   same
+                            MinLBFGSState structure can set Flags to 1.
+
+  -- ALGLIB --
+     Copyright 02.04.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinLBFGSCreateX(N : AlglibInteger;
+     M : AlglibInteger;
+     <b>const</b> X : TReal1DArray;
+     Flags : AlglibInteger;
+     <b>var</b> State : MinLBFGSState);
+</div></pre>
+<a name='sub_minlbfgsiteration'></a><h3><code>minlbfgsiteration</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+L-BFGS iterations
+
+Called after initialization with MinLBFGSCreate() function.
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be initialized
+                with MinLBFGSCreate()
+
+RESULT:
+* if function returned False, iterative proces has converged.
+  Use MinLBFGSResults() to obtain optimization results.
+* if subroutine returned True, then, depending on structure fields, we
+  have one of the following situations
+
+
+=== FUNC/GRAD REQUEST ===
+State.NeedFG is True =&gt; function value/gradient are needed.
+Caller should calculate function value State.F and gradient
+State.G[0..N-1] at State.X[0..N-1] and call MinLBFGSIteration() again.
+
+=== NEW INTERATION IS REPORTED ===
+State.XUpdated is True =&gt; one more iteration was made.
+State.X contains current position, State.F contains function value at X.
+You can read info from these fields, but never modify  them  because  they
+contain the only copy of optimization algorithm state.
+
+
+One and only one of these fields (NeedFG, XUpdated) is true on return. New
+iterations are reported only when reports  are  explicitly  turned  on  by
+MinLBFGSSetXRep() function, so if you never called it, you can expect that
+NeedFG is always True.
+
+
+  -- ALGLIB --
+     Copyright 20.03.2009 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>function</b> MinLBFGSIteration(<b>var</b> State : MinLBFGSState):Boolean;
+</div></pre>
+<p align=left><span class=inlineheader>Examples:</span>&nbsp;&nbsp;&nbsp;<a href='#example_minlbfgs_1' class=nav>minlbfgs_1</a>&nbsp;&nbsp;<a href='#example_minlbfgs_2' class=nav>minlbfgs_2</a>&nbsp;&nbsp;</p>
+<a name='sub_minlbfgsresults'></a><h3><code>minlbfgsresults</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+L-BFGS algorithm results
+
+Called after MinLBFGSIteration() returned False.
+
+INPUT PARAMETERS:
+    State   -   algorithm state (used by MinLBFGSIteration).
+
+OUTPUT PARAMETERS:
+    X       -   array[0..N-1], solution
+    Rep     -   optimization report:
+                * Rep.TerminationType completetion code:
+                    * -2    rounding errors prevent further improvement.
+                            X contains best point found.
+                    * -1    incorrect parameters were specified
+                    *  1    relative function improvement is no more than
+                            EpsF.
+                    *  2    relative step is no more than EpsX.
+                    *  4    gradient norm is no more than EpsG
+                    *  5    MaxIts steps was taken
+                    *  7    stopping conditions are too stringent,
+                            further improvement is impossible
+                * Rep.IterationsCount contains iterations count
+                * NFEV countains number of function calculations
+
+  -- ALGLIB --
+     Copyright 02.04.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinLBFGSResults(<b>const</b> State : MinLBFGSState;
+     <b>var</b> X : TReal1DArray;
+     <b>var</b> Rep : MinLBFGSReport);
+</div></pre>
+<p align=left><span class=inlineheader>Examples:</span>&nbsp;&nbsp;&nbsp;<a href='#example_minlbfgs_1' class=nav>minlbfgs_1</a>&nbsp;&nbsp;<a href='#example_minlbfgs_2' class=nav>minlbfgs_2</a>&nbsp;&nbsp;</p>
+<a name='sub_minlbfgssetcond'></a><h3><code>minlbfgssetcond</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function sets stopping conditions for L-BFGS optimization algorithm.
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be initialized
+                with MinLBFGSCreate()
+    EpsG    -   &gt;=0
+                The  subroutine  finishes  its  work   if   the  condition
+                ||G||&lt;EpsG is satisfied, where ||.|| means Euclidian norm,
+                G - gradient.
+    EpsF    -   &gt;=0
+                The  subroutine  finishes  its work if on k+1-th iteration
+                the  condition  |F(k+1)-F(k)|&lt;=EpsF*max{|F(k)|,|F(k+1)|,1}
+                is satisfied.
+    EpsX    -   &gt;=0
+                The subroutine finishes its work if  on  k+1-th  iteration
+                the condition |X(k+1)-X(k)| &lt;= EpsX is fulfilled.
+    MaxIts  -   maximum number of iterations. If MaxIts=0, the  number  of
+                iterations is unlimited.
+
+Passing EpsG=0, EpsF=0, EpsX=0 and MaxIts=0 (simultaneously) will lead to
+automatic stopping criterion selection (small EpsX).
+
+  -- ALGLIB --
+     Copyright 02.04.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinLBFGSSetCond(<b>var</b> State : MinLBFGSState;
+     EpsG : Double;
+     EpsF : Double;
+     EpsX : Double;
+     MaxIts : AlglibInteger);
+</div></pre>
+<a name='sub_minlbfgssetstpmax'></a><h3><code>minlbfgssetstpmax</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function sets maximum step length
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be
+                initialized with MinLBFGSCreate()
+    StpMax  -   maximum step length, &gt;=0. Set StpMax to 0.0,  if you don't
+                want to limit step length.
+
+Use this subroutine when you optimize target function which contains exp()
+or  other  fast  growing  functions,  and optimization algorithm makes too
+large  steps  which  leads  to overflow. This function allows us to reject
+steps  that  are  too  large  (and  therefore  expose  us  to the possible
+overflow) without actually calculating function value at the x+stp*d.
+
+  -- ALGLIB --
+     Copyright 02.04.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinLBFGSSetStpMax(<b>var</b> State : MinLBFGSState; StpMax : Double);
+</div></pre>
+<a name='sub_minlbfgssetxrep'></a><h3><code>minlbfgssetxrep</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function turns on/off reporting.
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be
+                initialized with MinLBFGSCreate()
+    NeedXRep-   whether iteration reports are needed or not
+
+Usually algorithm returns  from  MinLBFGSIteration()  only when  it  needs
+function/gradient/ (which is indicated by NeedFG field. However, with this
+function we can let it  stop  after  each  iteration  (one  iteration  may
+include more than one function evaluation), which is indicated by XUpdated
+field.
+
+
+  -- ALGLIB --
+     Copyright 02.04.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinLBFGSSetXRep(<b>var</b> State : MinLBFGSState; NeedXRep : Boolean);
+</div></pre>
+<a name='example_minlbfgs_1'></a><h3>minlbfgs_1 example</h3>
+<pre>
+<b>var</b>
+    N : AlglibInteger;
+    M : AlglibInteger;
+    State : MinLBFGSState;
+    Rep : MinLBFGSReport;
+    S : TReal1DArray;
+    X : Double;
+    Y : Double;
+<b>begin</b>
+    
+<font color=navy>    //</font>
+<font color=navy>    // Function minimized:</font>
+<font color=navy>    //     F = exp(x-1) + exp(1-x) + (y-x)^2</font>
+<font color=navy>    // N = 2 - task dimension</font>
+<font color=navy>    // M = 1 - build tank-1 model</font>
+<font color=navy>    //</font>
+    N := 2;
+    M := 1;
+    SetLength(S, 2);
+    S[0] := RandomReal-0.5;
+    S[1] := RandomReal-0.5;
+    MinLBFGSCreate(N, M, S, State);
+    MinLBFGSSetCond(State, 0.0, 0.0, 0.0001, 0);
+    <b>while</b> MinLBFGSIteration(State) <b>do</b>
+    <b>begin</b>
+        <b>if</b> State.NeedFG then
+        <b>begin</b>
+            X := State.X[0];
+            Y := State.X[1];
+            State.F := Exp(X-1)+Exp(1-X)+AP_Sqr(Y-X);
+            State.G[0] := Exp(X-1)-Exp(1-X)+2*(X-Y);
+            State.G[1] := 2*(Y-X);
+        <b>end</b>;
+    <b>end</b>;
+    MinLBFGSResults(State, S, Rep);
+    
+<font color=navy>    //</font>
+<font color=navy>    // output results</font>
+<font color=navy>    //</font>
+    Write(Format(<font color=blue>''</font>#13#10<font color=blue>''</font>#13#10<font color=blue>'F = exp(x-1) + exp(1-x) + (y-x)^2'</font>#13#10<font color=blue>''</font>,[]));
+    Write(Format(<font color=blue>'X = %4.2f (should be 1.00)'</font>#13#10<font color=blue>''</font>,[
+        S[0]]));
+    Write(Format(<font color=blue>'Y = %4.2f (should be 1.00)'</font>#13#10<font color=blue>''</font>#13#10<font color=blue>''</font>#13#10<font color=blue>''</font>,[
+        S[1]]));
+<b>end</b>.
+
+</pre><a name='example_minlbfgs_2'></a><h3>minlbfgs_2 example</h3>
+<pre>
+<b>var</b>
+    N : AlglibInteger;
+    M : AlglibInteger;
+    State : MinLBFGSState;
+    Rep : MinLBFGSReport;
+    S : TReal1DArray;
+    X : Double;
+    Y : Double;
+<b>begin</b>
+    
+<font color=navy>    //</font>
+<font color=navy>    // Function minimized:</font>
+<font color=navy>    //     F = exp(x-1) + exp(1-x) + (y-x)^2</font>
+<font color=navy>    // N = 2 - task dimension</font>
+<font color=navy>    // M = 1 - build tank-1 model</font>
+<font color=navy>    //</font>
+    N := 2;
+    M := 1;
+    SetLength(S, 2);
+    S[0] := 10;
+    S[1] := RandomReal-0.5;
+    MinLBFGSCreate(N, M, S, State);
+    MinLBFGSSetCond(State, 0.0, 0.0, 0.0001, 0);
+    MinLBFGSSetXRep(State, True);
+    Write(Format(<font color=blue>''</font>#13#10<font color=blue>''</font>#13#10<font color=blue>'F = exp(x-1) + exp(1-x) + (y-x)^2'</font>#13#10<font color=blue>''</font>,[]));
+    Write(Format(<font color=blue>'OPTIMIZATION STARTED'</font>#13#10<font color=blue>''</font>,[]));
+    <b>while</b> MinLBFGSIteration(State) <b>do</b>
+    <b>begin</b>
+        <b>if</b> State.NeedFG then
+        <b>begin</b>
+            X := State.X[0];
+            Y := State.X[1];
+            State.F := Exp(X-1)+Exp(1-X)+AP_Sqr(Y-X);
+            State.G[0] := Exp(X-1)-Exp(1-X)+2*(X-Y);
+            State.G[1] := 2*(Y-X);
+        <b>end</b>;
+        <b>if</b> State.XUpdated then
+        <b>begin</b>
+            Write(Format(<font color=blue>'    F(%8.5f,%8.5f)=%0.5f'</font>#13#10<font color=blue>''</font>,[
+                State.X[0],
+                State.X[1],
+                State.F]));
+        <b>end</b>;
+    <b>end</b>;
+    Write(Format(<font color=blue>'OPTIMIZATION STOPPED'</font>#13#10<font color=blue>''</font>,[]));
+    MinLBFGSResults(State, S, Rep);
+    
+<font color=navy>    //</font>
+<font color=navy>    // output results</font>
+<font color=navy>    //</font>
+    Write(Format(<font color=blue>'X = %4.2f (should be 1.00)'</font>#13#10<font color=blue>''</font>,[
+        S[0]]));
+    Write(Format(<font color=blue>'Y = %4.2f (should be 1.00)'</font>#13#10<font color=blue>''</font>#13#10<font color=blue>''</font>#13#10<font color=blue>''</font>,[
+        S[1]]));
+<b>end</b>.
+
+</pre><a name=unit_minlm></a><h2><code>minlm</code> unit</h2>
+<h3>Subroutines</h3>
+<a href='#sub_minlmcreatefgh' class=toc>minlmcreatefgh</a><br>
+<a href='#sub_minlmcreatefgj' class=toc>minlmcreatefgj</a><br>
+<a href='#sub_minlmcreatefj' class=toc>minlmcreatefj</a><br>
 <a href='#sub_minlmiteration' class=toc>minlmiteration</a><br>
 <a href='#sub_minlmresults' class=toc>minlmresults</a><br>
+<a href='#sub_minlmsetcond' class=toc>minlmsetcond</a><br>
+<a href='#sub_minlmsetstpmax' class=toc>minlmsetstpmax</a><br>
+<a href='#sub_minlmsetxrep' class=toc>minlmsetxrep</a><br>
 <h3>Examples</h3>
 <a href='#example_minlm_fgh' class=toc>minlm_fgh</a><br>
 <a href='#example_minlm_fgj' class=toc>minlm_fgj</a><br>
 <a href='#example_minlm_fj' class=toc>minlm_fj</a><br>
 <a href='#example_minlm_fj2' class=toc>minlm_fj2</a><br>
-<a name='sub_minlmfgh'></a><h3><code>minlmfgh</code> subroutine</h3>
+<a name='sub_minlmcreatefgh'></a><h3><code>minlmcreatefgh</code> subroutine</h3>
 <pre>
 <div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
     LEVENBERG-MARQUARDT-LIKE METHOD FOR NON-LINEAR OPTIMIZATION
@@ -9323,12 +10337,6 @@ See HTML-documentation.
 INPUT PARAMETERS:
     N       -   dimension, N&gt;1
     X       -   initial solution, array[0..N-1]
-    EpsF    -   stopping criterion. Algorithm stops if
-                |F(k+1)-F(k)| &lt;= EpsF*max{|F(k)|, |F(k+1)|, 1}
-    EpsX    -   stopping criterion. Algorithm stops if
-                |X(k+1)-X(k)| &lt;= EpsX*(1+|X(k)|)
-    MaxIts  -   stopping criterion. Algorithm stops after MaxIts iterations.
-                MaxIts=0 means no stopping criterion.
 
 OUTPUT PARAMETERS:
     State   -   structure which stores algorithm state between subsequent
@@ -9337,23 +10345,22 @@ OUTPUT PARAMETERS:
 
 See also MinLMIteration, MinLMResults.
 
-NOTE
+NOTES:
 
-Passing EpsF=0, EpsX=0 and MaxIts=0 (simultaneously) will lead to automatic
-stopping criterion selection (small EpsX).
+1. you may tune stopping conditions with MinLMSetCond() function
+2. if target function contains exp() or other fast growing functions,  and
+   optimization algorithm makes too large steps which leads  to  overflow,
+   use MinLMSetStpMax() function to bound algorithm's steps.
 
   -- ALGLIB --
      Copyright 30.03.2009 by Bochkanov Sergey
 *************************************************************************)
-</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinLMFGH(<b>const</b> N : AlglibInteger;
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinLMCreateFGH(<b>const</b> N : AlglibInteger;
      <b>const</b> X : TReal1DArray;
-     <b>const</b> EpsF : Double;
-     <b>const</b> EpsX : Double;
-     <b>const</b> MaxIts : AlglibInteger;
-     <b>var</b> State : LMState);
+     <b>var</b> State : MinLMState);
 </div></pre>
 <p align=left><span class=inlineheader>Examples:</span>&nbsp;&nbsp;&nbsp;<a href='#example_minlm_fgh' class=nav>minlm_fgh</a>&nbsp;&nbsp;</p>
-<a name='sub_minlmfgj'></a><h3><code>minlmfgj</code> subroutine</h3>
+<a name='sub_minlmcreatefgj'></a><h3><code>minlmcreatefgj</code> subroutine</h3>
 <pre>
 <div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
     LEVENBERG-MARQUARDT-LIKE METHOD FOR NON-LINEAR OPTIMIZATION
@@ -9374,12 +10381,6 @@ INPUT PARAMETERS:
     N       -   dimension, N&gt;1
     M       -   number of functions f[i]
     X       -   initial solution, array[0..N-1]
-    EpsF    -   stopping criterion. Algorithm stops if
-                |F(k+1)-F(k)| &lt;= EpsF*max{|F(k)|, |F(k+1)|, 1}
-    EpsX    -   stopping criterion. Algorithm stops if
-                |X(k+1)-X(k)| &lt;= EpsX*(1+|X(k)|)
-    MaxIts  -   stopping criterion. Algorithm stops after MaxIts iterations.
-                MaxIts=0 means no stopping criterion.
 
 OUTPUT PARAMETERS:
     State   -   structure which stores algorithm state between subsequent
@@ -9388,24 +10389,23 @@ OUTPUT PARAMETERS:
 
 See also MinLMIteration, MinLMResults.
 
-NOTE
+NOTES:
 
-Passing EpsF=0, EpsX=0 and MaxIts=0 (simultaneously) will lead to automatic
-stopping criterion selection (small EpsX).
+1. you may tune stopping conditions with MinLMSetCond() function
+2. if target function contains exp() or other fast growing functions,  and
+   optimization algorithm makes too large steps which leads  to  overflow,
+   use MinLMSetStpMax() function to bound algorithm's steps.
 
   -- ALGLIB --
      Copyright 30.03.2009 by Bochkanov Sergey
 *************************************************************************)
-</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinLMFGJ(<b>const</b> N : AlglibInteger;
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinLMCreateFGJ(<b>const</b> N : AlglibInteger;
      <b>const</b> M : AlglibInteger;
      <b>const</b> X : TReal1DArray;
-     <b>const</b> EpsF : Double;
-     <b>const</b> EpsX : Double;
-     <b>const</b> MaxIts : AlglibInteger;
-     <b>var</b> State : LMState);
+     <b>var</b> State : MinLMState);
 </div></pre>
 <p align=left><span class=inlineheader>Examples:</span>&nbsp;&nbsp;&nbsp;<a href='#example_minlm_fgj' class=nav>minlm_fgj</a>&nbsp;&nbsp;</p>
-<a name='sub_minlmfj'></a><h3><code>minlmfj</code> subroutine</h3>
+<a name='sub_minlmcreatefj'></a><h3><code>minlmcreatefj</code> subroutine</h3>
 <pre>
 <div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
     CLASSIC LEVENBERG-MARQUARDT METHOD FOR NON-LINEAR OPTIMIZATION
@@ -9425,12 +10425,6 @@ INPUT PARAMETERS:
     N       -   dimension, N&gt;1
     M       -   number of functions f[i]
     X       -   initial solution, array[0..N-1]
-    EpsF    -   stopping criterion. Algorithm stops if
-                |F(k+1)-F(k)| &lt;= EpsF*max{|F(k)|, |F(k+1)|, 1}
-    EpsX    -   stopping criterion. Algorithm stops if
-                |X(k+1)-X(k)| &lt;= EpsX*(1+|X(k)|)
-    MaxIts  -   stopping criterion. Algorithm stops after MaxIts iterations.
-                MaxIts=0 means no stopping criterion.
 
 OUTPUT PARAMETERS:
     State   -   structure which stores algorithm state between subsequent
@@ -9439,21 +10433,20 @@ OUTPUT PARAMETERS:
 
 See also MinLMIteration, MinLMResults.
 
-NOTE
+NOTES:
 
-Passing EpsF=0, EpsX=0 and MaxIts=0 (simultaneously) will lead to automatic
-stopping criterion selection (small EpsX).
+1. you may tune stopping conditions with MinLMSetCond() function
+2. if target function contains exp() or other fast growing functions,  and
+   optimization algorithm makes too large steps which leads  to  overflow,
+   use MinLMSetStpMax() function to bound algorithm's steps.
 
   -- ALGLIB --
      Copyright 30.03.2009 by Bochkanov Sergey
 *************************************************************************)
-</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinLMFJ(<b>const</b> N : AlglibInteger;
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinLMCreateFJ(<b>const</b> N : AlglibInteger;
      <b>const</b> M : AlglibInteger;
      <b>const</b> X : TReal1DArray;
-     <b>const</b> EpsF : Double;
-     <b>const</b> EpsX : Double;
-     <b>const</b> MaxIts : AlglibInteger;
-     <b>var</b> State : LMState);
+     <b>var</b> State : MinLMState);
 </div></pre>
 <p align=left><span class=inlineheader>Examples:</span>&nbsp;&nbsp;&nbsp;<a href='#example_minlm_fj' class=nav>minlm_fj</a>&nbsp;&nbsp;<a href='#example_minlm_fj2' class=nav>minlm_fj2</a>&nbsp;&nbsp;</p>
 <a name='sub_minlmiteration'></a><h3><code>minlmiteration</code> subroutine</h3>
@@ -9480,19 +10473,22 @@ If subroutine returned True, then:
                                 are required
 * if State.NeedFGH=True     -   function value F, gradient G and Hesian H
                                 are required
+* if State.XUpdated=True    -   algorithm reports about new iteration,
+                                State.X contains current point,
+                                State.F contains function value.
 
 One and only one of this fields can be set at time.
 
 Results are stored:
-* function value            -   in LMState.F
-* gradient                  -   in LMState.G[0..N-1]
-* Jacobi matrix             -   in LMState.J[0..M-1,0..N-1]
-* Hessian                   -   in LMState.H[0..N-1,0..N-1]
+* function value            -   in MinLMState.F
+* gradient                  -   in MinLMState.G[0..N-1]
+* Jacobi matrix             -   in MinLMState.J[0..M-1,0..N-1]
+* Hessian                   -   in MinLMState.H[0..N-1,0..N-1]
 
   -- ALGLIB --
      Copyright 10.03.2009 by Bochkanov Sergey
 *************************************************************************)
-</div><div style='margin-top: 0; margin-bottom: 0;'><b>function</b> MinLMIteration(<b>var</b> State : LMState):Boolean;
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>function</b> MinLMIteration(<b>var</b> State : MinLMState):Boolean;
 </div></pre>
 <p align=left><span class=inlineheader>Examples:</span>&nbsp;&nbsp;&nbsp;<a href='#example_minlm_fgh' class=nav>minlm_fgh</a>&nbsp;&nbsp;<a href='#example_minlm_fgj' class=nav>minlm_fgj</a>&nbsp;&nbsp;<a href='#example_minlm_fj' class=nav>minlm_fj</a>&nbsp;&nbsp;<a href='#example_minlm_fj2' class=nav>minlm_fj2</a>&nbsp;&nbsp;</p>
 <a name='sub_minlmresults'></a><h3><code>minlmresults</code> subroutine</h3>
@@ -9513,7 +10509,10 @@ Output parameters:
                     *  1    relative function improvement is no more than
                             EpsF.
                     *  2    relative step is no more than EpsX.
+                    *  4    gradient is no more than EpsG.
                     *  5    MaxIts steps was taken
+                    *  7    stopping conditions are too stringent,
+                            further improvement is impossible
                 * Rep.IterationsCount contains iterations count
                 * Rep.NFunc     - number of function calculations
                 * Rep.NJac      - number of Jacobi matrix calculations
@@ -9524,16 +10523,106 @@ Output parameters:
   -- ALGLIB --
      Copyright 10.03.2009 by Bochkanov Sergey
 *************************************************************************)
-</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinLMResults(<b>const</b> State : LMState;
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinLMResults(<b>const</b> State : MinLMState;
      <b>var</b> X : TReal1DArray;
-     <b>var</b> Rep : LMReport);
+     <b>var</b> Rep : MinLMReport);
 </div></pre>
 <p align=left><span class=inlineheader>Examples:</span>&nbsp;&nbsp;&nbsp;<a href='#example_minlm_fgh' class=nav>minlm_fgh</a>&nbsp;&nbsp;<a href='#example_minlm_fgj' class=nav>minlm_fgj</a>&nbsp;&nbsp;<a href='#example_minlm_fj' class=nav>minlm_fj</a>&nbsp;&nbsp;<a href='#example_minlm_fj2' class=nav>minlm_fj2</a>&nbsp;&nbsp;</p>
+<a name='sub_minlmsetcond'></a><h3><code>minlmsetcond</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function sets stopping conditions for Levenberg-Marquardt optimization
+algorithm.
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be initialized
+                with MinLMCreate???()
+    EpsG    -   &gt;=0
+                The  subroutine  finishes  its  work   if   the  condition
+                ||G||&lt;EpsG is satisfied, where ||.|| means Euclidian norm,
+                G - gradient.
+    EpsF    -   &gt;=0
+                The  subroutine  finishes  its work if on k+1-th iteration
+                the  condition  |F(k+1)-F(k)|&lt;=EpsF*max{|F(k)|,|F(k+1)|,1}
+                is satisfied.
+    EpsX    -   &gt;=0
+                The subroutine finishes its work if  on  k+1-th  iteration
+                the condition |X(k+1)-X(k)| &lt;= EpsX is fulfilled.
+    MaxIts  -   maximum number of iterations. If MaxIts=0, the  number  of
+                iterations   is    unlimited.   Only   Levenberg-Marquardt
+                iterations  are  counted  (L-BFGS/CG  iterations  are  NOT
+                counted  because their cost is very low copared to that of
+                LM).
+
+Passing EpsG=0, EpsF=0, EpsX=0 and MaxIts=0 (simultaneously) will lead to
+automatic stopping criterion selection (small EpsX).
+
+  -- ALGLIB --
+     Copyright 02.04.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinLMSetCond(<b>var</b> State : MinLMState;
+     EpsG : Double;
+     EpsF : Double;
+     EpsX : Double;
+     MaxIts : AlglibInteger);
+</div></pre>
+<a name='sub_minlmsetstpmax'></a><h3><code>minlmsetstpmax</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function sets maximum step length
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be
+                initialized with MinCGCreate???()
+    StpMax  -   maximum step length, &gt;=0. Set StpMax to 0.0,  if you don't
+                want to limit step length.
+
+Use this subroutine when you optimize target function which contains exp()
+or  other  fast  growing  functions,  and optimization algorithm makes too
+large  steps  which  leads  to overflow. This function allows us to reject
+steps  that  are  too  large  (and  therefore  expose  us  to the possible
+overflow) without actually calculating function value at the x+stp*d.
+
+NOTE: non-zero StpMax leads to moderate  performance  degradation  because
+intermediate  step  of  preconditioned L-BFGS optimization is incompatible
+with limits on step size.
+
+  -- ALGLIB --
+     Copyright 02.04.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinLMSetStpMax(<b>var</b> State : MinLMState; StpMax : Double);
+</div></pre>
+<a name='sub_minlmsetxrep'></a><h3><code>minlmsetxrep</code> subroutine</h3>
+<pre>
+<div style='font: italic; color: navy; margin-top: 0; margin-bottom: 0;'>(*************************************************************************
+This function turns on/off reporting.
+
+INPUT PARAMETERS:
+    State   -   structure which stores algorithm state between calls and
+                which is used for reverse communication. Must be
+                initialized with MinLMCreate???()
+    NeedXRep-   whether iteration reports are needed or not
+
+Usually  algorithm  returns  from  MinLMIteration()  only  when  it  needs
+function/gradient/Hessian. However, with this function we can let it  stop
+after  each  iteration  (one iteration may include  more than one function
+evaluation), which is indicated by XUpdated field.
+
+Both Levenberg-Marquardt and L-BFGS iterations are reported.
+
+
+  -- ALGLIB --
+     Copyright 02.04.2010 by Bochkanov Sergey
+*************************************************************************)
+</div><div style='margin-top: 0; margin-bottom: 0;'><b>procedure</b> MinLMSetXRep(<b>var</b> State : MinLMState; NeedXRep : Boolean);
+</div></pre>
 <a name='example_minlm_fgh'></a><h3>minlm_fgh example</h3>
 <pre>
 <b>var</b>
-    State : LMState;
-    Rep : LMReport;
+    State : MinLMState;
+    Rep : MinLMReport;
     S : TReal1DArray;
     X : Double;
     Y : Double;
@@ -9549,7 +10638,8 @@ Output parameters:
     SetLength(S, 2);
     S[0] := RandomReal-0.5;
     S[1] := RandomReal-0.5;
-    MinLMFGH(2, S, 0.0, 0.001, 0, State);
+    MinLMCreateFGH(2, S, State);
+    MinLMSetCond(State, 0.0, 0.0, 0.001, 0);
     <b>while</b> MinLMIteration(State) <b>do</b>
     <b>begin</b>
         X := State.X[0];
@@ -9599,8 +10689,8 @@ Output parameters:
 </pre><a name='example_minlm_fgj'></a><h3>minlm_fgj example</h3>
 <pre>
 <b>var</b>
-    State : LMState;
-    Rep : LMReport;
+    State : MinLMState;
+    Rep : MinLMReport;
     S : TReal1DArray;
     X : Double;
     Y : Double;
@@ -9616,7 +10706,8 @@ Output parameters:
     SetLength(S, 2);
     S[0] := RandomReal-0.5;
     S[1] := RandomReal-0.5;
-    MinLMFGJ(2, 3, S, 0.0, 0.001, 0, State);
+    MinLMCreateFGJ(2, 3, S, State);
+    MinLMSetCond(State, 0.0, 0.0, 0.001, 0);
     <b>while</b> MinLMIteration(State) <b>do</b>
     <b>begin</b>
         X := State.X[0];
@@ -9668,8 +10759,8 @@ Output parameters:
 </pre><a name='example_minlm_fj'></a><h3>minlm_fj example</h3>
 <pre>
 <b>var</b>
-    State : LMState;
-    Rep : LMReport;
+    State : MinLMState;
+    Rep : MinLMReport;
     S : TReal1DArray;
     X : Double;
     Y : Double;
@@ -9685,7 +10776,8 @@ Output parameters:
     SetLength(S, 2);
     S[0] := RandomReal-0.5;
     S[1] := RandomReal-0.5;
-    MinLMFJ(2, 3, S, 0.0, 0.001, 0, State);
+    MinLMCreateFJ(2, 3, S, State);
+    MinLMSetCond(State, 0.0, 0.0, 0.001, 0);
     <b>while</b> MinLMIteration(State) <b>do</b>
     <b>begin</b>
         X := State.X[0];
@@ -9731,8 +10823,8 @@ Output parameters:
 </pre><a name='example_minlm_fj2'></a><h3>minlm_fj2 example</h3>
 <pre>
 <b>var</b>
-    State : LMState;
-    Rep : LMReport;
+    State : MinLMState;
+    Rep : MinLMReport;
     I : AlglibInteger;
     S : TReal1DArray;
     X : TReal1DArray;
@@ -9778,7 +10870,8 @@ Output parameters:
 <font color=navy>    //</font>
 <font color=navy>    // Now S stores starting point, X and Y store points being fitted.</font>
 <font color=navy>    //</font>
-    MinLMFJ(N, M, S, 0.0, 0.001, 0, State);
+    MinLMCreateFJ(N, M, S, State);
+    MinLMSetCond(State, 0.0, 0.0, 0.001, 0);
     <b>while</b> MinLMIteration(State) <b>do</b>
     <b>begin</b>
         <b>if</b> State.NeedF then
@@ -11629,6 +12722,11 @@ OUTPUT PARAMETERS
 NOTE
     points are ordered by distance from the query point (first = closest)
 
+SEE ALSO
+* KDTreeQueryResultsX()             X-values
+* KDTreeQueryResultsXY()            X- and Y-values
+* KDTreeQueryResultsTags()          tag values
+
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************)
@@ -11653,6 +12751,11 @@ OUTPUT PARAMETERS
 NOTE
     points are ordered by distance from the query point (first = closest)
 
+SEE ALSO
+* KDTreeQueryResultsX()             X-values
+* KDTreeQueryResultsXY()            X- and Y-values
+* KDTreeQueryResultsDistances()     distances
+
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************)
@@ -11675,6 +12778,11 @@ OUTPUT PARAMETERS
 
 NOTE
     points are ordered by distance from the query point (first = closest)
+
+SEE ALSO
+* KDTreeQueryResultsXY()            X- and Y-values
+* KDTreeQueryResultsTags()          tag values
+* KDTreeQueryResultsDistances()     distances
 
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
@@ -11699,6 +12807,11 @@ OUTPUT PARAMETERS
 
 NOTE
     points are ordered by distance from the query point (first = closest)
+
+SEE ALSO
+* KDTreeQueryResultsX()             X-values
+* KDTreeQueryResultsTags()          tag values
+* KDTreeQueryResultsDistances()     distances
 
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey

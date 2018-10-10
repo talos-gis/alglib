@@ -29,8 +29,10 @@ IDWInterpolant = record
     N : AlglibInteger;
     NX : AlglibInteger;
     D : AlglibInteger;
+    R : Double;
     NW : AlglibInteger;
     Tree : KDTree;
+    ModelType : AlglibInteger;
     Q : TReal2DArray;
     XBuf : TReal1DArray;
     TBuf : TInteger1DArray;
@@ -51,6 +53,11 @@ procedure IDWBuildModifiedShepard(const XY : TReal2DArray;
      NQ : AlglibInteger;
      NW : AlglibInteger;
      var Z : IDWInterpolant);
+procedure IDWBuildModifiedShepardR(const XY : TReal2DArray;
+     N : AlglibInteger;
+     NX : AlglibInteger;
+     R : Double;
+     var Z : IDWInterpolant);
 procedure IDWBuildNoisy(const XY : TReal2DArray;
      N : AlglibInteger;
      NX : AlglibInteger;
@@ -63,6 +70,7 @@ implementation
 
 const
     IDWQFactor = 1.5;
+    IDWKMin = 5;
 
 function IDWCalcQ(var Z : IDWInterpolant;
      const X : TReal1DArray;
@@ -112,10 +120,38 @@ var
     DI : Double;
     V : Double;
 begin
-    NX := Z.NX;
-    KDTreeQueryKNN(Z.Tree, X, Z.NW, True);
-    KDTreeQueryResultsDistances(Z.Tree, Z.RBuf, K);
-    KDTreeQueryResultsTags(Z.Tree, Z.TBuf, K);
+    if Z.ModelType=0 then
+    begin
+        
+        //
+        // NQ/NW-based model
+        //
+        NX := Z.NX;
+        KDTreeQueryKNN(Z.Tree, X, Z.NW, True);
+        KDTreeQueryResultsDistances(Z.Tree, Z.RBuf, K);
+        KDTreeQueryResultsTags(Z.Tree, Z.TBuf, K);
+    end;
+    if Z.ModelType=1 then
+    begin
+        
+        //
+        // R-based model
+        //
+        NX := Z.NX;
+        KDTreeQueryRNN(Z.Tree, X, Z.R, True);
+        KDTreeQueryResultsDistances(Z.Tree, Z.RBuf, K);
+        KDTreeQueryResultsTags(Z.Tree, Z.TBuf, K);
+        if K<IDWKMin then
+        begin
+            
+            //
+            // we need at least IDWKMin points
+            //
+            KDTreeQueryKNN(Z.Tree, X, IDWKMin, True);
+            KDTreeQueryResultsDistances(Z.Tree, Z.RBuf, K);
+            KDTreeQueryResultsTags(Z.Tree, Z.TBuf, K);
+        end;
+    end;
     
     //
     // initialize weights for linear/quadratic members calculation.
@@ -171,7 +207,8 @@ end;
 
 
 (*************************************************************************
-IDW interpolant using modified Shepard method
+IDW interpolant using modified Shepard method for uniform point
+distributions.
 
 INPUT PARAMETERS:
     XY  -   X and Y values, array[0..N-1,0..NX].
@@ -191,10 +228,9 @@ INPUT PARAMETERS:
                     than constant model. But it is less robust (especially
                     in the presence of noise).
     NQ  -   number of points used to calculate  nodal  functions  (ignored
-            for  constant  models).  NQ  should  be  LARGER than 1.5 times
-            the number of coefficients in a nodal function:
-            * 1.5*(1+NX) for linear model,
-            * 3/4*(NX+2)*(NX+1) for quadratic model.
+            for constant models). NQ should be LARGER than:
+            * max(1.5*(1+NX),2^NX+1) for linear model,
+            * max(3/4*(NX+2)*(NX+1),2^NX+1) for quadratic model.
             Values less than this threshold will be silently increased.
     NW  -   number of points used to calculate weights and to interpolate.
             Required: >=2^NX+1, values less than this  threshold  will  be
@@ -216,6 +252,10 @@ NOTES:
     passed).
   * see  'Multivariate  Interpolation  of Large Sets of Scattered Data' by
     Robert J. Renka for more information on this algorithm.
+  * this subroutine assumes that point distribution is uniform at the small
+    scales.  If  it  isn't  -  for  example,  points are concentrated along
+    "lines", but "lines" distribution is uniform at the larger scale - then
+    you should use IDWBuildModifiedShepardR()
 
 
   -- ALGLIB PROJECT --
@@ -269,10 +309,12 @@ begin
     if D=1 then
     begin
         NQ := Max(NQ, Ceil(IDWQFactor*(1+NX))+1);
+        NQ := Max(NQ, Round(Power(2, NX))+1);
     end;
     if D=2 then
     begin
         NQ := Max(NQ, Ceil(IDWQFactor*(NX+2)*(NX+1)/2)+1);
+        NQ := Max(NQ, Round(Power(2, NX))+1);
     end;
     NW := Max(NW, Round(Power(2, NX))+1);
     NQ := Min(NQ, N);
@@ -282,6 +324,7 @@ begin
     // primary initialization of Z
     //
     IDWInit1(N, NX, D, NQ, NW, Z);
+    Z.ModelType := 0;
     
     //
     // Create KD-tree
@@ -558,6 +601,81 @@ end;
 
 
 (*************************************************************************
+IDW interpolant using modified Shepard method for non-uniform datasets.
+
+This type of model uses  constant  nodal  functions and interpolates using
+all nodes which are closer than user-specified radius R. It  may  be  used
+when points distribution is non-uniform at the small scale, but it  is  at
+the distances as large as R.
+
+INPUT PARAMETERS:
+    XY  -   X and Y values, array[0..N-1,0..NX].
+            First NX columns contain X-values, last column contain
+            Y-values.
+    N   -   number of nodes, N>0.
+    NX  -   space dimension, NX>=1.
+    R   -   radius, R>0
+
+OUTPUT PARAMETERS:
+    Z   -   IDW interpolant.
+
+NOTES:
+* if there is less than IDWKMin points within  R-ball,  algorithm  selects
+  IDWKMin closest ones, so that continuity properties of  interpolant  are
+  preserved even far from points.
+
+  -- ALGLIB PROJECT --
+     Copyright 11.04.2010 by Bochkanov Sergey
+*************************************************************************)
+procedure IDWBuildModifiedShepardR(const XY : TReal2DArray;
+     N : AlglibInteger;
+     NX : AlglibInteger;
+     R : Double;
+     var Z : IDWInterpolant);
+var
+    I : AlglibInteger;
+    Tags : TInteger1DArray;
+begin
+    
+    //
+    // assertions
+    //
+    Assert(N>0, 'IDWBuildModifiedShepardR: N<=0!');
+    Assert(NX>=1, 'IDWBuildModifiedShepardR: NX<1!');
+    Assert(AP_FP_Greater(R,0), 'IDWBuildModifiedShepardR: R<=0!');
+    
+    //
+    // primary initialization of Z
+    //
+    IDWInit1(N, NX, 0, 0, N, Z);
+    Z.ModelType := 1;
+    Z.R := R;
+    
+    //
+    // Create KD-tree
+    //
+    SetLength(Tags, N);
+    I:=0;
+    while I<=N-1 do
+    begin
+        Tags[I] := I;
+        Inc(I);
+    end;
+    KDTreeBuildTagged(XY, Tags, N, NX, 1, 2, Z.Tree);
+    
+    //
+    // build nodal functions
+    //
+    I:=0;
+    while I<=N-1 do
+    begin
+        APVMove(@Z.Q[I][0], 0, NX, @XY[I][0], 0, NX);
+        Inc(I);
+    end;
+end;
+
+
+(*************************************************************************
 IDW model for noisy data.
 
 This subroutine may be used to handle noisy data, i.e. data with noise  in
@@ -675,6 +793,7 @@ begin
     // primary initialization of Z
     //
     IDWInit1(N, NX, D, NQ, NW, Z);
+    Z.ModelType := 0;
     
     //
     // Create KD-tree

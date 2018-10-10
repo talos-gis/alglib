@@ -1,6 +1,6 @@
 unit llstestunit;
 interface
-uses Math, Sysutils, Ap, blas, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, hblas, sblas, ortfac, rotations, bdsvd, svd, xblas, densesolver, lbfgs, minlm, lsfit;
+uses Math, Sysutils, Ap, blas, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, hblas, sblas, ortfac, rotations, bdsvd, svd, xblas, densesolver, linmin, minlbfgs, minlm, lsfit;
 
 function TestLLS(Silent : Boolean):Boolean;
 function llstestunit_test_silent():Boolean;
@@ -223,7 +223,8 @@ begin
                         C2[I] := 2*RandomReal-1;
                         Inc(I);
                     end;
-                    LSFitNonlinearWFG(A, Y, W, C2, N, M, M, 0.0, NLThreshold, 0, AP_FP_Greater(RandomReal,0.5), State);
+                    LSFitNonlinearWFG(A, Y, W, C2, N, M, M, AP_FP_Greater(RandomReal,0.5), State);
+                    LSFitNonlinearSetCond(State, 0.0, NLThreshold, 0);
                     FitLinearNonlinear(M, True, A, State, NLSErrors);
                     LSFitNonlinearResults(State, Info, C2, Rep2);
                     if Info<=0 then
@@ -245,7 +246,8 @@ begin
                         C2[I] := 2*RandomReal-1;
                         Inc(I);
                     end;
-                    LSFitNonlinearWFGH(A, Y, W, C2, N, M, M, 0.0, NLThreshold, 0, State);
+                    LSFitNonlinearWFGH(A, Y, W, C2, N, M, M, State);
+                    LSFitNonlinearSetCond(State, 0.0, NLThreshold, 0);
                     FitLinearNonlinear(M, False, A, State, NLSErrors);
                     LSFitNonlinearResults(State, Info, C2, Rep2);
                     if Info<=0 then
@@ -272,7 +274,8 @@ begin
                         C2[I] := 2*RandomReal-1;
                         Inc(I);
                     end;
-                    LSFitNonlinearFG(A, Y, C2, N, M, M, 0.0, NLThreshold, 0, AP_FP_Greater(RandomReal,0.5), State);
+                    LSFitNonlinearFG(A, Y, C2, N, M, M, AP_FP_Greater(RandomReal,0.5), State);
+                    LSFitNonlinearSetCond(State, 0.0, NLThreshold, 0);
                     FitLinearNonlinear(M, True, A, State, NLSErrors);
                     LSFitNonlinearResults(State, Info, C2, Rep2);
                     if Info<=0 then
@@ -294,7 +297,8 @@ begin
                         C2[I] := 2*RandomReal-1;
                         Inc(I);
                     end;
-                    LSFitNonlinearFGH(A, Y, C2, N, M, M, 0.0, NLThreshold, 0, State);
+                    LSFitNonlinearFGH(A, Y, C2, N, M, M, State);
+                    LSFitNonlinearSetCond(State, 0.0, NLThreshold, 0);
                     FitLinearNonlinear(M, False, A, State, NLSErrors);
                     LSFitNonlinearResults(State, Info, C2, Rep2);
                     if Info<=0 then
@@ -498,7 +502,8 @@ begin
         Y[I] := 1/(1+2*AP_Sqr(A[I,0]));
         Inc(I);
     end;
-    LSFitNonlinearFG(A, Y, C, N, 1, 1, 0.0, NLThreshold, 0, True, State);
+    LSFitNonlinearFG(A, Y, C, N, 1, 1, True, State);
+    LSFitNonlinearSetCond(State, 0.0, NLThreshold, 0);
     while LSFitNonlinearIteration(State) do
     begin
         if State.NeedF then
@@ -573,7 +578,8 @@ begin
         //
         // Test NLS
         //
-        LSFitNonlinearFG(A, Y, C, 4, 1, 1, 0.0, NLThreshold, 0, True, State);
+        LSFitNonlinearFG(A, Y, C, 4, 1, 1, True, State);
+        LSFitNonlinearSetCond(State, 0.0, NLThreshold, 0);
         while LSFitNonlinearIteration(State) do
         begin
             if State.NeedF then

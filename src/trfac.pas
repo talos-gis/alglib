@@ -1288,11 +1288,10 @@ begin
             //
             //Compute elements J+1:M of J-th column.
             //
-            if J<M then
+            if J+1<=M-1 then
             begin
-                JP := J+1;
                 S := C_RDiv(1,A[Offs+J,Offs+J]);
-                for i_ := Offs+JP to Offs+M-1 do
+                for i_ := Offs+J+1 to Offs+M-1 do
                 begin
                     A[i_,Offs+J] := C_Mul(S, A[i_,Offs+J]);
                 end;
@@ -1390,11 +1389,10 @@ begin
             //
             //Compute elements J+1:M of J-th column.
             //
-            if J<M then
+            if J+1<=M-1 then
             begin
-                JP := J+1;
                 S := 1/A[Offs+J,Offs+J];
-                for i_ := Offs+JP to Offs+M-1 do
+                for i_ := Offs+J+1 to Offs+M-1 do
                 begin
                     A[i_,Offs+J] := S*A[i_,Offs+J];
                 end;

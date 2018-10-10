@@ -1,6 +1,6 @@
 
 program _test;
-uses Sysutils, testinterpolation2dunit;
+uses Sysutils, testminlmunit;
 
 var
     MySeed: Cardinal;
@@ -14,14 +14,18 @@ begin
         MySeed:=StrToIntDef(ParamStr(1),0);
     RandSeed:=MySeed;
     try 
-        if not testinterpolation2dunit_test_silent() then
-            raise Exception.Create('');
+        if not testminlmunit_test() then
+        begin
+            WriteLn('SEED: ', MySeed);
+            Halt(1);
+        end;
     except on E: Exception do 
         begin
-            WriteLn('spline2d                         FAILED(seed=',MySeed,')');
+            WriteLn('SEED: ', MySeed);
+            WriteLn('AP exception generated!');
+            WriteLn('\"',E.Message,'\"');
             Halt(1);
         end;
     end;
-    WriteLn('spline2d                         OK');
     Halt(0);
 end.

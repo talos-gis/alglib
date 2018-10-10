@@ -1,6 +1,6 @@
 
 program _test;
-uses Sysutils, testinterpolation2dunit;
+uses Sysutils, testminlbfgsunit;
 
 var
     MySeed: Cardinal;
@@ -14,13 +14,14 @@ begin
         MySeed:=StrToIntDef(ParamStr(1),0);
     RandSeed:=MySeed;
     try 
-        if not testinterpolation2dunit_test_silent() then
+        if not testminlbfgsunit_test_silent() then
             raise Exception.Create('');
     except on E: Exception do 
         begin
-            WriteLn('SEED ', MySeed:9, '    UNIT ', 'spline2d');
+            WriteLn('minlbfgs                         FAILED(seed=',MySeed,')');
             Halt(1);
         end;
     end;
+    WriteLn('minlbfgs                         OK');
     Halt(0);
 end.

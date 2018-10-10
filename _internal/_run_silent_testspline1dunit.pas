@@ -1,6 +1,6 @@
 
 program _test;
-uses Sysutils, testsplineinterpolationunit;
+uses Sysutils, testspline1dunit;
 
 var
     MySeed: Cardinal;
@@ -14,7 +14,7 @@ begin
         MySeed:=StrToIntDef(ParamStr(1),0);
     RandSeed:=MySeed;
     try 
-        if not testsplineinterpolationunit_test_silent() then
+        if not testspline1dunit_test_silent() then
             raise Exception.Create('');
     except on E: Exception do 
         begin

@@ -44,7 +44,8 @@ IF "%~2"=="mlpbase" GOTO lbl_4_mlpbase
 IF "%~2"=="xblas" GOTO lbl_4_xblas
 IF "%~2"=="densesolver" GOTO lbl_4_densesolver
 IF "%~2"=="mlpe" GOTO lbl_4_mlpe
-IF "%~2"=="lbfgs" GOTO lbl_4_lbfgs
+IF "%~2"=="linmin" GOTO lbl_4_linmin
+IF "%~2"=="minlbfgs" GOTO lbl_4_minlbfgs
 IF "%~2"=="mlptrain" GOTO lbl_4_mlptrain
 IF "%~2"=="pca" GOTO lbl_4_pca
 IF "%~2"=="odesolver" GOTO lbl_4_odesolver
@@ -77,6 +78,8 @@ IF "%~2"=="srcond" GOTO lbl_4_srcond
 IF "%~2"=="ssolve" GOTO lbl_4_ssolve
 IF "%~2"=="estnorm" GOTO lbl_4_estnorm
 IF "%~2"=="schur" GOTO lbl_4_schur
+IF "%~2"=="mincg" GOTO lbl_4_mincg
+IF "%~2"=="minasa" GOTO lbl_4_minasa
 IF "%~2"=="airyf" GOTO lbl_4_airyf
 IF "%~2"=="bessel" GOTO lbl_4_bessel
 IF "%~2"=="betaf" GOTO lbl_4_betaf
@@ -215,8 +218,12 @@ GOTO lbl_4___end
 :lbl_4_mlpe
 echo No examples for this unit
 GOTO lbl_4___end
-:lbl_4_lbfgs
-echo lbfgs_min           L-BFGS optimization
+:lbl_4_linmin
+echo No examples for this unit
+GOTO lbl_4___end
+:lbl_4_minlbfgs
+echo minlbfgs_1          L-BFGS optimization #1
+echo minlbfgs_2          L-BFGS optimization #2
 GOTO lbl_4___end
 :lbl_4_mlptrain
 echo No examples for this unit
@@ -330,6 +337,14 @@ GOTO lbl_4___end
 :lbl_4_schur
 echo No examples for this unit
 GOTO lbl_4___end
+:lbl_4_mincg
+echo mincg_2             CG optimization #2 (StpMax demo)
+echo mincg_1             CG optimization #1
+GOTO lbl_4___end
+:lbl_4_minasa
+echo minasa_1            Bound constrained optimization #1
+echo minasa_2            Bound constrained optimization #2
+GOTO lbl_4___end
 :lbl_4_airyf
 echo No examples for this unit
 GOTO lbl_4___end
@@ -426,7 +441,7 @@ EXIT /B 0
 IF NOT "%~1"=="view" GOTO lbl_5_end
 IF "%~2"=="autogk_singular" GOTO lbl_6_autogk_singular
 IF "%~2"=="autogk_smooth" GOTO lbl_6_autogk_smooth
-IF "%~2"=="lbfgs_min" GOTO lbl_6_lbfgs_min
+IF "%~2"=="minlbfgs_1" GOTO lbl_6_minlbfgs_1
 IF "%~2"=="lsfit_linear" GOTO lbl_6_lsfit_linear
 IF "%~2"=="lsfit_nonlinear" GOTO lbl_6_lsfit_nonlinear
 IF "%~2"=="lsfit_nonlinear2" GOTO lbl_6_lsfit_nonlinear2
@@ -453,6 +468,11 @@ IF "%~2"=="spline1d_fit" GOTO lbl_6_spline1d_fit
 IF "%~2"=="spline1d_fitc" GOTO lbl_6_spline1d_fitc
 IF "%~2"=="spline1d_hermite" GOTO lbl_6_spline1d_hermite
 IF "%~2"=="spline1d_linear" GOTO lbl_6_spline1d_linear
+IF "%~2"=="minlbfgs_2" GOTO lbl_6_minlbfgs_2
+IF "%~2"=="mincg_2" GOTO lbl_6_mincg_2
+IF "%~2"=="mincg_1" GOTO lbl_6_mincg_1
+IF "%~2"=="minasa_1" GOTO lbl_6_minasa_1
+IF "%~2"=="minasa_2" GOTO lbl_6_minasa_2
 GOTO lbl_6___error
 :lbl_6_autogk_singular
 type examples\_demo_autogk_singular.*
@@ -460,8 +480,8 @@ GOTO lbl_6___end
 :lbl_6_autogk_smooth
 type examples\_demo_autogk_smooth.*
 GOTO lbl_6___end
-:lbl_6_lbfgs_min
-type examples\_demo_lbfgs_min.*
+:lbl_6_minlbfgs_1
+type examples\_demo_minlbfgs_1.*
 GOTO lbl_6___end
 :lbl_6_lsfit_linear
 type examples\_demo_lsfit_linear.*
@@ -541,6 +561,21 @@ GOTO lbl_6___end
 :lbl_6_spline1d_linear
 type examples\_demo_spline1d_linear.*
 GOTO lbl_6___end
+:lbl_6_minlbfgs_2
+type examples\_demo_minlbfgs_2.*
+GOTO lbl_6___end
+:lbl_6_mincg_2
+type examples\_demo_mincg_2.*
+GOTO lbl_6___end
+:lbl_6_mincg_1
+type examples\_demo_mincg_1.*
+GOTO lbl_6___end
+:lbl_6_minasa_1
+type examples\_demo_minasa_1.*
+GOTO lbl_6___end
+:lbl_6_minasa_2
+type examples\_demo_minasa_2.*
+GOTO lbl_6___end
 :lbl_6___error
 echo unknown example
 EXIT /B 1
@@ -565,7 +600,7 @@ EXIT /B 1
 :lbl_7___end
 IF "%~2"=="autogk_singular" GOTO lbl_9_autogk_singular
 IF "%~2"=="autogk_smooth" GOTO lbl_9_autogk_smooth
-IF "%~2"=="lbfgs_min" GOTO lbl_9_lbfgs_min
+IF "%~2"=="minlbfgs_1" GOTO lbl_9_minlbfgs_1
 IF "%~2"=="lsfit_linear" GOTO lbl_9_lsfit_linear
 IF "%~2"=="lsfit_nonlinear" GOTO lbl_9_lsfit_nonlinear
 IF "%~2"=="lsfit_nonlinear2" GOTO lbl_9_lsfit_nonlinear2
@@ -592,6 +627,11 @@ IF "%~2"=="spline1d_fit" GOTO lbl_9_spline1d_fit
 IF "%~2"=="spline1d_fitc" GOTO lbl_9_spline1d_fitc
 IF "%~2"=="spline1d_hermite" GOTO lbl_9_spline1d_hermite
 IF "%~2"=="spline1d_linear" GOTO lbl_9_spline1d_linear
+IF "%~2"=="minlbfgs_2" GOTO lbl_9_minlbfgs_2
+IF "%~2"=="mincg_2" GOTO lbl_9_mincg_2
+IF "%~2"=="mincg_1" GOTO lbl_9_mincg_1
+IF "%~2"=="minasa_1" GOTO lbl_9_minasa_1
+IF "%~2"=="minasa_2" GOTO lbl_9_minasa_2
 GOTO lbl_9___error
 :lbl_9_autogk_singular
 COPY examples\_demo_autogk_singular.pas _tmp\_demo.pas > NUL 2> NUL
@@ -599,8 +639,8 @@ GOTO lbl_9___end
 :lbl_9_autogk_smooth
 COPY examples\_demo_autogk_smooth.pas _tmp\_demo.pas > NUL 2> NUL
 GOTO lbl_9___end
-:lbl_9_lbfgs_min
-COPY examples\_demo_lbfgs_min.pas _tmp\_demo.pas > NUL 2> NUL
+:lbl_9_minlbfgs_1
+COPY examples\_demo_minlbfgs_1.pas _tmp\_demo.pas > NUL 2> NUL
 GOTO lbl_9___end
 :lbl_9_lsfit_linear
 COPY examples\_demo_lsfit_linear.pas _tmp\_demo.pas > NUL 2> NUL
@@ -679,6 +719,21 @@ COPY examples\_demo_spline1d_hermite.pas _tmp\_demo.pas > NUL 2> NUL
 GOTO lbl_9___end
 :lbl_9_spline1d_linear
 COPY examples\_demo_spline1d_linear.pas _tmp\_demo.pas > NUL 2> NUL
+GOTO lbl_9___end
+:lbl_9_minlbfgs_2
+COPY examples\_demo_minlbfgs_2.pas _tmp\_demo.pas > NUL 2> NUL
+GOTO lbl_9___end
+:lbl_9_mincg_2
+COPY examples\_demo_mincg_2.pas _tmp\_demo.pas > NUL 2> NUL
+GOTO lbl_9___end
+:lbl_9_mincg_1
+COPY examples\_demo_mincg_1.pas _tmp\_demo.pas > NUL 2> NUL
+GOTO lbl_9___end
+:lbl_9_minasa_1
+COPY examples\_demo_minasa_1.pas _tmp\_demo.pas > NUL 2> NUL
+GOTO lbl_9___end
+:lbl_9_minasa_2
+COPY examples\_demo_minasa_2.pas _tmp\_demo.pas > NUL 2> NUL
 GOTO lbl_9___end
 :lbl_9___error
 echo unknown example

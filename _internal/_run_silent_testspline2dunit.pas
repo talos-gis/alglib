@@ -1,6 +1,6 @@
 
 program _test;
-uses Sysutils, testlbfgs;
+uses Sysutils, testspline2dunit;
 
 var
     MySeed: Cardinal;
@@ -14,14 +14,13 @@ begin
         MySeed:=StrToIntDef(ParamStr(1),0);
     RandSeed:=MySeed;
     try 
-        if not testlbfgs_test_silent() then
+        if not testspline2dunit_test_silent() then
             raise Exception.Create('');
     except on E: Exception do 
         begin
-            WriteLn('lbfgs                            FAILED(seed=',MySeed,')');
+            WriteLn('SEED ', MySeed:9, '    UNIT ', 'spline2d');
             Halt(1);
         end;
     end;
-    WriteLn('lbfgs                            OK');
     Halt(0);
 end.

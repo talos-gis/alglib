@@ -59,7 +59,8 @@ begin
     //
     // Solve
     //
-    LSFitNonlinearFG(X, Y, C, N, M, K, EpsF, EpsX, MaxIts, True, State);
+    LSFitNonlinearFG(X, Y, C, N, M, K, True, State);
+    LSFitNonlinearSetCond(State, EpsF, EpsX, MaxIts);
     while LSFitNonlinearIteration(State) do
     begin
         if State.NeedF then

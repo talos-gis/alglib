@@ -1,6 +1,6 @@
 
 program _test;
-uses Sysutils, testlm;
+uses Sysutils, testmincgunit;
 
 var
     MySeed: Cardinal;
@@ -14,14 +14,14 @@ begin
         MySeed:=StrToIntDef(ParamStr(1),0);
     RandSeed:=MySeed;
     try 
-        if not testlm_test_silent() then
+        if not testmincgunit_test_silent() then
             raise Exception.Create('');
     except on E: Exception do 
         begin
-            WriteLn('minlm                            FAILED(seed=',MySeed,')');
+            WriteLn('mincg                            FAILED(seed=',MySeed,')');
             Halt(1);
         end;
     end;
-    WriteLn('minlm                            OK');
+    WriteLn('mincg                            OK');
     Halt(0);
 end.

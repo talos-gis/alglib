@@ -1,6 +1,6 @@
 
 program _test;
-uses Sysutils, testsplineinterpolationunit;
+uses Sysutils, testmincgunit;
 
 var
     MySeed: Cardinal;
@@ -14,14 +14,13 @@ begin
         MySeed:=StrToIntDef(ParamStr(1),0);
     RandSeed:=MySeed;
     try 
-        if not testsplineinterpolationunit_test_silent() then
+        if not testmincgunit_test_silent() then
             raise Exception.Create('');
     except on E: Exception do 
         begin
-            WriteLn('spline1d                         FAILED(seed=',MySeed,')');
+            WriteLn('SEED ', MySeed:9, '    UNIT ', 'mincg');
             Halt(1);
         end;
     end;
-    WriteLn('spline1d                         OK');
     Halt(0);
 end.

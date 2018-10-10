@@ -17,6 +17,11 @@ procedure TestXY(const XY : TReal2DArray;
      const NQ : AlglibInteger;
      const NW : AlglibInteger;
      var IDWErrors : Boolean);forward;
+procedure TestRXY(const XY : TReal2DArray;
+     const N : AlglibInteger;
+     const NX : AlglibInteger;
+     const R : Double;
+     var IDWErrors : Boolean);forward;
 procedure TestDegree(const N : AlglibInteger;
      const NX : AlglibInteger;
      const D : AlglibInteger;
@@ -63,46 +68,46 @@ begin
     NX:=1;
     while NX<=2 do
     begin
+        SetLength(XY, LargeN, NX+1);
+        I:=0;
+        while I<=LargeN-1 do
+        begin
+            J:=0;
+            while J<=NX-1 do
+            begin
+                XY[I,J] := 2*RandomReal-1;
+                Inc(J);
+            end;
+            if NX>=1 then
+            begin
+                VX := XY[I,0];
+            end
+            else
+            begin
+                VX := 0;
+            end;
+            if NX>=2 then
+            begin
+                VY := XY[I,1];
+            end
+            else
+            begin
+                VY := 0;
+            end;
+            if NX>=3 then
+            begin
+                VZ := XY[I,2];
+            end
+            else
+            begin
+                VZ := 0;
+            end;
+            XY[I,NX] := VX*VX*VX+Sin(Pi*VY)*AP_Sqr(VZ)-AP_Sqr(VX+VY);
+            Inc(I);
+        end;
         D:=-1;
         while D<=2 do
         begin
-            SetLength(XY, LargeN, NX+1);
-            I:=0;
-            while I<=LargeN-1 do
-            begin
-                J:=0;
-                while J<=NX-1 do
-                begin
-                    XY[I,J] := 2*RandomReal-1;
-                    Inc(J);
-                end;
-                if NX>=1 then
-                begin
-                    VX := XY[I,0];
-                end
-                else
-                begin
-                    VX := 0;
-                end;
-                if NX>=2 then
-                begin
-                    VY := XY[I,1];
-                end
-                else
-                begin
-                    VY := 0;
-                end;
-                if NX>=3 then
-                begin
-                    VZ := XY[I,2];
-                end
-                else
-                begin
-                    VZ := 0;
-                end;
-                XY[I,NX] := VX*VX*VX+Sin(Pi*VY)*AP_Sqr(VZ)-AP_Sqr(VX+VY);
-                Inc(I);
-            end;
             TestXY(XY, LargeN, NX, D, NQ, NW, IDWErrors);
             Inc(D);
         end;
@@ -321,6 +326,97 @@ end;
 
 
 (*************************************************************************
+Testing IDW:
+* generate model using R-based model
+* test basic properties
+*************************************************************************)
+procedure TestRXY(const XY : TReal2DArray;
+     const N : AlglibInteger;
+     const NX : AlglibInteger;
+     const R : Double;
+     var IDWErrors : Boolean);
+var
+    Threshold : Double;
+    LipschitzStep : Double;
+    I : AlglibInteger;
+    J : AlglibInteger;
+    I1 : AlglibInteger;
+    I2 : AlglibInteger;
+    V : Double;
+    V1 : Double;
+    V2 : Double;
+    T : Double;
+    L1 : Double;
+    L2 : Double;
+    Z1 : IDWInterpolant;
+    X : TReal1DArray;
+begin
+    Threshold := 1000*MachineEpsilon;
+    LipschitzStep := 0.001;
+    SetLength(X, NX);
+    
+    //
+    // build
+    //
+    IDWBuildModifiedShepardR(XY, N, NX, R, Z1);
+    
+    //
+    // first, test interpolation properties at nodes
+    //
+    I:=0;
+    while I<=N-1 do
+    begin
+        APVMove(@X[0], 0, NX-1, @XY[I][0], 0, NX-1);
+        IDWErrors := IDWErrors or AP_FP_Neq(IDWCalc(Z1, X),XY[I,NX]);
+        Inc(I);
+    end;
+    
+    //
+    // test Lipschitz continuity
+    //
+    I1 := RandomInteger(N);
+    repeat
+        I2 := RandomInteger(N);
+    until I2<>I1;
+    L1 := 0;
+    T := 0;
+    while AP_FP_Less(T,1) do
+    begin
+        V := 1-T;
+        APVMove(@X[0], 0, NX-1, @XY[I1][0], 0, NX-1, V);
+        V := T;
+        APVAdd(@X[0], 0, NX-1, @XY[I2][0], 0, NX-1, V);
+        V1 := IDWCalc(Z1, X);
+        V := 1-(T+LipschitzStep);
+        APVMove(@X[0], 0, NX-1, @XY[I1][0], 0, NX-1, V);
+        V := T+LipschitzStep;
+        APVAdd(@X[0], 0, NX-1, @XY[I2][0], 0, NX-1, V);
+        V2 := IDWCalc(Z1, X);
+        L1 := Max(L1, AbsReal(V2-V1)/LipschitzStep);
+        T := T+LipschitzStep;
+    end;
+    L2 := 0;
+    T := 0;
+    while AP_FP_Less(T,1) do
+    begin
+        V := 1-T;
+        APVMove(@X[0], 0, NX-1, @XY[I1][0], 0, NX-1, V);
+        V := T;
+        APVAdd(@X[0], 0, NX-1, @XY[I2][0], 0, NX-1, V);
+        V1 := IDWCalc(Z1, X);
+        V := 1-(T+LipschitzStep/3);
+        APVMove(@X[0], 0, NX-1, @XY[I1][0], 0, NX-1, V);
+        V := T+LipschitzStep/3;
+        APVAdd(@X[0], 0, NX-1, @XY[I2][0], 0, NX-1, V);
+        V2 := IDWCalc(Z1, X);
+        L2 := Max(L2, AbsReal(V2-V1)/(LipschitzStep/3));
+        T := T+LipschitzStep/3;
+    end;
+    IDWErrors := IDWErrors or AP_FP_Greater(L2,2.0*L1);
+end;
+
+
+(*************************************************************************
 Testing degree properties
 
 F is either:
@@ -474,7 +570,7 @@ Noisy test:
  * F = x^2 + y^2 + z^2 + noise on [-1,+1]^3
  * space is either R1=[-1,+1] (other dimensions are
    fixed at 0), R1^2 or R1^3.
- * D = 0, 1, 2
+ * D = 1, 2
  * 4096 points is used for function generation,
    4096 points - for testing
  * RMS error of "noisy" model on test set must be

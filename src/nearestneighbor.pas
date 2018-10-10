@@ -531,6 +531,11 @@ OUTPUT PARAMETERS
 NOTE
     points are ordered by distance from the query point (first = closest)
 
+SEE ALSO
+* KDTreeQueryResultsXY()            X- and Y-values
+* KDTreeQueryResultsTags()          tag values
+* KDTreeQueryResultsDistances()     distances
+
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************)
@@ -564,6 +569,11 @@ OUTPUT PARAMETERS
 
 NOTE
     points are ordered by distance from the query point (first = closest)
+
+SEE ALSO
+* KDTreeQueryResultsX()             X-values
+* KDTreeQueryResultsTags()          tag values
+* KDTreeQueryResultsDistances()     distances
 
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
@@ -599,6 +609,11 @@ OUTPUT PARAMETERS
 NOTE
     points are ordered by distance from the query point (first = closest)
 
+SEE ALSO
+* KDTreeQueryResultsX()             X-values
+* KDTreeQueryResultsXY()            X- and Y-values
+* KDTreeQueryResultsDistances()     distances
+
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey
 *************************************************************************)
@@ -632,6 +647,11 @@ OUTPUT PARAMETERS
 
 NOTE
     points are ordered by distance from the query point (first = closest)
+
+SEE ALSO
+* KDTreeQueryResultsX()             X-values
+* KDTreeQueryResultsXY()            X- and Y-values
+* KDTreeQueryResultsTags()          tag values
 
   -- ALGLIB --
      Copyright 28.02.2010 by Bochkanov Sergey

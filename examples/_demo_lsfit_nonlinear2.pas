@@ -60,7 +60,8 @@ begin
     //
     // Solve
     //
-    LSFitNonlinearFGH(X, Y, C, N, M, K, EpsF, EpsX, MaxIts, State);
+    LSFitNonlinearFGH(X, Y, C, N, M, K, State);
+    LSFitNonlinearSetCond(State, EpsF, EpsX, MaxIts);
     while LSFitNonlinearIteration(State) do
     begin
         

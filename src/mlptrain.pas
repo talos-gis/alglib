@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit mlptrain;
 interface
-uses Math, Sysutils, Ap, mlpbase, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, lbfgs, hblas, sblas, ortfac, blas, rotations, bdsvd, svd, xblas, densesolver;
+uses Math, Sysutils, Ap, mlpbase, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, matinv, linmin, minlbfgs, hblas, sblas, ortfac, blas, rotations, bdsvd, svd, xblas, densesolver;
 
 type
 (*************************************************************************
@@ -180,8 +180,8 @@ var
     Lambda : Double;
     LambdaUp : Double;
     LambdaDown : Double;
-    InternalRep : LBFGSReport;
-    State : LBFGSState;
+    InternalRep : MinLBFGSReport;
+    State : MinLBFGSState;
     X : TReal1DArray;
     Y : TReal1DArray;
     WBase : TReal1DArray;
@@ -264,7 +264,8 @@ begin
         // First stage of the hybrid algorithm: LBFGS
         //
         APVMove(@WBase[0], 0, WCount-1, @Network.Weights[0], 0, WCount-1);
-        MinLBFGS(WCount, Min(WCount, 5), WBase, 0.0, 0.0, 0.0, Max(25, WCount), 0, State);
+        MinLBFGSCreate(WCount, Min(WCount, 5), WBase, State);
+        MinLBFGSSetCond(State, 0, 0, 0, Max(25, WCount));
         while MinLBFGSIteration(State) do
         begin
             
@@ -384,7 +385,8 @@ begin
                 WT[I] := 0;
                 Inc(I);
             end;
-            MinLBFGS(WCount, WCount, WT, 0.0, 0.0, 0.0, 5, 0, State);
+            MinLBFGSCreateX(WCount, WCount, WT, 1, State);
+            MinLBFGSSetCond(State, 0, 0, 0, 5);
             while MinLBFGSIteration(State) do
             begin
                 
@@ -541,8 +543,8 @@ var
     E : Double;
     V : Double;
     EBest : Double;
-    InternalRep : LBFGSReport;
-    State : LBFGSState;
+    InternalRep : MinLBFGSReport;
+    State : MinLBFGSState;
 begin
     
     //
@@ -598,7 +600,8 @@ begin
         //
         MLPRandomize(Network);
         APVMove(@W[0], 0, WCount-1, @Network.Weights[0], 0, WCount-1);
-        MinLBFGS(WCount, Min(WCount, 50), W, 0.0, 0.0, WStep, MaxIts, 0, State);
+        MinLBFGSCreate(WCount, Min(WCount, 10), W, State);
+        MinLBFGSSetCond(State, 0.0, 0.0, WStep, MaxIts);
         while MinLBFGSIteration(State) do
         begin
             APVMove(@Network.Weights[0], 0, WCount-1, @State.X[0], 0, WCount-1);
@@ -696,8 +699,8 @@ var
     WFinal : TReal1DArray;
     EFinal : Double;
     ItBest : AlglibInteger;
-    InternalRep : LBFGSReport;
-    State : LBFGSState;
+    InternalRep : MinLBFGSReport;
+    State : MinLBFGSState;
     WStep : Double;
 begin
     WStep := 0.001;
@@ -769,7 +772,9 @@ begin
         APVMove(@WBest[0], 0, WCount-1, @Network.Weights[0], 0, WCount-1);
         ItBest := 0;
         APVMove(@W[0], 0, WCount-1, @Network.Weights[0], 0, WCount-1);
-        MinLBFGS(WCount, Min(WCount, 50), W, 0.0, 0.0, WStep, 0, 0, State);
+        MinLBFGSCreate(WCount, Min(WCount, 10), W, State);
+        MinLBFGSSetCond(State, 0.0, 0.0, WStep, 0);
+        MinLBFGSSetXRep(State, True);
         while MinLBFGSIteration(State) do
         begin
             

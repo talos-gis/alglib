@@ -2,8 +2,8 @@
 program _demo;
 Array[0]
 var
-    State : LMState;
-    Rep : LMReport;
+    State : MinLMState;
+    Rep : MinLMReport;
     I : AlglibInteger;
     S : TReal1DArray;
     X : TReal1DArray;
@@ -49,7 +49,8 @@ begin
     //
     // Now S stores starting point, X and Y store points being fitted.
     //
-    MinLMFJ(N, M, S, 0.0, 0.001, 0, State);
+    MinLMCreateFJ(N, M, S, State);
+    MinLMSetCond(State, 0.0, 0.0, 0.001, 0);
     while MinLMIteration(State) do
     begin
         if State.NeedF then

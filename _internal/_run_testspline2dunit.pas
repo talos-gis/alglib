@@ -1,6 +1,6 @@
 
 program _test;
-uses Sysutils, testinterpolation2dunit;
+uses Sysutils, testspline2dunit;
 
 var
     MySeed: Cardinal;
@@ -14,7 +14,7 @@ begin
         MySeed:=StrToIntDef(ParamStr(1),0);
     RandSeed:=MySeed;
     try 
-        if not testinterpolation2dunit_test() then
+        if not testspline2dunit_test() then
         begin
             WriteLn('SEED: ', MySeed);
             Halt(1);
