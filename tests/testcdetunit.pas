@@ -1,6 +1,6 @@
 unit testcdetunit;
 interface
-uses Math, Sysutils, Ap, clu, cdet;
+uses Math, Sysutils, Ap, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, cdet;
 
 function TestCDet(Silent : Boolean):Boolean;
 function testcdetunit_test_silent():Boolean;

@@ -396,7 +396,7 @@ begin
             J:=0;
             while J<=K-1 do
             begin
-                OtherErrors := OtherErrors or C_NotEqual(Q2[I,J],Q[I,J]);
+                OtherErrors := OtherErrors or AP_FP_Greater(AbsComplex(C_Sub(Q2[I,J],Q[I,J])),10*MachineEpsilon);
                 Inc(J);
             end;
             Inc(I);

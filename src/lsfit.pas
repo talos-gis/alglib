@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit lsfit;
 interface
-uses Math, Sysutils, Ap, blas, trinverse, cholesky, spdsolve, lbfgs, minlm, reflections, bidiagonal, qr, lq, rotations, bdsvd, svd, lu, trlinsolve, rcond, spline3, leastsquares;
+uses Math, Sysutils, Ap, blas, reflections, creflections, hqrnd, matgen, trinverse, ablasf, ablas, trfac, bidiagonal, qr, lq, rotations, bdsvd, svd, trlinsolve, safesolve, rcond, tsort, xblas, densesolver, lbfgs, minlm, spline3, leastsquares;
 
 type
 (*************************************************************************
@@ -1207,7 +1207,6 @@ procedure LSFitScaleXY(var X : TReal1DArray;
      var XOriginal : TReal1DArray;
      var YOriginal : TReal1DArray);
 var
-    V : Double;
     XMin : Double;
     XMax : Double;
     I : AlglibInteger;

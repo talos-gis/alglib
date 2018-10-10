@@ -1,6 +1,6 @@
 unit testratinterpolation;
 interface
-uses Math, Sysutils, Ap, tsort, ratinterpolation, blas, trinverse, cholesky, spdsolve, lbfgs, minlm, reflections, bidiagonal, qr, lq, rotations, bdsvd, svd, lu, trlinsolve, rcond, spline3, leastsquares, lsfit, ratint;
+uses Math, Sysutils, Ap, tsort, ratinterpolation, blas, reflections, creflections, hqrnd, matgen, trinverse, ablasf, ablas, trfac, bidiagonal, qr, lq, rotations, bdsvd, svd, trlinsolve, safesolve, rcond, xblas, densesolver, lbfgs, minlm, spline3, leastsquares, lsfit, ratint;
 
 function TestRI(Silent : Boolean):Boolean;
 function testratinterpolation_test_silent():Boolean;

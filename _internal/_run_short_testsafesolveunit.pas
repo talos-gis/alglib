@@ -1,6 +1,6 @@
 
 program _test;
-uses Sysutils, testcholeskyunit;
+uses Sysutils, testsafesolveunit;
 
 var
     MySeed: Cardinal;
@@ -14,18 +14,14 @@ begin
         MySeed:=StrToIntDef(ParamStr(1),0);
     RandSeed:=MySeed;
     try 
-        if not testcholeskyunit_test() then
-        begin
-            WriteLn('SEED: ', MySeed);
-            Halt(1);
-        end;
+        if not testsafesolveunit_test_silent() then
+            raise Exception.Create('');
     except on E: Exception do 
         begin
-            WriteLn('SEED: ', MySeed);
-            WriteLn('AP exception generated!');
-            WriteLn('\"',E.Message,'\"');
+            WriteLn('safesolve                        FAILED(seed=',MySeed,')');
             Halt(1);
         end;
     end;
+    WriteLn('safesolve                        OK');
     Halt(0);
 end.

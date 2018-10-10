@@ -463,6 +463,16 @@ begin
     // Multiply
     //
     HMatrixRndMultiply(A, N);
+    
+    //
+    // post-process to ensure that matrix diagonal is real
+    //
+    I:=0;
+    while I<=N-1 do
+    begin
+        A[I,I].Y := 0;
+        Inc(I);
+    end;
 end;
 
 
@@ -534,6 +544,16 @@ begin
     // Multiply
     //
     HMatrixRndMultiply(A, N);
+    
+    //
+    // post-process to ensure that matrix diagonal is real
+    //
+    I:=0;
+    while I<=N-1 do
+    begin
+        A[I,I].Y := 0;
+        Inc(I);
+    end;
 end;
 
 
@@ -559,12 +579,10 @@ var
     Lambda : Double;
     S : AlglibInteger;
     I : AlglibInteger;
-    J : AlglibInteger;
     U1 : Double;
     U2 : Double;
     W : TReal1DArray;
     V : TReal1DArray;
-    SM : Double;
     State : HQRNDState;
     i_ : AlglibInteger;
 begin
@@ -666,7 +684,6 @@ var
     U2 : Double;
     W : TReal1DArray;
     V : TReal1DArray;
-    SM : Double;
     State : HQRNDState;
 begin
     Assert((N>=1) and (M>=1), 'RMatrixRndOrthogonalFromTheRight: N<1 or M<1!');
@@ -760,12 +777,8 @@ var
     Tau : Complex;
     S : AlglibInteger;
     I : AlglibInteger;
-    J : AlglibInteger;
-    U1 : Double;
-    U2 : Double;
     W : TComplex1DArray;
     V : TComplex1DArray;
-    SM : Double;
     State : HQRNDState;
     i_ : AlglibInteger;
 begin
@@ -865,11 +878,8 @@ var
     S : AlglibInteger;
     I : AlglibInteger;
     J : AlglibInteger;
-    U1 : Double;
-    U2 : Double;
     W : TComplex1DArray;
     V : TComplex1DArray;
-    SM : Double;
     State : HQRNDState;
     i_ : AlglibInteger;
 begin
@@ -966,12 +976,10 @@ var
     Lambda : Double;
     S : AlglibInteger;
     I : AlglibInteger;
-    J : AlglibInteger;
     U1 : Double;
     U2 : Double;
     W : TReal1DArray;
     V : TReal1DArray;
-    SM : Double;
     State : HQRNDState;
     i_ : AlglibInteger;
 begin
@@ -1052,12 +1060,8 @@ var
     Lambda : Complex;
     S : AlglibInteger;
     I : AlglibInteger;
-    J : AlglibInteger;
-    U1 : Double;
-    U2 : Double;
     W : TComplex1DArray;
     V : TComplex1DArray;
-    SM : Double;
     State : HQRNDState;
     i_ : AlglibInteger;
 begin

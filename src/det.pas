@@ -19,16 +19,12 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit det;
 interface
-uses Math, Sysutils, Ap, lu;
+uses Math, Sysutils, Ap, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac;
 
 function RMatrixLUDet(const A : TReal2DArray;
      const Pivots : TInteger1DArray;
      N : AlglibInteger):Double;
 function RMatrixDet(A : TReal2DArray; N : AlglibInteger):Double;
-function DeterminantLU(const A : TReal2DArray;
-     const Pivots : TInteger1DArray;
-     N : AlglibInteger):Double;
-function Determinant(A : TReal2DArray; N : AlglibInteger):Double;
 
 implementation
 
@@ -90,39 +86,6 @@ begin
     A := DynamicArrayCopy(A);
     RMatrixLU(A, N, N, Pivots);
     Result := RMatrixLUDet(A, Pivots, N);
-end;
-
-
-function DeterminantLU(const A : TReal2DArray;
-     const Pivots : TInteger1DArray;
-     N : AlglibInteger):Double;
-var
-    I : AlglibInteger;
-    S : AlglibInteger;
-begin
-    Result := 1;
-    S := 1;
-    I:=1;
-    while I<=N do
-    begin
-        Result := Result*A[I,I];
-        if Pivots[I]<>I then
-        begin
-            S := -S;
-        end;
-        Inc(I);
-    end;
-    Result := Result*S;
-end;
-
-
-function Determinant(A : TReal2DArray; N : AlglibInteger):Double;
-var
-    Pivots : TInteger1DArray;
-begin
-    A := DynamicArrayCopy(A);
-    LUDecomposition(A, N, N, Pivots);
-    Result := DeterminantLU(A, Pivots, N);
 end;
 
 

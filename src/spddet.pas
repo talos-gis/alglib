@@ -19,15 +19,11 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit spddet;
 interface
-uses Math, Sysutils, Ap, cholesky;
+uses Math, Sysutils, Ap, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac;
 
 function SPDMatrixCholeskyDet(const A : TReal2DArray;
      N : AlglibInteger):Double;
 function SPDMatrixDet(A : TReal2DArray;
-     N : AlglibInteger;
-     IsUpper : Boolean):Double;
-function DeterminantCholesky(const A : TReal2DArray; N : AlglibInteger):Double;
-function DeterminantSPD(A : TReal2DArray;
      N : AlglibInteger;
      IsUpper : Boolean):Double;
 
@@ -96,36 +92,6 @@ begin
     else
     begin
         Result := SPDMatrixCholeskyDet(A, N);
-    end;
-end;
-
-
-function DeterminantCholesky(const A : TReal2DArray; N : AlglibInteger):Double;
-var
-    I : AlglibInteger;
-begin
-    Result := 1;
-    I:=1;
-    while I<=N do
-    begin
-        Result := Result*AP_Sqr(A[I,I]);
-        Inc(I);
-    end;
-end;
-
-
-function DeterminantSPD(A : TReal2DArray;
-     N : AlglibInteger;
-     IsUpper : Boolean):Double;
-begin
-    A := DynamicArrayCopy(A);
-    if  not CholeskyDecomposition(A, N, IsUpper) then
-    begin
-        Result := -1;
-    end
-    else
-    begin
-        Result := DeterminantCholesky(A, N);
     end;
 end;
 

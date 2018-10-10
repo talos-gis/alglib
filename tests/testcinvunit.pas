@@ -1,6 +1,6 @@
 unit testcinvunit;
 interface
-uses Math, Sysutils, Ap, clu, ctrinverse, cinverse;
+uses Math, Sysutils, Ap, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, ctrinverse, cinverse;
 
 function TestCInv(Silent : Boolean):Boolean;
 function testcinvunit_test_silent():Boolean;

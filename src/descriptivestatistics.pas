@@ -217,7 +217,6 @@ var
     midp : AlglibInteger;
     K : AlglibInteger;
     a : Double;
-    temp : Double;
     tval : Double;
 begin
     X := DynamicArrayCopy(X);
@@ -388,7 +387,6 @@ end;
 procedure InternalStatHeapSort(var Arr : TReal1DArray; N : AlglibInteger);
 var
     I : AlglibInteger;
-    J : AlglibInteger;
     K : AlglibInteger;
     T : AlglibInteger;
     Tmp : Double;

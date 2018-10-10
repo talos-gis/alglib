@@ -1,6 +1,6 @@
 
 program _test;
-uses Sysutils, testcluunit;
+uses Sysutils, testsafesolveunit;
 
 var
     MySeed: Cardinal;
@@ -14,11 +14,16 @@ begin
         MySeed:=StrToIntDef(ParamStr(1),0);
     RandSeed:=MySeed;
     try 
-        if not testcluunit_test_silent() then
-            raise Exception.Create('');
+        if not testsafesolveunit_test() then
+        begin
+            WriteLn('SEED: ', MySeed);
+            Halt(1);
+        end;
     except on E: Exception do 
         begin
-            WriteLn('SEED ', MySeed:9, '    UNIT ', 'clu');
+            WriteLn('SEED: ', MySeed);
+            WriteLn('AP exception generated!');
+            WriteLn('\"',E.Message,'\"');
             Halt(1);
         end;
     end;

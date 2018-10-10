@@ -173,7 +173,6 @@ var
     MinMN : AlglibInteger;
     MaxMN : AlglibInteger;
     I : AlglibInteger;
-    J : AlglibInteger;
     LTau : Double;
     i_ : AlglibInteger;
     i1_ : AlglibInteger;

@@ -54,7 +54,7 @@ begin
         Rep.TerminationType]));
     Write(Format('NFunc = %0d'#13#10'',[
         Rep.NFunc]));
-    Write(Format('NJac  = %0d (should be 2 - task is very simple)'#13#10'',[
+    Write(Format('NJac  = %0d'#13#10'',[
         Rep.NJac]));
     Write(Format('NGrad = %0d'#13#10'',[
         Rep.NGrad]));

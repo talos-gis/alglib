@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit mannwhitneyu;
 interface
-uses Math, Sysutils, Ap, normaldistr;
+uses Math, Sysutils, Ap;
 
 procedure MannWhitneyUTest(const X : TReal1DArray;
      N : AlglibInteger;

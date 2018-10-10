@@ -273,7 +273,6 @@ var
     I : AlglibInteger;
     J : AlglibInteger;
     K : AlglibInteger;
-    Idx : AlglibInteger;
     N1 : AlglibInteger;
     N2 : AlglibInteger;
     N : AlglibInteger;
@@ -290,7 +289,6 @@ var
     Y : Double;
     BX : Double;
     BY : Double;
-    V : Double;
     EmptyArray : TReal1DArray;
     A0X : Double;
     A0Y : Double;
@@ -300,8 +298,6 @@ var
     A2Y : Double;
     A3X : Double;
     A3Y : Double;
-    A4X : Double;
-    A4Y : Double;
     V0 : Double;
     V1 : Double;
     V2 : Double;
@@ -1038,7 +1034,6 @@ procedure FTBaseGeneratePlanRec(N : AlglibInteger;
      var StackMemSize : AlglibInteger;
      StackPtr : AlglibInteger);
 var
-    J : AlglibInteger;
     K : AlglibInteger;
     M : AlglibInteger;
     N1 : AlglibInteger;
@@ -1249,7 +1244,6 @@ procedure FTBasePrecomputePlanRec(var Plan : FTPlan;
      StackPtr : AlglibInteger);
 var
     I : AlglibInteger;
-    J : AlglibInteger;
     Idx : AlglibInteger;
     N1 : AlglibInteger;
     N2 : AlglibInteger;

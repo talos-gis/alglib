@@ -340,7 +340,6 @@ procedure ConvC1DCircularInv(const A : TComplex1DArray;
      var R : TComplex1DArray);
 var
     I : AlglibInteger;
-    P : AlglibInteger;
     I1 : AlglibInteger;
     I2 : AlglibInteger;
     J2 : AlglibInteger;
@@ -467,16 +466,6 @@ procedure ConvR1D(const A : TReal1DArray;
      const B : TReal1DArray;
      N : AlglibInteger;
      var R : TReal1DArray);
-var
-    I : AlglibInteger;
-    J : AlglibInteger;
-    P : AlglibInteger;
-    Q : AlglibInteger;
-    ABuf : TComplex1DArray;
-    BBuf : TComplex1DArray;
-    V : Complex;
-    Flop1 : Double;
-    Flop2 : Double;
 begin
     Assert((N>0) and (M>0), 'ConvR1D: incorrect N or M!');
     
@@ -534,7 +523,6 @@ var
     C1 : Complex;
     C2 : Complex;
     C3 : Complex;
-    T : Double;
 begin
     Assert((N>0) and (M>0) and (N<=M), 'ConvR1DInv: incorrect N or M!');
     P := FTBaseFindSmoothEven(M);
@@ -690,7 +678,6 @@ var
     C1 : Complex;
     C2 : Complex;
     C3 : Complex;
-    T : Double;
 begin
     Assert((N>0) and (M>0), 'ConvR1DCircularInv: incorrect N or M!');
     
@@ -1367,7 +1354,6 @@ var
     AY : Double;
     BX : Double;
     BY : Double;
-    T : Double;
     TX : Double;
     TY : Double;
     FlopCand : Double;

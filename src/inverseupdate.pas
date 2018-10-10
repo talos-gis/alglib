@@ -88,7 +88,6 @@ var
     T1 : TReal1DArray;
     T2 : TReal1DArray;
     I : AlglibInteger;
-    J : AlglibInteger;
     Lambda : Double;
     VT : Double;
     i_ : AlglibInteger;
@@ -234,7 +233,6 @@ var
     T1 : TReal1DArray;
     T2 : TReal1DArray;
     I : AlglibInteger;
-    J : AlglibInteger;
     Lambda : Double;
     VT : Double;
 begin
@@ -359,7 +357,6 @@ var
     T1 : TReal1DArray;
     T2 : TReal1DArray;
     I : AlglibInteger;
-    J : AlglibInteger;
     Lambda : Double;
     VT : Double;
     i_ : AlglibInteger;
@@ -461,7 +458,6 @@ var
     T1 : TReal1DArray;
     T2 : TReal1DArray;
     I : AlglibInteger;
-    J : AlglibInteger;
     Lambda : Double;
     VT : Double;
 begin

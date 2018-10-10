@@ -249,7 +249,6 @@ procedure InternalLDLTRCond(const L : TReal2DArray;
      var RCOND : Double);
 var
     I : AlglibInteger;
-    IX : AlglibInteger;
     KASE : AlglibInteger;
     K : AlglibInteger;
     KM1 : AlglibInteger;

@@ -1,6 +1,6 @@
 
 program _test;
-uses Sysutils, testcholeskyunit;
+uses Sysutils, testtrfacunit;
 
 var
     MySeed: Cardinal;
@@ -14,14 +14,18 @@ begin
         MySeed:=StrToIntDef(ParamStr(1),0);
     RandSeed:=MySeed;
     try 
-        if not testcholeskyunit_test_silent() then
-            raise Exception.Create('');
+        if not testtrfacunit_test() then
+        begin
+            WriteLn('SEED: ', MySeed);
+            Halt(1);
+        end;
     except on E: Exception do 
         begin
-            WriteLn('cholesky                         FAILED(seed=',MySeed,')');
+            WriteLn('SEED: ', MySeed);
+            WriteLn('AP exception generated!');
+            WriteLn('\"',E.Message,'\"');
             Halt(1);
         end;
     end;
-    WriteLn('cholesky                         OK');
     Halt(0);
 end.

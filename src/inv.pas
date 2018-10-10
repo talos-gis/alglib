@@ -25,16 +25,12 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit inv;
 interface
-uses Math, Sysutils, Ap, lu, trinverse;
+uses Math, Sysutils, Ap, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trinverse;
 
 function RMatrixLUInverse(var A : TReal2DArray;
      const Pivots : TInteger1DArray;
      N : AlglibInteger):Boolean;
 function RMatrixInverse(var A : TReal2DArray; N : AlglibInteger):Boolean;
-function InverseLU(var A : TReal2DArray;
-     const Pivots : TInteger1DArray;
-     N : AlglibInteger):Boolean;
-function Inverse(var A : TReal2DArray; N : AlglibInteger):Boolean;
 
 implementation
 
@@ -179,112 +175,6 @@ var
 begin
     RMatrixLU(A, N, N, Pivots);
     Result := RMatrixLUInverse(A, Pivots, N);
-end;
-
-
-function InverseLU(var A : TReal2DArray;
-     const Pivots : TInteger1DArray;
-     N : AlglibInteger):Boolean;
-var
-    WORK : TReal1DArray;
-    I : AlglibInteger;
-    IWS : AlglibInteger;
-    J : AlglibInteger;
-    JB : AlglibInteger;
-    JJ : AlglibInteger;
-    JP : AlglibInteger;
-    JP1 : AlglibInteger;
-    V : Double;
-    i_ : AlglibInteger;
-begin
-    Result := True;
-    
-    //
-    // Quick return if possible
-    //
-    if N=0 then
-    begin
-        Exit;
-    end;
-    SetLength(WORK, N+1);
-    
-    //
-    // Form inv(U)
-    //
-    if  not InvTriangular(A, N, True, False) then
-    begin
-        Result := False;
-        Exit;
-    end;
-    
-    //
-    // Solve the equation inv(A)*L = inv(U) for inv(A).
-    //
-    J:=N;
-    while J>=1 do
-    begin
-        
-        //
-        // Copy current column of L to WORK and replace with zeros.
-        //
-        I:=J+1;
-        while I<=N do
-        begin
-            WORK[I] := A[I,J];
-            A[I,J] := 0;
-            Inc(I);
-        end;
-        
-        //
-        // Compute current column of inv(A).
-        //
-        if J<N then
-        begin
-            JP1 := J+1;
-            I:=1;
-            while I<=N do
-            begin
-                V := APVDotProduct(@A[I][0], JP1, N, @WORK[0], JP1, N);
-                A[I,J] := A[I,J]-V;
-                Inc(I);
-            end;
-        end;
-        Dec(J);
-    end;
-    
-    //
-    // Apply column interchanges.
-    //
-    J:=N-1;
-    while J>=1 do
-    begin
-        JP := Pivots[J];
-        if JP<>J then
-        begin
-            for i_ := 1 to N do
-            begin
-                WORK[i_] := A[i_,J];
-            end;
-            for i_ := 1 to N do
-            begin
-                A[i_,J] := A[i_,JP];
-            end;
-            for i_ := 1 to N do
-            begin
-                A[i_,JP] := WORK[i_];
-            end;
-        end;
-        Dec(J);
-    end;
-end;
-
-
-function Inverse(var A : TReal2DArray; N : AlglibInteger):Boolean;
-var
-    Pivots : TInteger1DArray;
-begin
-    LUDecomposition(A, N, N, Pivots);
-    Result := InverseLU(A, Pivots, N);
 end;
 
 

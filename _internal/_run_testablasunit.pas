@@ -1,6 +1,6 @@
 
 program _test;
-uses Sysutils, testspdrcondunit;
+uses Sysutils, testablasunit;
 
 var
     MySeed: Cardinal;
@@ -14,11 +14,16 @@ begin
         MySeed:=StrToIntDef(ParamStr(1),0);
     RandSeed:=MySeed;
     try 
-        if not testspdrcondunit_test_silent() then
-            raise Exception.Create('');
+        if not testablasunit_test() then
+        begin
+            WriteLn('SEED: ', MySeed);
+            Halt(1);
+        end;
     except on E: Exception do 
         begin
-            WriteLn('SEED ', MySeed:9, '    UNIT ', 'spdrcond');
+            WriteLn('SEED: ', MySeed);
+            WriteLn('AP exception generated!');
+            WriteLn('\"',E.Message,'\"');
             Halt(1);
         end;
     end;

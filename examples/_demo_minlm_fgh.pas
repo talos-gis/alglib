@@ -62,6 +62,6 @@ begin
         Rep.NJac]));
     Write(Format('NGrad = %0d'#13#10'',[
         Rep.NGrad]));
-    Write(Format('NHess = %0d (should be 1 - task is very simple)'#13#10'',[
+    Write(Format('NHess = %0d'#13#10'',[
         Rep.NHess]));
 end.

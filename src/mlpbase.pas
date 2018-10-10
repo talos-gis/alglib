@@ -1486,14 +1486,11 @@ function MLPErrorN(var Network : MultiLayerPerceptron;
      SSize : AlglibInteger):Double;
 var
     I : AlglibInteger;
-    J : AlglibInteger;
     K : AlglibInteger;
     NIn : AlglibInteger;
     NOut : AlglibInteger;
     WCount : AlglibInteger;
     E : Double;
-    T : Double;
-    Z : Double;
 begin
     MLPProperties(Network, NIn, NOut, WCount);
     Result := 0;
@@ -2110,7 +2107,6 @@ procedure MLPInternalProcessVector(const StructInfo : TInteger1DArray;
      var Y : TReal1DArray);
 var
     I : AlglibInteger;
-    J : AlglibInteger;
     N1 : AlglibInteger;
     N2 : AlglibInteger;
     W1 : AlglibInteger;
@@ -2121,7 +2117,6 @@ var
     IStart : AlglibInteger;
     Offs : AlglibInteger;
     NET : Double;
-    E : Double;
     F : Double;
     DF : Double;
     D2F : Double;
@@ -2668,7 +2663,6 @@ var
     D2F : Double;
     dEIdYJ : Double;
     MX : Double;
-    NET : Double;
     Q : Double;
     Z : Double;
     S2 : Double;
@@ -3139,7 +3133,6 @@ procedure MLPInternalCalculateGradient(var Network : MultiLayerPerceptron;
      NaturalErrorFunc : Boolean);
 var
     I : AlglibInteger;
-    J : AlglibInteger;
     N1 : AlglibInteger;
     N2 : AlglibInteger;
     W1 : AlglibInteger;
@@ -3306,8 +3299,6 @@ var
     NIn : AlglibInteger;
     NOut : AlglibInteger;
     Offs : AlglibInteger;
-    dEdF : Double;
-    dFdNET : Double;
     F : Double;
     DF : Double;
     D2F : Double;

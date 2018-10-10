@@ -8,11 +8,21 @@ procedure XDot(const A : TReal1DArray;
      var Temp : TReal1DArray;
      var R : Double;
      var RErr : Double);
+procedure XCDot(const A : TComplex1DArray;
+     const B : TComplex1DArray;
+     N : AlglibInteger;
+     var Temp : TReal1DArray;
+     var R : Complex;
+     var RErr : Double);
 
 implementation
 
+procedure XSum(var W : TReal1DArray;
+     MX : Double;
+     N : AlglibInteger;
+     var R : Double;
+     var RErr : Double);forward;
 function XFastPow(R : Double; N : AlglibInteger):Double;forward;
-function XFrac(R : Double):Double;forward;
 
 
 (*************************************************************************
@@ -20,18 +30,18 @@ More precise dot-product. Absolute error of  subroutine  result  is  about
 1 ulp of max(MX,V), where:
     MX = max( |a[i]*b[i]| )
     V  = |(a,b)|
-    
+
 INPUT PARAMETERS
     A       -   array[0..N-1], vector 1
     B       -   array[0..N-1], vector 2
     N       -   vectors length, N<2^29.
     Temp    -   array[0..N-1], pre-allocated temporary storage
-    
+
 OUTPUT PARAMETERS
     R       -   (A,B)
     RErr    -   estimate of error. This estimate accounts for both  errors
                 during  calculation  of  (A,B)  and  errors  introduced by
-                rounding of A/B to fit in double (about 1 ulp).
+                rounding of A and B to fit in double (about 1 ulp).
 
   -- ALGLIB --
      Copyright 24.08.2009 by Bochkanov Sergey
@@ -44,12 +54,175 @@ procedure XDot(const A : TReal1DArray;
      var RErr : Double);
 var
     I : AlglibInteger;
-    K : AlglibInteger;
-    KS : AlglibInteger;
     MX : Double;
     V : Double;
-    V1 : Double;
-    V2 : Double;
+begin
+    
+    //
+    // special cases:
+    // * N=0
+    //
+    if N=0 then
+    begin
+        R := 0;
+        RErr := 0;
+        Exit;
+    end;
+    MX := 0;
+    I:=0;
+    while I<=N-1 do
+    begin
+        V := A[I]*B[I];
+        Temp[I] := V;
+        MX := Max(MX, AbsReal(V));
+        Inc(I);
+    end;
+    if AP_FP_Eq(MX,0) then
+    begin
+        R := 0;
+        RErr := 0;
+        Exit;
+    end;
+    XSum(Temp, MX, N, R, RErr);
+end;
+
+
+(*************************************************************************
+More precise complex dot-product. Absolute error of  subroutine  result is
+about 1 ulp of max(MX,V), where:
+    MX = max( |a[i]*b[i]| )
+    V  = |(a,b)|
+
+INPUT PARAMETERS
+    A       -   array[0..N-1], vector 1
+    B       -   array[0..N-1], vector 2
+    N       -   vectors length, N<2^29.
+    Temp    -   array[0..2*N-1], pre-allocated temporary storage
+
+OUTPUT PARAMETERS
+    R       -   (A,B)
+    RErr    -   estimate of error. This estimate accounts for both  errors
+                during  calculation  of  (A,B)  and  errors  introduced by
+                rounding of A and B to fit in double (about 1 ulp).
+
+  -- ALGLIB --
+     Copyright 27.01.2010 by Bochkanov Sergey
+*************************************************************************)
+procedure XCDot(const A : TComplex1DArray;
+     const B : TComplex1DArray;
+     N : AlglibInteger;
+     var Temp : TReal1DArray;
+     var R : Complex;
+     var RErr : Double);
+var
+    I : AlglibInteger;
+    MX : Double;
+    V : Double;
+    RErrX : Double;
+    RErrY : Double;
+begin
+    
+    //
+    // special cases:
+    // * N=0
+    //
+    if N=0 then
+    begin
+        R := C_Complex(0);
+        RErr := 0;
+        Exit;
+    end;
+    
+    //
+    // calculate real part
+    //
+    MX := 0;
+    I:=0;
+    while I<=N-1 do
+    begin
+        V := A[I].X*B[I].X;
+        Temp[2*I+0] := V;
+        MX := Max(MX, AbsReal(V));
+        V := -A[I].Y*B[I].Y;
+        Temp[2*I+1] := V;
+        MX := Max(MX, AbsReal(V));
+        Inc(I);
+    end;
+    if AP_FP_Eq(MX,0) then
+    begin
+        R.X := 0;
+        RErrX := 0;
+    end
+    else
+    begin
+        XSum(Temp, MX, 2*N, R.X, RErrX);
+    end;
+    
+    //
+    // calculate imaginary part
+    //
+    MX := 0;
+    I:=0;
+    while I<=N-1 do
+    begin
+        V := A[I].X*B[I].Y;
+        Temp[2*I+0] := V;
+        MX := Max(MX, AbsReal(V));
+        V := A[I].Y*B[I].X;
+        Temp[2*I+1] := V;
+        MX := Max(MX, AbsReal(V));
+        Inc(I);
+    end;
+    if AP_FP_Eq(MX,0) then
+    begin
+        R.Y := 0;
+        RErrY := 0;
+    end
+    else
+    begin
+        XSum(Temp, MX, 2*N, R.Y, RErrY);
+    end;
+    
+    //
+    // total error
+    //
+    if AP_FP_Eq(RErrX,0) and AP_FP_Eq(RErrY,0) then
+    begin
+        RErr := 0;
+    end
+    else
+    begin
+        RErr := Max(RErrX, RErrY)*Sqrt(1+AP_Sqr(Min(RErrX, RErrY)/Max(RErrX, RErrY)));
+    end;
+end;
+
+
+(*************************************************************************
+Internal subroutine for extra-precise calculation of SUM(w[i]).
+
+INPUT PARAMETERS:
+    W   -   array[0..N-1], values to be added
+            W is modified during calculations.
+    MX  -   max(W[i])
+    N   -   array size
+    
+OUTPUT PARAMETERS:
+    R   -   SUM(w[i])
+    RErr-   error estimate for R
+
+  -- ALGLIB --
+     Copyright 24.08.2009 by Bochkanov Sergey
+*************************************************************************)
+procedure XSum(var W : TReal1DArray;
+     MX : Double;
+     N : AlglibInteger;
+     var R : Double;
+     var RErr : Double);
+var
+    I : AlglibInteger;
+    K : AlglibInteger;
+    KS : AlglibInteger;
+    V : Double;
     S : Double;
     LN2 : Double;
     Chunk : Double;
@@ -68,38 +241,23 @@ begin
         RErr := 0;
         Exit;
     end;
-    Assert(N<536870912, 'XDot: N is too large!');
-    
-    //
-    // Prepare
-    //
-    LN2 := Ln(2);
-    
-    //
-    // calculate pairwise products vector TEMP
-    // (relative precision of TEMP - almost full)
-    // find infinity-norm of products vector
-    //
-    MX := 0;
-    I:=0;
-    while I<=N-1 do
-    begin
-        V := A[I]*B[I];
-        Temp[I] := V;
-        MX := Max(MX, AbsReal(V));
-        Inc(I);
-    end;
     if AP_FP_Eq(MX,0) then
     begin
         R := 0;
         RErr := 0;
         Exit;
     end;
+    Assert(N<536870912, 'XDot: N is too large!');
+    
+    //
+    // Prepare
+    //
+    LN2 := Ln(2);
     RErr := MX*MachineEpsilon;
     
     //
     // 1. find S such that 0.5<=S*MX<1
-    // 2. multiply TEMP by S, so task is normalized in some sense
+    // 2. multiply W by S, so task is normalized in some sense
     // 3. S:=1/S so we can obtain original vector multiplying by S
     //
     K := Round(Ln(MX)/LN2);
@@ -112,7 +270,7 @@ begin
     begin
         S := 2*S;
     end;
-    APVMul(@Temp[0], 0, N-1, S);
+    APVMul(@W[0], 0, N-1, S);
     S := 1/S;
     
     //
@@ -134,7 +292,7 @@ begin
     // calculate result
     //
     R := 0;
-    APVMul(@Temp[0], 0, N-1, Chunk);
+    APVMul(@W[0], 0, N-1, Chunk);
     while True do
     begin
         S := S*InvChunk;
@@ -143,13 +301,13 @@ begin
         I:=0;
         while I<=N-1 do
         begin
-            V := Temp[I];
+            V := W[I];
             K := Trunc(V);
             if AP_FP_Neq(V,K) then
             begin
                 AllZeros := False;
             end;
-            Temp[I] := Chunk*(V-K);
+            W[I] := Chunk*(V-K);
             KS := KS+K;
             Inc(I);
         end;
@@ -168,6 +326,12 @@ begin
 end;
 
 
+(*************************************************************************
+Fast Pow
+
+  -- ALGLIB --
+     Copyright 24.08.2009 by Bochkanov Sergey
+*************************************************************************)
 function XFastPow(R : Double; N : AlglibInteger):Double;
 begin
     if N>0 then
@@ -190,28 +354,6 @@ begin
     begin
         Result := XFastPow(1/R, -N);
     end;
-end;
-
-
-function XFrac(R : Double):Double;
-var
-    I : AlglibInteger;
-begin
-    if AP_FP_Eq(R,0) then
-    begin
-        Result := 0;
-        Exit;
-    end;
-    if AP_FP_Less(R,0) then
-    begin
-        Result := -1;
-        R := -R;
-    end
-    else
-    begin
-        Result := 1;
-    end;
-    Result := Result*(R-Floor(R));
 end;
 
 

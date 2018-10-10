@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit minlm;
 interface
-uses Math, Sysutils, Ap, blas, trinverse, cholesky, spdsolve, lbfgs;
+uses Math, Sysutils, Ap, blas, reflections, creflections, hqrnd, matgen, trinverse, ablasf, ablas, trfac, bidiagonal, qr, lq, rotations, bdsvd, svd, trlinsolve, safesolve, rcond, tsort, xblas, densesolver, lbfgs;
 
 type
 LMState = record
@@ -59,6 +59,8 @@ LMState = record
     RepNGrad : AlglibInteger;
     RepNHess : AlglibInteger;
     RepNCholesky : AlglibInteger;
+    SolverInfo : AlglibInteger;
+    SolverRep : DenseSolverReport;
 end;
 
 
@@ -538,7 +540,7 @@ begin
     //
     // First stage of the hybrid algorithm: LBFGS
     //
-    MinLBFGS(N, Min(N, LMPreLBFGSM), State.X, 0.0, 0.0, 0.0, Max(25, N), 0, State.InternalState);
+    MinLBFGS(N, Min(N, LMPreLBFGSM), State.X, 0.0, 0.0, 0.0, Max(5, N), 0, State.InternalState);
 lbl_9:
     if not MinLBFGSIteration(State.InternalState) then
     begin
@@ -650,7 +652,8 @@ lbl_15:
         Nu := Nu*2;
         goto lbl_15;
     end;
-    if  not SPDMatrixCholeskySolve(State.Model, State.GBase, N, True, State.XDir) then
+    SPDMatrixCholeskySolve(State.Model, N, True, State.GBase, State.SolverInfo, State.SolverRep, State.XDir);
+    if State.SolverInfo<0 then
     begin
         Lambda := Lambda*LambdaUp*Nu;
         Nu := Nu*2;
@@ -710,7 +713,6 @@ lbl_3:
     begin
         goto lbl_17;
     end;
-    Assert(State.UserMode=LMModeFGH);
     
     //
     // Optimize using inv(cholesky(H)) as preconditioner
@@ -915,7 +917,6 @@ Output parameters:
                     *  1    relative function improvement is no more than
                             EpsF.
                     *  2    relative step is no more than EpsX.
-                    *  4    gradient norm is no more than EpsG
                     *  5    MaxIts steps was taken
                 * Rep.IterationsCount contains iterations count
                 * Rep.NFunc     - number of function calculations

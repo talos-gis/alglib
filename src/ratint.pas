@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit ratint;
 interface
-uses Math, Sysutils, Ap, tsort, ratinterpolation, blas, trinverse, cholesky, spdsolve, lbfgs, minlm, reflections, bidiagonal, qr, lq, rotations, bdsvd, svd, lu, trlinsolve, rcond, spline3, leastsquares, lsfit;
+uses Math, Sysutils, Ap, tsort, ratinterpolation, blas, reflections, creflections, hqrnd, matgen, trinverse, ablasf, ablas, trfac, bidiagonal, qr, lq, rotations, bdsvd, svd, trlinsolve, safesolve, rcond, xblas, densesolver, lbfgs, minlm, spline3, leastsquares, lsfit;
 
 type
 (*************************************************************************
@@ -44,7 +44,7 @@ Barycentric fitting report:
 *************************************************************************)
 BarycentricFitReport = record
     TaskRCond : Double;
-    DBest : Double;
+    DBest : AlglibInteger;
     RMSError : Double;
     AvgError : Double;
     AvgRelError : Double;
@@ -891,7 +891,7 @@ Weghted rational least  squares  fitting  using  Floater-Hormann  rational
 functions  with  optimal  D  chosen  from  [0,9],  with  constraints   and
 individual weights.
 
-Equidistant grid with M+1 node on [min(x),max(x)]  is  used to build basis
+Equidistant  grid  with M node on [min(x),max(x)]  is  used to build basis
 functions. Different values of D are tried, optimal D (least WEIGHTED root
 mean square error) is chosen.  Task  is  linear,  so  linear least squares
 solver  is  used.  Complexity  of  this  computational  scheme is O(N*M^2)
@@ -1026,7 +1026,7 @@ begin
                 Inc(I);
             end;
             WRMSCur := Sqrt(WRMSCur/N);
-            if AP_FP_Less(WRMSCur,WRMSBest) or AP_FP_Less(Rep.DBest,0) then
+            if AP_FP_Less(WRMSCur,WRMSBest) or (Rep.DBest<0) then
             begin
                 BarycentricCopy(LocB, B);
                 Rep.DBest := D;
@@ -1090,8 +1090,14 @@ end;
 
 
 (*************************************************************************
-Normalization of barycentric interpolant.
-Internal subroutine
+Normalization of barycentric interpolant:
+* B.N, B.X, B.Y and B.W are initialized
+* B.SY is NOT initialized
+* Y[] is normalized, scaling coefficient is stored in B.SY
+* W[] is normalized, no scaling coefficient is stored
+* X[] is sorted
+
+Internal subroutine.
 *************************************************************************)
 procedure BarycentricNormalize(var B : BarycentricInterpolant);
 var
@@ -1257,10 +1263,8 @@ var
     YOriginal : TReal1DArray;
     Tmp : TReal1DArray;
     LRep : LSFitReport;
-    V : Double;
     V0 : Double;
     V1 : Double;
-    V2 : Double;
     MX : Double;
     B2 : BarycentricInterpolant;
     I : AlglibInteger;

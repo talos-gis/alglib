@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit spline1d;
 interface
-uses Math, Sysutils, Ap, spline3, blas, trinverse, cholesky, spdsolve, lbfgs, minlm, reflections, bidiagonal, qr, lq, rotations, bdsvd, svd, lu, trlinsolve, rcond, leastsquares, lsfit;
+uses Math, Sysutils, Ap, spline3, blas, reflections, creflections, hqrnd, matgen, trinverse, ablasf, ablas, trfac, bidiagonal, qr, lq, rotations, bdsvd, svd, trlinsolve, safesolve, rcond, tsort, xblas, densesolver, lbfgs, minlm, leastsquares, lsfit;
 
 type
 (*************************************************************************
@@ -270,10 +270,6 @@ var
     B : TReal1DArray;
     D : TReal1DArray;
     I : AlglibInteger;
-    TblSize : AlglibInteger;
-    Delta : Double;
-    Delta2 : Double;
-    Delta3 : Double;
 begin
     X := DynamicArrayCopy(X);
     Y := DynamicArrayCopy(Y);
@@ -405,7 +401,6 @@ procedure Spline1DBuildHermite(X : TReal1DArray;
      var C : Spline1DInterpolant);
 var
     I : AlglibInteger;
-    TblSize : AlglibInteger;
     Delta : Double;
     Delta2 : Double;
     Delta3 : Double;
@@ -1272,7 +1267,6 @@ var
     XOriginal : TReal1DArray;
     YOriginal : TReal1DArray;
     LRep : LSFitReport;
-    V : Double;
     V0 : Double;
     V1 : Double;
     V2 : Double;

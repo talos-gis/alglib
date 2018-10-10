@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit mlpe;
 interface
-uses Math, Sysutils, Ap, mlpbase, trinverse, lbfgs, cholesky, spdsolve, mlptrain, tsort, descriptivestatistics, bdss;
+uses Math, Sysutils, Ap, mlpbase, trinverse, lbfgs, reflections, bidiagonal, qr, lq, blas, rotations, bdsvd, svd, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, tsort, xblas, densesolver, mlptrain, descriptivestatistics, bdss;
 
 type
 (*************************************************************************
@@ -456,7 +456,6 @@ procedure MLPECreateFromNetwork(const Network : MultiLayerPerceptron;
 var
     I : AlglibInteger;
     CCount : AlglibInteger;
-    RLen : AlglibInteger;
 begin
     Assert(EnsembleSize>0, 'MLPECreate: incorrect ensemble size!');
     
@@ -542,9 +541,6 @@ var
     SSize : AlglibInteger;
     CCount : AlglibInteger;
     NTotal : AlglibInteger;
-    NIn : AlglibInteger;
-    NOut : AlglibInteger;
-    WCount : AlglibInteger;
 begin
     
     //

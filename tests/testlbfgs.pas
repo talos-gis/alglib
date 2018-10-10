@@ -51,38 +51,6 @@ begin
     RefError := (Rep.TerminationType<=0) or AP_FP_Greater(AbsReal(X[0]-2),0.001) or AP_FP_Greater(AbsReal(X[1]),0.001) or AP_FP_Greater(AbsReal(X[2]-2),0.001);
     
     //
-    // 1D problem #1
-    //
-    SetLength(X, 0+1);
-    N := 1;
-    M := 1;
-    x[0] := 100*RandomReal-50;
-    MinLBFGS(N, M, X, 0.0, 0.0, 0.0, 0, 0, State);
-    while MinLBFGSIteration(State) do
-    begin
-        State.F := -Cos(State.X[0]);
-        State.G[0] := Sin(State.X[0]);
-    end;
-    MinLBFGSResults(State, X, Rep);
-    Lin1Error := (Rep.TerminationType<=0) or AP_FP_Greater(AbsReal(X[0]/Pi-Round(X[0]/Pi)),0.001);
-    
-    //
-    // 1D problem #2
-    //
-    SetLength(X, 0+1);
-    N := 1;
-    M := 1;
-    x[0] := 100*RandomReal-50;
-    MinLBFGS(N, M, X, 0.0, 0.0, 0.0, 0, 0, State);
-    while MinLBFGSIteration(State) do
-    begin
-        State.F := AP_Sqr(State.X[0])/(1+AP_Sqr(State.X[0]));
-        State.G[0] := (2*State.X[0]*(1+AP_Sqr(State.X[0]))-AP_Sqr(State.X[0])*2*State.X[0])/AP_Sqr(1+AP_Sqr(State.X[0]));
-    end;
-    MinLBFGSResults(State, X, Rep);
-    Lin2Error := (Rep.TerminationType<=0) or AP_FP_Greater(AbsReal(X[0]),0.001);
-    
-    //
     // Linear equations
     //
     EqError := False;

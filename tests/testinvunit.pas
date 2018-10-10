@@ -1,6 +1,6 @@
 unit testinvunit;
 interface
-uses Math, Sysutils, Ap, lu, trinverse, inv;
+uses Math, Sysutils, Ap, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trinverse, inv;
 
 function TestInv(Silent : Boolean):Boolean;
 function testinvunit_test_silent():Boolean;

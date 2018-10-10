@@ -397,7 +397,6 @@ procedure DSNormalizeC(const XY : TReal2DArray;
      var Means : TReal1DArray;
      var Sigmas : TReal1DArray);
 var
-    I : AlglibInteger;
     J : AlglibInteger;
     Tmp : TReal1DArray;
     Mean : Double;
@@ -635,14 +634,10 @@ var
     I : AlglibInteger;
     T : AlglibInteger;
     S : Double;
-    PEA : Double;
-    PEB : Double;
     Ties : TInteger1DArray;
     TieCount : AlglibInteger;
     P1 : TInteger1DArray;
     P2 : TInteger1DArray;
-    V1 : Double;
-    V2 : Double;
     K : AlglibInteger;
     KOptimal : AlglibInteger;
     PAK : Double;
@@ -1304,10 +1299,7 @@ var
     S : AlglibInteger;
     JL : AlglibInteger;
     JR : AlglibInteger;
-    V1 : Double;
     V2 : Double;
-    V3 : Double;
-    V4 : Double;
     Ties : TInteger1DArray;
     TieCount : AlglibInteger;
     P1 : TInteger1DArray;

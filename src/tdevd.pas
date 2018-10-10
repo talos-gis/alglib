@@ -194,7 +194,6 @@ function TridiagonalEVD(var D : TReal1DArray;
 var
     MAXIT : AlglibInteger;
     I : AlglibInteger;
-    ICOMPZ : AlglibInteger;
     II : AlglibInteger;
     ISCALE : AlglibInteger;
     J : AlglibInteger;

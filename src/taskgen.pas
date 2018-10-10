@@ -151,7 +151,6 @@ procedure TaskGenInt1DCheb1(A : Double;
      var Y : TReal1DArray);
 var
     I : AlglibInteger;
-    H : Double;
 begin
     Assert(N>=1, 'TaskGenInterpolation1DCheb1: N<1!');
     SetLength(X, N);
@@ -197,7 +196,6 @@ procedure TaskGenInt1DCheb2(A : Double;
      var Y : TReal1DArray);
 var
     I : AlglibInteger;
-    H : Double;
 begin
     Assert(N>=1, 'TaskGenInterpolation1DCheb2: N<1!');
     SetLength(X, N);

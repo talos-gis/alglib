@@ -1099,7 +1099,6 @@ procedure DFProcessInternal(const DF : DecisionForest;
      const X : TReal1DArray;
      var Y : TReal1DArray);
 var
-    I : AlglibInteger;
     K : AlglibInteger;
     Idx : AlglibInteger;
 begin
@@ -1205,10 +1204,8 @@ var
     J : AlglibInteger;
     K : AlglibInteger;
     BFlag : Boolean;
-    Offs : AlglibInteger;
     I1 : AlglibInteger;
     I2 : AlglibInteger;
-    LSize : AlglibInteger;
     Info : AlglibInteger;
     SL : Double;
     SR : Double;
@@ -1221,12 +1218,9 @@ var
     V : Double;
     V1 : Double;
     V2 : Double;
-    NBuf : AlglibInteger;
     Threshold : Double;
     OldNP : AlglibInteger;
-    E : Double;
     CurRMS : Double;
-    CurCVRMS : Double;
     UseEVS : Boolean;
 begin
     Assert(NPoints>0);

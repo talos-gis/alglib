@@ -90,7 +90,6 @@ procedure ComplexGenerateReflection(var X : TComplex1DArray;
      var Tau : Complex);
 var
     J : AlglibInteger;
-    KNT : AlglibInteger;
     ALPHA : Complex;
     ALPHI : Double;
     ALPHR : Double;

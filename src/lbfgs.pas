@@ -88,13 +88,13 @@ end;
 
 
 
-procedure MinLBFGS(const N : AlglibInteger;
-     const M : AlglibInteger;
-     var X : TReal1DArray;
-     const EpsG : Double;
-     const EpsF : Double;
-     const EpsX : Double;
-     const MaxIts : AlglibInteger;
+procedure MinLBFGS(N : AlglibInteger;
+     M : AlglibInteger;
+     const X : TReal1DArray;
+     EpsG : Double;
+     EpsF : Double;
+     EpsX : Double;
+     MaxIts : AlglibInteger;
      Flags : AlglibInteger;
      var State : LBFGSState);
 function MinLBFGSIteration(var State : LBFGSState):Boolean;
@@ -184,16 +184,21 @@ Output parameters:
     
 See also MinLBFGSIteration, MinLBFGSResults
 
+NOTE:
+
+Passing EpsG=0, EpsF=0, EpsX=0 and MaxIts=0 (simultaneously) will lead to
+automatic stopping criterion selection (small EpsX).
+
   -- ALGLIB --
      Copyright 14.11.2007 by Bochkanov Sergey
 *************************************************************************)
-procedure MinLBFGS(const N : AlglibInteger;
-     const M : AlglibInteger;
-     var X : TReal1DArray;
-     const EpsG : Double;
-     const EpsF : Double;
-     const EpsX : Double;
-     const MaxIts : AlglibInteger;
+procedure MinLBFGS(N : AlglibInteger;
+     M : AlglibInteger;
+     const X : TReal1DArray;
+     EpsG : Double;
+     EpsF : Double;
+     EpsX : Double;
+     MaxIts : AlglibInteger;
      Flags : AlglibInteger;
      var State : LBFGSState);
 var
@@ -210,6 +215,10 @@ begin
     //
     // Initialize
     //
+    if AP_FP_Eq(EpsG,0) and AP_FP_Eq(EpsF,0) and AP_FP_Eq(EpsX,0) and (MaxIts=0) then
+    begin
+        EpsX := 1.0E-6;
+    end;
     State.N := N;
     State.M := M;
     State.EpsG := EpsG;
@@ -377,7 +386,7 @@ lbl_0:
         Result := False;
         Exit;
     end;
-    State.Stp := 1.0/V;
+    State.Stp := Min(1.0/V, 1);
     APVMoveNeg(@State.D[0], 0, N-1, @State.G[0], 0, N-1);
     
     //
@@ -500,7 +509,7 @@ lbl_5:
     State.GammaK := V/VV;
     
     //
-    //  Calculate d(k+1) = H(k+1)*g(k+1)
+    //  Calculate d(k+1) = -H(k+1)*g(k+1)
     //
     //  for I:=K downto K-Q do
     //      V = s(i)^T * work(iteration:I)

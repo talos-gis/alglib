@@ -41,11 +41,6 @@ procedure TagSort(var A : TReal1DArray;
      var P2 : TInteger1DArray);
 var
     I : AlglibInteger;
-    J : AlglibInteger;
-    K : AlglibInteger;
-    T : AlglibInteger;
-    Tmp : Double;
-    TmpI : AlglibInteger;
     PV : TInteger1DArray;
     VP : TInteger1DArray;
     LV : AlglibInteger;
@@ -142,7 +137,6 @@ procedure TagSortFastI(var A : TReal1DArray;
      N : AlglibInteger);
 var
     I : AlglibInteger;
-    J : AlglibInteger;
     K : AlglibInteger;
     T : AlglibInteger;
     Tmp : Double;
@@ -234,7 +228,6 @@ procedure TagSortFastR(var A : TReal1DArray;
      N : AlglibInteger);
 var
     I : AlglibInteger;
-    J : AlglibInteger;
     K : AlglibInteger;
     T : AlglibInteger;
     Tmp : Double;
@@ -324,11 +317,9 @@ end;
 procedure TagSortFast(var A : TReal1DArray; N : AlglibInteger);
 var
     I : AlglibInteger;
-    J : AlglibInteger;
     K : AlglibInteger;
     T : AlglibInteger;
     Tmp : Double;
-    TmpR : Double;
 begin
     
     //

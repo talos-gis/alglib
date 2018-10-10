@@ -25,33 +25,97 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit rcond;
 interface
-uses Math, Sysutils, Ap, lu, trlinsolve;
+uses Math, Sysutils, Ap, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve;
 
-function RMatrixRCond1(const A : TReal2DArray; N : AlglibInteger):Double;
-function RMatrixLURCond1(const LUDcmp : TReal2DArray;
+function RMatrixRCond1(A : TReal2DArray; N : AlglibInteger):Double;
+function RMatrixRCondInf(A : TReal2DArray; N : AlglibInteger):Double;
+function SPDMatrixRCond(A : TReal2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean):Double;
+function HPDMatrixRCond(A : TComplex2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean):Double;
+function CMatrixRCond1(A : TComplex2DArray; N : AlglibInteger):Double;
+function CMatrixRCondInf(A : TComplex2DArray; N : AlglibInteger):Double;
+function RMatrixLURCond1(const LUA : TReal2DArray; N : AlglibInteger):Double;
+function RMatrixLURCondInf(const LUA : TReal2DArray; N : AlglibInteger):Double;
+function SPDMatrixCholeskyRCond(const A : TReal2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean):Double;
+function HPDMatrixCholeskyRCond(const A : TComplex2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean):Double;
+function CMatrixLURCond1(const LUA : TComplex2DArray;
      N : AlglibInteger):Double;
-function RMatrixRCondInf(const A : TReal2DArray; N : AlglibInteger):Double;
-function RMatrixLURCondInf(const LUDcmp : TReal2DArray;
+function CMatrixLURCondInf(const LUA : TComplex2DArray;
      N : AlglibInteger):Double;
-function RCond1(A : TReal2DArray; N : AlglibInteger):Double;
-function RCond1LU(const LUDcmp : TReal2DArray; N : AlglibInteger):Double;
-function RCondInf(A : TReal2DArray; N : AlglibInteger):Double;
-function RCondInfLU(const LUDcmp : TReal2DArray; N : AlglibInteger):Double;
+function RCondThreshold():Double;
 
 implementation
 
-procedure InternalEstimateRCondLU(const LUDcmp : TReal2DArray;
+procedure SPDMatrixRCondCholeskyInternal(const CHA : TReal2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean;
+     IsNormProvided : Boolean;
+     ANORM : Double;
+     var RC : Double);forward;
+procedure HPDMatrixRCondCholeskyInternal(const CHA : TComplex2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean;
+     IsNormProvided : Boolean;
+     ANORM : Double;
+     var RC : Double);forward;
+procedure RMatrixRCondLUInternal(const LUA : TReal2DArray;
      N : AlglibInteger;
      OneNorm : Boolean;
      IsANormProvided : Boolean;
      ANORM : Double;
      var RC : Double);forward;
-procedure InternalEstimateNorm(N : AlglibInteger;
+procedure CMatrixRCondLUInternal(const LUA : TComplex2DArray;
+     const N : AlglibInteger;
+     OneNorm : Boolean;
+     IsANormProvided : Boolean;
+     ANORM : Double;
+     var RC : Double);forward;
+procedure RMatrixEstimateNorm(N : AlglibInteger;
      var V : TReal1DArray;
      var X : TReal1DArray;
      var ISGN : TInteger1DArray;
      var EST : Double;
      var KASE : AlglibInteger);forward;
+procedure CMatrixEstimateNorm(const N : AlglibInteger;
+     var V : TComplex1DArray;
+     var X : TComplex1DArray;
+     var EST : Double;
+     var KASE : AlglibInteger;
+     var ISAVE : TInteger1DArray;
+     var RSAVE : TReal1DArray);forward;
+function InternalComplexRCondSCSUM1(const X : TComplex1DArray;
+     N : AlglibInteger):Double;forward;
+function InternalComplexRCondICMAX1(const X : TComplex1DArray;
+     N : AlglibInteger):AlglibInteger;forward;
+procedure InternalComplexRCondSaveAll(var ISAVE : TInteger1DArray;
+     var RSAVE : TReal1DArray;
+     var I : AlglibInteger;
+     var ITER : AlglibInteger;
+     var J : AlglibInteger;
+     var JLAST : AlglibInteger;
+     var JUMP : AlglibInteger;
+     var ABSXI : Double;
+     var ALTSGN : Double;
+     var ESTOLD : Double;
+     var TEMP : Double);forward;
+procedure InternalComplexRCondLoadAll(var ISAVE : TInteger1DArray;
+     var RSAVE : TReal1DArray;
+     var I : AlglibInteger;
+     var ITER : AlglibInteger;
+     var J : AlglibInteger;
+     var JLAST : AlglibInteger;
+     var JUMP : AlglibInteger;
+     var ABSXI : Double;
+     var ALTSGN : Double;
+     var ESTOLD : Double;
+     var TEMP : Double);forward;
 
 
 (*************************************************************************
@@ -66,53 +130,50 @@ Input parameters:
     N   -   size of matrix A.
 
 Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
+    returned in such cases.
 *************************************************************************)
-function RMatrixRCond1(const A : TReal2DArray; N : AlglibInteger):Double;
+function RMatrixRCond1(A : TReal2DArray; N : AlglibInteger):Double;
 var
     I : AlglibInteger;
-    A1 : TReal2DArray;
+    J : AlglibInteger;
+    V : Double;
+    Nrm : Double;
+    Pivots : TInteger1DArray;
+    T : TReal1DArray;
 begin
+    A := DynamicArrayCopy(A);
     Assert(N>=1, 'RMatrixRCond1: N<1!');
-    SetLength(A1, N+1, N+1);
-    I:=1;
-    while I<=N do
+    SetLength(T, N);
+    I:=0;
+    while I<=N-1 do
     begin
-        APVMove(@A1[I][0], 1, N, @A[I-1][0], 0, N-1);
+        T[I] := 0;
         Inc(I);
     end;
-    Result := RCond1(A1, N);
-end;
-
-
-(*************************************************************************
-Estimate of the condition number of a matrix given by its LU decomposition (1-norm)
-
-The algorithm calculates a lower bound of the condition number. In this case,
-the algorithm does not return a lower bound of the condition number, but an
-inverse number (to avoid an overflow in case of a singular matrix).
-
-Input parameters:
-    LUDcmp      -   LU decomposition of a matrix in compact form. Output of
-                    the RMatrixLU subroutine.
-    N           -   size of matrix A.
-
-Result: 1/LowerBound(cond(A))
-*************************************************************************)
-function RMatrixLURCond1(const LUDcmp : TReal2DArray;
-     N : AlglibInteger):Double;
-var
-    I : AlglibInteger;
-    A1 : TReal2DArray;
-begin
-    Assert(N>=1, 'RMatrixLURCond1: N<1!');
-    SetLength(A1, N+1, N+1);
-    I:=1;
-    while I<=N do
+    I:=0;
+    while I<=N-1 do
     begin
-        APVMove(@A1[I][0], 1, N, @LUDcmp[I-1][0], 0, N-1);
+        J:=0;
+        while J<=N-1 do
+        begin
+            T[J] := T[J]+AbsReal(A[I,J]);
+            Inc(J);
+        end;
         Inc(I);
     end;
-    Result := RCond1LU(A1, N);
+    Nrm := 0;
+    I:=0;
+    while I<=N-1 do
+    begin
+        Nrm := Max(Nrm, T[I]);
+        Inc(I);
+    end;
+    RMatrixLU(A, N, N, Pivots);
+    RMatrixRCondLUInternal(A, N, True, True, Nrm, V);
+    Result := V;
 end;
 
 
@@ -128,21 +189,361 @@ Input parameters:
     N   -   size of matrix A.
 
 Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
+    returned in such cases.
 *************************************************************************)
-function RMatrixRCondInf(const A : TReal2DArray; N : AlglibInteger):Double;
+function RMatrixRCondInf(A : TReal2DArray; N : AlglibInteger):Double;
 var
     I : AlglibInteger;
-    A1 : TReal2DArray;
+    J : AlglibInteger;
+    V : Double;
+    Nrm : Double;
+    Pivots : TInteger1DArray;
 begin
+    A := DynamicArrayCopy(A);
     Assert(N>=1, 'RMatrixRCondInf: N<1!');
-    SetLength(A1, N+1, N+1);
-    I:=1;
-    while I<=N do
+    Nrm := 0;
+    I:=0;
+    while I<=N-1 do
     begin
-        APVMove(@A1[I][0], 1, N, @A[I-1][0], 0, N-1);
+        V := 0;
+        J:=0;
+        while J<=N-1 do
+        begin
+            V := V+AbsReal(A[I,J]);
+            Inc(J);
+        end;
+        Nrm := Max(Nrm, V);
         Inc(I);
     end;
-    Result := RCondInf(A1, N);
+    RMatrixLU(A, N, N, Pivots);
+    RMatrixRCondLUInternal(A, N, False, True, Nrm, V);
+    Result := V;
+end;
+
+
+(*************************************************************************
+Condition number estimate of a symmetric positive definite matrix.
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+It should be noted that 1-norm and inf-norm of condition numbers of symmetric
+matrices are equal, so the algorithm doesn't take into account the
+differences between these types of norms.
+
+Input parameters:
+    A       -   symmetric positive definite matrix which is given by its
+                upper or lower triangle depending on the value of
+                IsUpper. Array with elements [0..N-1, 0..N-1].
+    N       -   size of matrix A.
+    IsUpper -   storage format.
+
+Result:
+    1/LowerBound(cond(A)), if matrix A is positive definite,
+   -1, if matrix A is not positive definite, and its condition number
+    could not be found by this algorithm.
+
+NOTE:
+    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
+    returned in such cases.
+*************************************************************************)
+function SPDMatrixRCond(A : TReal2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean):Double;
+var
+    I : AlglibInteger;
+    J : AlglibInteger;
+    J1 : AlglibInteger;
+    J2 : AlglibInteger;
+    V : Double;
+    Nrm : Double;
+    T : TReal1DArray;
+begin
+    A := DynamicArrayCopy(A);
+    SetLength(T, N);
+    I:=0;
+    while I<=N-1 do
+    begin
+        T[I] := 0;
+        Inc(I);
+    end;
+    I:=0;
+    while I<=N-1 do
+    begin
+        if IsUpper then
+        begin
+            J1 := I;
+            J2 := N-1;
+        end
+        else
+        begin
+            J1 := 0;
+            J2 := I;
+        end;
+        J:=J1;
+        while J<=J2 do
+        begin
+            if I=J then
+            begin
+                T[I] := T[I]+AbsReal(A[I,I]);
+            end
+            else
+            begin
+                T[I] := T[I]+AbsReal(A[I,J]);
+                T[J] := T[J]+AbsReal(A[I,J]);
+            end;
+            Inc(J);
+        end;
+        Inc(I);
+    end;
+    Nrm := 0;
+    I:=0;
+    while I<=N-1 do
+    begin
+        Nrm := Max(Nrm, T[I]);
+        Inc(I);
+    end;
+    if SPDMatrixCholesky(A, N, IsUpper) then
+    begin
+        SPDMatrixRCondCholeskyInternal(A, N, IsUpper, True, Nrm, V);
+        Result := V;
+    end
+    else
+    begin
+        Result := -1;
+    end;
+end;
+
+
+(*************************************************************************
+Condition number estimate of a Hermitian positive definite matrix.
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+It should be noted that 1-norm and inf-norm of condition numbers of symmetric
+matrices are equal, so the algorithm doesn't take into account the
+differences between these types of norms.
+
+Input parameters:
+    A       -   Hermitian positive definite matrix which is given by its
+                upper or lower triangle depending on the value of
+                IsUpper. Array with elements [0..N-1, 0..N-1].
+    N       -   size of matrix A.
+    IsUpper -   storage format.
+
+Result:
+    1/LowerBound(cond(A)), if matrix A is positive definite,
+   -1, if matrix A is not positive definite, and its condition number
+    could not be found by this algorithm.
+
+NOTE:
+    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
+    returned in such cases.
+*************************************************************************)
+function HPDMatrixRCond(A : TComplex2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean):Double;
+var
+    I : AlglibInteger;
+    J : AlglibInteger;
+    J1 : AlglibInteger;
+    J2 : AlglibInteger;
+    V : Double;
+    Nrm : Double;
+    T : TReal1DArray;
+begin
+    A := DynamicArrayCopy(A);
+    SetLength(T, N);
+    I:=0;
+    while I<=N-1 do
+    begin
+        T[I] := 0;
+        Inc(I);
+    end;
+    I:=0;
+    while I<=N-1 do
+    begin
+        if IsUpper then
+        begin
+            J1 := I;
+            J2 := N-1;
+        end
+        else
+        begin
+            J1 := 0;
+            J2 := I;
+        end;
+        J:=J1;
+        while J<=J2 do
+        begin
+            if I=J then
+            begin
+                T[I] := T[I]+AbsComplex(A[I,I]);
+            end
+            else
+            begin
+                T[I] := T[I]+AbsComplex(A[I,J]);
+                T[J] := T[J]+AbsComplex(A[I,J]);
+            end;
+            Inc(J);
+        end;
+        Inc(I);
+    end;
+    Nrm := 0;
+    I:=0;
+    while I<=N-1 do
+    begin
+        Nrm := Max(Nrm, T[I]);
+        Inc(I);
+    end;
+    if HPDMatrixCholesky(A, N, IsUpper) then
+    begin
+        HPDMatrixRCondCholeskyInternal(A, N, IsUpper, True, Nrm, V);
+        Result := V;
+    end
+    else
+    begin
+        Result := -1;
+    end;
+end;
+
+
+(*************************************************************************
+Estimate of a matrix condition number (1-norm)
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    A   -   matrix. Array whose indexes range within [0..N-1, 0..N-1].
+    N   -   size of matrix A.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
+    returned in such cases.
+*************************************************************************)
+function CMatrixRCond1(A : TComplex2DArray; N : AlglibInteger):Double;
+var
+    I : AlglibInteger;
+    J : AlglibInteger;
+    V : Double;
+    Nrm : Double;
+    Pivots : TInteger1DArray;
+    T : TReal1DArray;
+begin
+    A := DynamicArrayCopy(A);
+    Assert(N>=1, 'CMatrixRCond1: N<1!');
+    SetLength(T, N);
+    I:=0;
+    while I<=N-1 do
+    begin
+        T[I] := 0;
+        Inc(I);
+    end;
+    I:=0;
+    while I<=N-1 do
+    begin
+        J:=0;
+        while J<=N-1 do
+        begin
+            T[J] := T[J]+AbsComplex(A[I,J]);
+            Inc(J);
+        end;
+        Inc(I);
+    end;
+    Nrm := 0;
+    I:=0;
+    while I<=N-1 do
+    begin
+        Nrm := Max(Nrm, T[I]);
+        Inc(I);
+    end;
+    CMatrixLU(A, N, N, Pivots);
+    CMatrixRCondLUInternal(A, N, True, True, Nrm, V);
+    Result := V;
+end;
+
+
+(*************************************************************************
+Estimate of a matrix condition number (infinity-norm).
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    A   -   matrix. Array whose indexes range within [0..N-1, 0..N-1].
+    N   -   size of matrix A.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
+    returned in such cases.
+*************************************************************************)
+function CMatrixRCondInf(A : TComplex2DArray; N : AlglibInteger):Double;
+var
+    I : AlglibInteger;
+    J : AlglibInteger;
+    V : Double;
+    Nrm : Double;
+    Pivots : TInteger1DArray;
+begin
+    A := DynamicArrayCopy(A);
+    Assert(N>=1, 'CMatrixRCondInf: N<1!');
+    Nrm := 0;
+    I:=0;
+    while I<=N-1 do
+    begin
+        V := 0;
+        J:=0;
+        while J<=N-1 do
+        begin
+            V := V+AbsComplex(A[I,J]);
+            Inc(J);
+        end;
+        Nrm := Max(Nrm, V);
+        Inc(I);
+    end;
+    CMatrixLU(A, N, N, Pivots);
+    CMatrixRCondLUInternal(A, N, False, True, Nrm, V);
+    Result := V;
+end;
+
+
+(*************************************************************************
+Estimate of the condition number of a matrix given by its LU decomposition (1-norm)
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    LUA         -   LU decomposition of a matrix in compact form. Output of
+                    the RMatrixLU subroutine.
+    N           -   size of matrix A.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
+    returned in such cases.
+*************************************************************************)
+function RMatrixLURCond1(const LUA : TReal2DArray; N : AlglibInteger):Double;
+var
+    V : Double;
+begin
+    RMatrixRCondLUInternal(LUA, N, True, False, 0, V);
+    Result := V;
 end;
 
 
@@ -155,145 +556,743 @@ the algorithm does not return a lower bound of the condition number, but an
 inverse number (to avoid an overflow in case of a singular matrix).
 
 Input parameters:
-    LUDcmp  -   LU decomposition of a matrix in compact form. Output of
+    LUA     -   LU decomposition of a matrix in compact form. Output of
                 the RMatrixLU subroutine.
     N       -   size of matrix A.
 
 Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
+    returned in such cases.
 *************************************************************************)
-function RMatrixLURCondInf(const LUDcmp : TReal2DArray;
+function RMatrixLURCondInf(const LUA : TReal2DArray; N : AlglibInteger):Double;
+var
+    V : Double;
+begin
+    RMatrixRCondLUInternal(LUA, N, False, False, 0, V);
+    Result := V;
+end;
+
+
+(*************************************************************************
+Condition number estimate of a symmetric positive definite matrix given by
+Cholesky decomposition.
+
+The algorithm calculates a lower bound of the condition number. In this
+case, the algorithm does not return a lower bound of the condition number,
+but an inverse number (to avoid an overflow in case of a singular matrix).
+
+It should be noted that 1-norm and inf-norm condition numbers of symmetric
+matrices are equal, so the algorithm doesn't take into account the
+differences between these types of norms.
+
+Input parameters:
+    CD  - Cholesky decomposition of matrix A,
+          output of SMatrixCholesky subroutine.
+    N   - size of matrix A.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
+    returned in such cases.
+*************************************************************************)
+function SPDMatrixCholeskyRCond(const A : TReal2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean):Double;
+var
+    V : Double;
+begin
+    SPDMatrixRCondCholeskyInternal(A, N, IsUpper, False, 0, V);
+    Result := V;
+end;
+
+
+(*************************************************************************
+Condition number estimate of a Hermitian positive definite matrix given by
+Cholesky decomposition.
+
+The algorithm calculates a lower bound of the condition number. In this
+case, the algorithm does not return a lower bound of the condition number,
+but an inverse number (to avoid an overflow in case of a singular matrix).
+
+It should be noted that 1-norm and inf-norm condition numbers of symmetric
+matrices are equal, so the algorithm doesn't take into account the
+differences between these types of norms.
+
+Input parameters:
+    CD  - Cholesky decomposition of matrix A,
+          output of SMatrixCholesky subroutine.
+    N   - size of matrix A.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
+    returned in such cases.
+*************************************************************************)
+function HPDMatrixCholeskyRCond(const A : TComplex2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean):Double;
+var
+    V : Double;
+begin
+    HPDMatrixRCondCholeskyInternal(A, N, IsUpper, False, 0, V);
+    Result := V;
+end;
+
+
+(*************************************************************************
+Estimate of the condition number of a matrix given by its LU decomposition (1-norm)
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    LUA         -   LU decomposition of a matrix in compact form. Output of
+                    the CMatrixLU subroutine.
+    N           -   size of matrix A.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
+    returned in such cases.
+*************************************************************************)
+function CMatrixLURCond1(const LUA : TComplex2DArray;
      N : AlglibInteger):Double;
 var
-    I : AlglibInteger;
-    A1 : TReal2DArray;
+    V : Double;
 begin
-    Assert(N>=1, 'RMatrixLURCondInf: N<1!');
-    SetLength(A1, N+1, N+1);
-    I:=1;
-    while I<=N do
-    begin
-        APVMove(@A1[I][0], 1, N, @LUDcmp[I-1][0], 0, N-1);
-        Inc(I);
-    end;
-    Result := RCondInfLU(A1, N);
+    Assert(N>=1, 'CMatrixLURCond1: N<1!');
+    CMatrixRCondLUInternal(LUA, N, True, False, 0.0, V);
+    Result := V;
 end;
 
 
-function RCond1(A : TReal2DArray; N : AlglibInteger):Double;
+(*************************************************************************
+Estimate of the condition number of a matrix given by its LU decomposition
+(infinity norm).
+
+The algorithm calculates a lower bound of the condition number. In this case,
+the algorithm does not return a lower bound of the condition number, but an
+inverse number (to avoid an overflow in case of a singular matrix).
+
+Input parameters:
+    LUA     -   LU decomposition of a matrix in compact form. Output of
+                the CMatrixLU subroutine.
+    N       -   size of matrix A.
+
+Result: 1/LowerBound(cond(A))
+
+NOTE:
+    if k(A)>1/epsilon, then matrix is assumed degenerate, k(A)=INF, 0.0 is
+    returned in such cases.
+*************************************************************************)
+function CMatrixLURCondInf(const LUA : TComplex2DArray;
+     N : AlglibInteger):Double;
+var
+    V : Double;
+begin
+    Assert(N>=1, 'CMatrixLURCondInf: N<1!');
+    CMatrixRCondLUInternal(LUA, N, False, False, 0.0, V);
+    Result := V;
+end;
+
+
+(*************************************************************************
+Threshold for rcond: matrices with condition number beyond this  threshold
+are considered singular.
+
+Threshold must be far enough from underflow, at least Sqr(Threshold)  must
+be greater than underflow.
+*************************************************************************)
+function RCondThreshold():Double;
+begin
+    Result := Sqrt(Sqrt(MinRealNumber));
+end;
+
+
+(*************************************************************************
+Internal subroutine for condition number estimation
+
+  -- LAPACK routine (version 3.0) --
+     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+     Courant Institute, Argonne National Lab, and Rice University
+     February 29, 1992
+*************************************************************************)
+procedure SPDMatrixRCondCholeskyInternal(const CHA : TReal2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean;
+     IsNormProvided : Boolean;
+     ANORM : Double;
+     var RC : Double);
 var
     I : AlglibInteger;
     J : AlglibInteger;
+    KASE : AlglibInteger;
+    AINVNM : Double;
+    EX : TReal1DArray;
+    EV : TReal1DArray;
+    Tmp : TReal1DArray;
+    IWORK : TInteger1DArray;
+    SA : Double;
     V : Double;
-    Nrm : Double;
-    Pivots : TInteger1DArray;
+    MaxGrowth : Double;
 begin
-    A := DynamicArrayCopy(A);
-    Nrm := 0;
-    J:=1;
-    while J<=N do
+    Assert(N>=1);
+    SetLength(Tmp, N);
+    
+    //
+    // RC=0 if something happens
+    //
+    RC := 0;
+    
+    //
+    // prepare parameters for triangular solver
+    //
+    MaxGrowth := 1/RCondThreshold;
+    SA := 0;
+    if IsUpper then
     begin
-        V := 0;
-        I:=1;
-        while I<=N do
+        I:=0;
+        while I<=N-1 do
         begin
-            V := V+AbsReal(A[I,J]);
+            J:=I;
+            while J<=N-1 do
+            begin
+                SA := Max(SA, AbsComplex(C_Complex(CHA[I,J])));
+                Inc(J);
+            end;
             Inc(I);
         end;
-        Nrm := Max(Nrm, V);
-        Inc(J);
+    end
+    else
+    begin
+        I:=0;
+        while I<=N-1 do
+        begin
+            J:=0;
+            while J<=I do
+            begin
+                SA := Max(SA, AbsComplex(C_Complex(CHA[I,J])));
+                Inc(J);
+            end;
+            Inc(I);
+        end;
     end;
-    LUDecomposition(A, N, N, Pivots);
-    InternalEstimateRCondLU(A, N, True, True, Nrm, V);
-    Result := V;
+    if AP_FP_Eq(SA,0) then
+    begin
+        SA := 1;
+    end;
+    SA := 1/SA;
+    
+    //
+    // Estimate the norm of A.
+    //
+    if  not IsNormProvided then
+    begin
+        KASE := 0;
+        ANORM := 0;
+        while True do
+        begin
+            RMatrixEstimateNorm(N, EV, EX, IWORK, ANORM, KASE);
+            if KASE=0 then
+            begin
+                Break;
+            end;
+            if IsUpper then
+            begin
+                
+                //
+                // Multiply by U
+                //
+                I:=1;
+                while I<=N do
+                begin
+                    V := APVDotProduct(@CHA[I-1][0], I-1, N-1, @EX[0], I, N);
+                    EX[I] := V;
+                    Inc(I);
+                end;
+                APVMul(@EX[0], 1, N, SA);
+                
+                //
+                // Multiply by U'
+                //
+                I:=0;
+                while I<=N-1 do
+                begin
+                    Tmp[I] := 0;
+                    Inc(I);
+                end;
+                I:=0;
+                while I<=N-1 do
+                begin
+                    V := EX[I+1];
+                    APVAdd(@Tmp[0], I, N-1, @CHA[I][0], I, N-1, V);
+                    Inc(I);
+                end;
+                APVMove(@EX[0], 1, N, @Tmp[0], 0, N-1);
+                APVMul(@EX[0], 1, N, SA);
+            end
+            else
+            begin
+                
+                //
+                // Multiply by L'
+                //
+                I:=0;
+                while I<=N-1 do
+                begin
+                    Tmp[I] := 0;
+                    Inc(I);
+                end;
+                I:=0;
+                while I<=N-1 do
+                begin
+                    V := EX[I+1];
+                    APVAdd(@Tmp[0], 0, I, @CHA[I][0], 0, I, V);
+                    Inc(I);
+                end;
+                APVMove(@EX[0], 1, N, @Tmp[0], 0, N-1);
+                APVMul(@EX[0], 1, N, SA);
+                
+                //
+                // Multiply by L
+                //
+                I:=N;
+                while I>=1 do
+                begin
+                    V := APVDotProduct(@CHA[I-1][0], 0, I-1, @EX[0], 1, I);
+                    EX[I] := V;
+                    Dec(I);
+                end;
+                APVMul(@EX[0], 1, N, SA);
+            end;
+        end;
+    end;
+    
+    //
+    // Quick return if possible
+    //
+    if AP_FP_Eq(ANORM,0) then
+    begin
+        Exit;
+    end;
+    if N=1 then
+    begin
+        RC := 1;
+        Exit;
+    end;
+    
+    //
+    // Estimate the 1-norm of inv(A).
+    //
+    KASE := 0;
+    while True do
+    begin
+        RMatrixEstimateNorm(N, EV, EX, IWORK, AINVNM, KASE);
+        if KASE=0 then
+        begin
+            Break;
+        end;
+        I:=0;
+        while I<=N-1 do
+        begin
+            EX[I] := EX[I+1];
+            Inc(I);
+        end;
+        if IsUpper then
+        begin
+            
+            //
+            // Multiply by inv(U').
+            //
+            if  not RMatrixScaledTRSafeSolve(CHA, SA, N, EX, IsUpper, 1, False, MaxGrowth) then
+            begin
+                Exit;
+            end;
+            
+            //
+            // Multiply by inv(U).
+            //
+            if  not RMatrixScaledTRSafeSolve(CHA, SA, N, EX, IsUpper, 0, False, MaxGrowth) then
+            begin
+                Exit;
+            end;
+        end
+        else
+        begin
+            
+            //
+            // Multiply by inv(L).
+            //
+            if  not RMatrixScaledTRSafeSolve(CHA, SA, N, EX, IsUpper, 0, False, MaxGrowth) then
+            begin
+                Exit;
+            end;
+            
+            //
+            // Multiply by inv(L').
+            //
+            if  not RMatrixScaledTRSafeSolve(CHA, SA, N, EX, IsUpper, 1, False, MaxGrowth) then
+            begin
+                Exit;
+            end;
+        end;
+        I:=N-1;
+        while I>=0 do
+        begin
+            EX[I+1] := EX[I];
+            Dec(I);
+        end;
+    end;
+    
+    //
+    // Compute the estimate of the reciprocal condition number.
+    //
+    if AP_FP_Neq(AINVNM,0) then
+    begin
+        V := 1/AINVNM;
+        RC := V/ANORM;
+        if AP_FP_Less(RC,RCondThreshold) then
+        begin
+            RC := 0;
+        end;
+    end;
 end;
 
 
-function RCond1LU(const LUDcmp : TReal2DArray; N : AlglibInteger):Double;
-var
-    V : Double;
-begin
-    InternalEstimateRCondLU(LUDcmp, N, True, False, 0, V);
-    Result := V;
-end;
+(*************************************************************************
+Internal subroutine for condition number estimation
 
-
-function RCondInf(A : TReal2DArray; N : AlglibInteger):Double;
+  -- LAPACK routine (version 3.0) --
+     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+     Courant Institute, Argonne National Lab, and Rice University
+     February 29, 1992
+*************************************************************************)
+procedure HPDMatrixRCondCholeskyInternal(const CHA : TComplex2DArray;
+     N : AlglibInteger;
+     IsUpper : Boolean;
+     IsNormProvided : Boolean;
+     ANORM : Double;
+     var RC : Double);
 var
+    ISAVE : TInteger1DArray;
+    RSAVE : TReal1DArray;
+    EX : TComplex1DArray;
+    EV : TComplex1DArray;
+    Tmp : TComplex1DArray;
+    KASE : AlglibInteger;
+    AINVNM : Double;
+    V : Complex;
     I : AlglibInteger;
     J : AlglibInteger;
-    V : Double;
-    Nrm : Double;
-    Pivots : TInteger1DArray;
+    SA : Double;
+    MaxGrowth : Double;
+    i_ : AlglibInteger;
+    i1_ : AlglibInteger;
 begin
-    A := DynamicArrayCopy(A);
-    Nrm := 0;
-    I:=1;
-    while I<=N do
+    Assert(N>=1);
+    SetLength(Tmp, N);
+    
+    //
+    // RC=0 if something happens
+    //
+    RC := 0;
+    
+    //
+    // prepare parameters for triangular solver
+    //
+    MaxGrowth := 1/RCondThreshold;
+    SA := 0;
+    if IsUpper then
     begin
-        V := 0;
-        J:=1;
-        while J<=N do
+        I:=0;
+        while I<=N-1 do
         begin
-            V := V+AbsReal(A[I,J]);
-            Inc(J);
+            J:=I;
+            while J<=N-1 do
+            begin
+                SA := Max(SA, AbsComplex(CHA[I,J]));
+                Inc(J);
+            end;
+            Inc(I);
         end;
-        Nrm := Max(Nrm, V);
-        Inc(I);
+    end
+    else
+    begin
+        I:=0;
+        while I<=N-1 do
+        begin
+            J:=0;
+            while J<=I do
+            begin
+                SA := Max(SA, AbsComplex(CHA[I,J]));
+                Inc(J);
+            end;
+            Inc(I);
+        end;
     end;
-    LUDecomposition(A, N, N, Pivots);
-    InternalEstimateRCondLU(A, N, False, True, Nrm, V);
-    Result := V;
+    if AP_FP_Eq(SA,0) then
+    begin
+        SA := 1;
+    end;
+    SA := 1/SA;
+    
+    //
+    // Estimate the norm of A
+    //
+    if  not IsNormProvided then
+    begin
+        ANORM := 0;
+        KASE := 0;
+        while True do
+        begin
+            CMatrixEstimateNorm(N, EV, EX, ANORM, KASE, ISAVE, RSAVE);
+            if KASE=0 then
+            begin
+                Break;
+            end;
+            if IsUpper then
+            begin
+                
+                //
+                // Multiply by U
+                //
+                I:=1;
+                while I<=N do
+                begin
+                    i1_ := (I)-(I-1);
+                    V := C_Complex(0.0);
+                    for i_ := I-1 to N-1 do
+                    begin
+                        V := C_Add(V,C_Mul(CHA[I-1,i_],EX[i_+i1_]));
+                    end;
+                    EX[I] := V;
+                    Inc(I);
+                end;
+                for i_ := 1 to N do
+                begin
+                    EX[i_] := C_MulR(EX[i_],SA);
+                end;
+                
+                //
+                // Multiply by U'
+                //
+                I:=0;
+                while I<=N-1 do
+                begin
+                    Tmp[I] := C_Complex(0);
+                    Inc(I);
+                end;
+                I:=0;
+                while I<=N-1 do
+                begin
+                    V := EX[I+1];
+                    for i_ := I to N-1 do
+                    begin
+                        Tmp[i_] := C_Add(Tmp[i_], C_Mul(V, Conj(CHA[I,i_])));
+                    end;
+                    Inc(I);
+                end;
+                i1_ := (0) - (1);
+                for i_ := 1 to N do
+                begin
+                    EX[i_] := Tmp[i_+i1_];
+                end;
+                for i_ := 1 to N do
+                begin
+                    EX[i_] := C_MulR(EX[i_],SA);
+                end;
+            end
+            else
+            begin
+                
+                //
+                // Multiply by L'
+                //
+                I:=0;
+                while I<=N-1 do
+                begin
+                    Tmp[I] := C_Complex(0);
+                    Inc(I);
+                end;
+                I:=0;
+                while I<=N-1 do
+                begin
+                    V := EX[I+1];
+                    for i_ := 0 to I do
+                    begin
+                        Tmp[i_] := C_Add(Tmp[i_], C_Mul(V, Conj(CHA[I,i_])));
+                    end;
+                    Inc(I);
+                end;
+                i1_ := (0) - (1);
+                for i_ := 1 to N do
+                begin
+                    EX[i_] := Tmp[i_+i1_];
+                end;
+                for i_ := 1 to N do
+                begin
+                    EX[i_] := C_MulR(EX[i_],SA);
+                end;
+                
+                //
+                // Multiply by L
+                //
+                I:=N;
+                while I>=1 do
+                begin
+                    i1_ := (1)-(0);
+                    V := C_Complex(0.0);
+                    for i_ := 0 to I-1 do
+                    begin
+                        V := C_Add(V,C_Mul(CHA[I-1,i_],EX[i_+i1_]));
+                    end;
+                    EX[I] := V;
+                    Dec(I);
+                end;
+                for i_ := 1 to N do
+                begin
+                    EX[i_] := C_MulR(EX[i_],SA);
+                end;
+            end;
+        end;
+    end;
+    
+    //
+    // Quick return if possible
+    // After this block we assume that ANORM<>0
+    //
+    if AP_FP_Eq(ANORM,0) then
+    begin
+        Exit;
+    end;
+    if N=1 then
+    begin
+        RC := 1;
+        Exit;
+    end;
+    
+    //
+    // Estimate the norm of inv(A).
+    //
+    AINVNM := 0;
+    KASE := 0;
+    while True do
+    begin
+        CMatrixEstimateNorm(N, EV, EX, AINVNM, KASE, ISAVE, RSAVE);
+        if KASE=0 then
+        begin
+            Break;
+        end;
+        I:=0;
+        while I<=N-1 do
+        begin
+            EX[I] := EX[I+1];
+            Inc(I);
+        end;
+        if IsUpper then
+        begin
+            
+            //
+            // Multiply by inv(U').
+            //
+            if  not CMatrixScaledTRSafeSolve(CHA, SA, N, EX, IsUpper, 2, False, MaxGrowth) then
+            begin
+                Exit;
+            end;
+            
+            //
+            // Multiply by inv(U).
+            //
+            if  not CMatrixScaledTRSafeSolve(CHA, SA, N, EX, IsUpper, 0, False, MaxGrowth) then
+            begin
+                Exit;
+            end;
+        end
+        else
+        begin
+            
+            //
+            // Multiply by inv(L).
+            //
+            if  not CMatrixScaledTRSafeSolve(CHA, SA, N, EX, IsUpper, 0, False, MaxGrowth) then
+            begin
+                Exit;
+            end;
+            
+            //
+            // Multiply by inv(L').
+            //
+            if  not CMatrixScaledTRSafeSolve(CHA, SA, N, EX, IsUpper, 2, False, MaxGrowth) then
+            begin
+                Exit;
+            end;
+        end;
+        I:=N-1;
+        while I>=0 do
+        begin
+            EX[I+1] := EX[I];
+            Dec(I);
+        end;
+    end;
+    
+    //
+    // Compute the estimate of the reciprocal condition number.
+    //
+    if AP_FP_Neq(AINVNM,0) then
+    begin
+        RC := 1/AINVNM;
+        RC := RC/ANORM;
+        if AP_FP_Less(RC,RCondThreshold) then
+        begin
+            RC := 0;
+        end;
+    end;
 end;
 
 
-function RCondInfLU(const LUDcmp : TReal2DArray; N : AlglibInteger):Double;
-var
-    V : Double;
-begin
-    InternalEstimateRCondLU(LUDcmp, N, False, False, 0, V);
-    Result := V;
-end;
+(*************************************************************************
+Internal subroutine for condition number estimation
 
-
-procedure InternalEstimateRCondLU(const LUDcmp : TReal2DArray;
+  -- LAPACK routine (version 3.0) --
+     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+     Courant Institute, Argonne National Lab, and Rice University
+     February 29, 1992
+*************************************************************************)
+procedure RMatrixRCondLUInternal(const LUA : TReal2DArray;
      N : AlglibInteger;
      OneNorm : Boolean;
      IsANormProvided : Boolean;
      ANORM : Double;
      var RC : Double);
 var
-    WORK0 : TReal1DArray;
-    WORK1 : TReal1DArray;
-    WORK2 : TReal1DArray;
-    WORK3 : TReal1DArray;
+    EX : TReal1DArray;
+    EV : TReal1DArray;
     IWORK : TInteger1DArray;
+    Tmp : TReal1DArray;
     V : Double;
-    NORMIN : Boolean;
     I : AlglibInteger;
-    IM1 : AlglibInteger;
-    IP1 : AlglibInteger;
-    IX : AlglibInteger;
+    J : AlglibInteger;
     KASE : AlglibInteger;
     KASE1 : AlglibInteger;
     AINVNM : Double;
-    ASCALE : Double;
-    SL : Double;
-    SMLNUM : Double;
+    MaxGrowth : Double;
     SU : Double;
+    SL : Double;
     MUpper : Boolean;
     MTrans : Boolean;
     Munit : Boolean;
-    i_ : AlglibInteger;
 begin
     
     //
-    // Quick return if possible
+    // RC=0 if something happens
     //
-    if N=0 then
-    begin
-        RC := 1;
-        Exit;
-    end;
+    RC := 0;
     
     //
     // init
@@ -309,11 +1308,38 @@ begin
     MUpper := True;
     MTrans := True;
     Munit := True;
-    SetLength(WORK0, N+1);
-    SetLength(WORK1, N+1);
-    SetLength(WORK2, N+1);
-    SetLength(WORK3, N+1);
     SetLength(IWORK, N+1);
+    SetLength(Tmp, N);
+    
+    //
+    // prepare parameters for triangular solver
+    //
+    MaxGrowth := 1/RCondThreshold;
+    SU := 0;
+    SL := 1;
+    I:=0;
+    while I<=N-1 do
+    begin
+        J:=0;
+        while J<=I-1 do
+        begin
+            SL := Max(SL, AbsReal(LUA[I,J]));
+            Inc(J);
+        end;
+        J:=I;
+        while J<=N-1 do
+        begin
+            SU := Max(SU, AbsReal(LUA[I,J]));
+            Inc(J);
+        end;
+        Inc(I);
+    end;
+    if AP_FP_Eq(SU,0) then
+    begin
+        SU := 1;
+    end;
+    SU := 1/SU;
+    SL := 1/SL;
     
     //
     // Estimate the norm of A.
@@ -324,7 +1350,7 @@ begin
         ANORM := 0;
         while True do
         begin
-            InternalEstimateNorm(N, WORK1, WORK0, IWORK, ANORM, KASE);
+            RMatrixEstimateNorm(N, EV, EX, IWORK, ANORM, KASE);
             if KASE=0 then
             begin
                 Break;
@@ -338,8 +1364,8 @@ begin
                 I:=1;
                 while I<=N do
                 begin
-                    V := APVDotProduct(@LUDcmp[I][0], I, N, @WORK0[0], I, N);
-                    WORK0[I] := V;
+                    V := APVDotProduct(@LUA[I-1][0], I-1, N-1, @EX[0], I, N);
+                    EX[I] := V;
                     Inc(I);
                 end;
                 
@@ -349,16 +1375,15 @@ begin
                 I:=N;
                 while I>=1 do
                 begin
-                    IM1 := I-1;
                     if I>1 then
                     begin
-                        V := APVDotProduct(@LUDcmp[I][0], 1, IM1, @WORK0[0], 1, IM1);
+                        V := APVDotProduct(@LUA[I-1][0], 0, I-2, @EX[0], 1, I-1);
                     end
                     else
                     begin
                         V := 0;
                     end;
-                    WORK0[I] := WORK0[I]+V;
+                    EX[I] := EX[I]+V;
                     Dec(I);
                 end;
             end
@@ -368,72 +1393,109 @@ begin
                 //
                 // Multiply by L'
                 //
-                I:=1;
-                while I<=N do
+                I:=0;
+                while I<=N-1 do
                 begin
-                    IP1 := I+1;
-                    V := 0.0;
-                    for i_ := IP1 to N do
-                    begin
-                        V := V + LUDcmp[i_,I]*WORK0[i_];
-                    end;
-                    WORK0[I] := WORK0[I]+V;
+                    Tmp[I] := 0;
                     Inc(I);
                 end;
+                I:=0;
+                while I<=N-1 do
+                begin
+                    V := EX[I+1];
+                    if I>=1 then
+                    begin
+                        APVAdd(@Tmp[0], 0, I-1, @LUA[I][0], 0, I-1, V);
+                    end;
+                    Tmp[I] := Tmp[I]+V;
+                    Inc(I);
+                end;
+                APVMove(@EX[0], 1, N, @Tmp[0], 0, N-1);
                 
                 //
                 // Multiply by U'
                 //
-                I:=N;
-                while I>=1 do
+                I:=0;
+                while I<=N-1 do
                 begin
-                    V := 0.0;
-                    for i_ := 1 to I do
-                    begin
-                        V := V + LUDcmp[i_,I]*WORK0[i_];
-                    end;
-                    WORK0[I] := V;
-                    Dec(I);
+                    Tmp[I] := 0;
+                    Inc(I);
                 end;
+                I:=0;
+                while I<=N-1 do
+                begin
+                    V := EX[I+1];
+                    APVAdd(@Tmp[0], I, N-1, @LUA[I][0], I, N-1, V);
+                    Inc(I);
+                end;
+                APVMove(@EX[0], 1, N, @Tmp[0], 0, N-1);
             end;
         end;
     end;
     
     //
-    // Quick return if possible
+    // Scale according to SU/SL
     //
-    RC := 0;
+    ANORM := ANORM*SU*SL;
+    
+    //
+    // Quick return if possible
+    // We assume that ANORM<>0 after this block
+    //
     if AP_FP_Eq(ANORM,0) then
     begin
+        Exit;
+    end;
+    if N=1 then
+    begin
+        RC := 1;
         Exit;
     end;
     
     //
     // Estimate the norm of inv(A).
     //
-    SMLNUM := MinRealNumber;
     AINVNM := 0;
-    NORMIN := False;
     KASE := 0;
     while True do
     begin
-        InternalEstimateNorm(N, WORK1, WORK0, IWORK, AINVNM, KASE);
+        RMatrixEstimateNorm(N, EV, EX, IWORK, AINVNM, KASE);
         if KASE=0 then
         begin
             Break;
         end;
+        
+        //
+        // from 1-based array to 0-based
+        //
+        I:=0;
+        while I<=N-1 do
+        begin
+            EX[I] := EX[I+1];
+            Inc(I);
+        end;
+        
+        //
+        // multiply by inv(A) or inv(A')
+        //
         if KASE=KASE1 then
         begin
             
             //
             // Multiply by inv(L).
             //
-            SafeSolveTriangular(LUDcmp, N, WORK0, SL,  not MUpper,  not MTrans, Munit, NORMIN, WORK2);
+            if  not RMatrixScaledTRSafeSolve(LUA, SL, N, EX,  not MUpper, 0, Munit, MaxGrowth) then
+            begin
+                Exit;
+            end;
             
             //
             // Multiply by inv(U).
             //
-            SafeSolveTriangular(LUDcmp, N, WORK0, SU, MUpper,  not MTrans,  not Munit, NORMIN, WORK3);
+            if  not RMatrixScaledTRSafeSolve(LUA, SU, N, EX, MUpper, 0,  not Munit, MaxGrowth) then
+            begin
+                Exit;
+            end;
         end
         else
         begin
@@ -441,41 +1503,28 @@ begin
             //
             // Multiply by inv(U').
             //
-            SafeSolveTriangular(LUDcmp, N, WORK0, SU, MUpper, MTrans,  not Munit, NORMIN, WORK3);
+            if  not RMatrixScaledTRSafeSolve(LUA, SU, N, EX, MUpper, 1,  not Munit, MaxGrowth) then
+            begin
+                Exit;
+            end;
             
             //
             // Multiply by inv(L').
             //
-            SafeSolveTriangular(LUDcmp, N, WORK0, SL,  not MUpper, MTrans, Munit, NORMIN, WORK2);
-        end;
-        
-        //
-        // Divide X by 1/(SL*SU) if doing so will not cause overflow.
-        //
-        ASCALE := SL*SU;
-        NORMIN := True;
-        if AP_FP_Neq(ASCALE,1) then
-        begin
-            IX := 1;
-            I:=2;
-            while I<=N do
-            begin
-                if AP_FP_Greater(AbsReal(WORK0[I]),AbsReal(WORK0[IX])) then
-                begin
-                    IX := I;
-                end;
-                Inc(I);
-            end;
-            if AP_FP_Less(ASCALE,ABSReal(WORK0[IX])*SMLNUM) or AP_FP_Eq(ASCALE,0) then
+            if  not RMatrixScaledTRSafeSolve(LUA, SL, N, EX,  not MUpper, 1, Munit, MaxGrowth) then
             begin
                 Exit;
             end;
-            I:=1;
-            while I<=N do
-            begin
-                WORK0[I] := WORK0[I]/ASCALE;
-                Inc(I);
-            end;
+        end;
+        
+        //
+        // from 0-based array to 1-based
+        //
+        I:=N-1;
+        while I>=0 do
+        begin
+            EX[I+1] := EX[I];
+            Dec(I);
         end;
     end;
     
@@ -486,11 +1535,325 @@ begin
     begin
         RC := 1/AINVNM;
         RC := RC/ANORM;
+        if AP_FP_Less(RC,RCondThreshold) then
+        begin
+            RC := 0;
+        end;
     end;
 end;
 
 
-procedure InternalEstimateNorm(N : AlglibInteger;
+(*************************************************************************
+Condition number estimation
+
+  -- LAPACK routine (version 3.0) --
+     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+     Courant Institute, Argonne National Lab, and Rice University
+     March 31, 1993
+*************************************************************************)
+procedure CMatrixRCondLUInternal(const LUA : TComplex2DArray;
+     const N : AlglibInteger;
+     OneNorm : Boolean;
+     IsANormProvided : Boolean;
+     ANORM : Double;
+     var RC : Double);
+var
+    EX : TComplex1DArray;
+    CWORK2 : TComplex1DArray;
+    CWORK3 : TComplex1DArray;
+    CWORK4 : TComplex1DArray;
+    ISAVE : TInteger1DArray;
+    RSAVE : TReal1DArray;
+    KASE : AlglibInteger;
+    KASE1 : AlglibInteger;
+    AINVNM : Double;
+    V : Complex;
+    I : AlglibInteger;
+    J : AlglibInteger;
+    SU : Double;
+    SL : Double;
+    MaxGrowth : Double;
+    i_ : AlglibInteger;
+    i1_ : AlglibInteger;
+begin
+    if N<=0 then
+    begin
+        Exit;
+    end;
+    SetLength(CWORK2, N+1);
+    RC := 0;
+    if N=0 then
+    begin
+        RC := 1;
+        Exit;
+    end;
+    
+    //
+    // prepare parameters for triangular solver
+    //
+    MaxGrowth := 1/RCondThreshold;
+    SU := 0;
+    SL := 1;
+    I:=0;
+    while I<=N-1 do
+    begin
+        J:=0;
+        while J<=I-1 do
+        begin
+            SL := Max(SL, AbsComplex(LUA[I,J]));
+            Inc(J);
+        end;
+        J:=I;
+        while J<=N-1 do
+        begin
+            SU := Max(SU, AbsComplex(LUA[I,J]));
+            Inc(J);
+        end;
+        Inc(I);
+    end;
+    if AP_FP_Eq(SU,0) then
+    begin
+        SU := 1;
+    end;
+    SU := 1/SU;
+    SL := 1/SL;
+    
+    //
+    // Estimate the norm of SU*SL*A.
+    //
+    if  not IsANormProvided then
+    begin
+        ANORM := 0;
+        if OneNorm then
+        begin
+            KASE1 := 1;
+        end
+        else
+        begin
+            KASE1 := 2;
+        end;
+        KASE := 0;
+        repeat
+            CMatrixEstimateNorm(N, CWORK4, EX, ANORM, KASE, ISAVE, RSAVE);
+            if KASE<>0 then
+            begin
+                if KASE=KASE1 then
+                begin
+                    
+                    //
+                    // Multiply by U
+                    //
+                    I:=1;
+                    while I<=N do
+                    begin
+                        i1_ := (I)-(I-1);
+                        V := C_Complex(0.0);
+                        for i_ := I-1 to N-1 do
+                        begin
+                            V := C_Add(V,C_Mul(LUA[I-1,i_],EX[i_+i1_]));
+                        end;
+                        EX[I] := V;
+                        Inc(I);
+                    end;
+                    
+                    //
+                    // Multiply by L
+                    //
+                    I:=N;
+                    while I>=1 do
+                    begin
+                        V := C_Complex(0);
+                        if I>1 then
+                        begin
+                            i1_ := (1)-(0);
+                            V := C_Complex(0.0);
+                            for i_ := 0 to I-2 do
+                            begin
+                                V := C_Add(V,C_Mul(LUA[I-1,i_],EX[i_+i1_]));
+                            end;
+                        end;
+                        EX[I] := C_Add(V,EX[I]);
+                        Dec(I);
+                    end;
+                end
+                else
+                begin
+                    
+                    //
+                    // Multiply by L'
+                    //
+                    I:=1;
+                    while I<=N do
+                    begin
+                        CWORK2[I] := C_Complex(0);
+                        Inc(I);
+                    end;
+                    I:=1;
+                    while I<=N do
+                    begin
+                        V := EX[I];
+                        if I>1 then
+                        begin
+                            i1_ := (0) - (1);
+                            for i_ := 1 to I-1 do
+                            begin
+                                CWORK2[i_] := C_Add(CWORK2[i_], C_Mul(V, Conj(LUA[I-1,i_+i1_])));
+                            end;
+                        end;
+                        CWORK2[I] := C_Add(CWORK2[I],V);
+                        Inc(I);
+                    end;
+                    
+                    //
+                    // Multiply by U'
+                    //
+                    I:=1;
+                    while I<=N do
+                    begin
+                        EX[I] := C_Complex(0);
+                        Inc(I);
+                    end;
+                    I:=1;
+                    while I<=N do
+                    begin
+                        V := CWORK2[I];
+                        i1_ := (I-1) - (I);
+                        for i_ := I to N do
+                        begin
+                            EX[i_] := C_Add(EX[i_], C_Mul(V, Conj(LUA[I-1,i_+i1_])));
+                        end;
+                        Inc(I);
+                    end;
+                end;
+            end;
+        until KASE=0;
+    end;
+    
+    //
+    // Scale according to SU/SL
+    //
+    ANORM := ANORM*SU*SL;
+    
+    //
+    // Quick return if possible
+    //
+    if AP_FP_Eq(ANORM,0) then
+    begin
+        Exit;
+    end;
+    
+    //
+    // Estimate the norm of inv(A).
+    //
+    AINVNM := 0;
+    if OneNorm then
+    begin
+        KASE1 := 1;
+    end
+    else
+    begin
+        KASE1 := 2;
+    end;
+    KASE := 0;
+    while True do
+    begin
+        CMatrixEstimateNorm(N, CWORK4, EX, AINVNM, KASE, ISAVE, RSAVE);
+        if KASE=0 then
+        begin
+            Break;
+        end;
+        
+        //
+        // From 1-based to 0-based
+        //
+        I:=0;
+        while I<=N-1 do
+        begin
+            EX[I] := EX[I+1];
+            Inc(I);
+        end;
+        
+        //
+        // multiply by inv(A) or inv(A')
+        //
+        if KASE=KASE1 then
+        begin
+            
+            //
+            // Multiply by inv(L).
+            //
+            if  not CMatrixScaledTRSafeSolve(LUA, SL, N, EX, False, 0, True, MaxGrowth) then
+            begin
+                RC := 0;
+                Exit;
+            end;
+            
+            //
+            // Multiply by inv(U).
+            //
+            if  not CMatrixScaledTRSafeSolve(LUA, SU, N, EX, True, 0, False, MaxGrowth) then
+            begin
+                RC := 0;
+                Exit;
+            end;
+        end
+        else
+        begin
+            
+            //
+            // Multiply by inv(U').
+            //
+            if  not CMatrixScaledTRSafeSolve(LUA, SU, N, EX, True, 2, False, MaxGrowth) then
+            begin
+                RC := 0;
+                Exit;
+            end;
+            
+            //
+            // Multiply by inv(L').
+            //
+            if  not CMatrixScaledTRSafeSolve(LUA, SL, N, EX, False, 2, True, MaxGrowth) then
+            begin
+                RC := 0;
+                Exit;
+            end;
+        end;
+        
+        //
+        // from 0-based to 1-based
+        //
+        I:=N-1;
+        while I>=0 do
+        begin
+            EX[I+1] := EX[I];
+            Dec(I);
+        end;
+    end;
+    
+    //
+    // Compute the estimate of the reciprocal condition number.
+    //
+    if AP_FP_Neq(AINVNM,0) then
+    begin
+        RC := 1/AINVNM;
+        RC := RC/ANORM;
+        if AP_FP_Less(RC,RCondThreshold) then
+        begin
+            RC := 0;
+        end;
+    end;
+end;
+
+
+(*************************************************************************
+Internal subroutine for matrix norm estimation
+
+  -- LAPACK auxiliary routine (version 3.0) --
+     Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+     Courant Institute, Argonne National Lab, and Rice University
+     February 29, 1992
+*************************************************************************)
+procedure RMatrixEstimateNorm(N : AlglibInteger;
      var V : TReal1DArray;
      var X : TReal1DArray;
      var ISGN : TInteger1DArray;
@@ -519,9 +1882,9 @@ begin
     PosJUMP := N+4;
     if KASE=0 then
     begin
-        SetLength(V, N+3+1);
+        SetLength(V, N+4);
         SetLength(X, N+1);
-        SetLength(ISGN, N+4+1);
+        SetLength(ISGN, N+5);
         T := AP_Double(1)/N;
         I:=1;
         while I<=N do
@@ -740,6 +2103,318 @@ begin
         KASE := 0;
         Exit;
     end;
+end;
+
+
+procedure CMatrixEstimateNorm(const N : AlglibInteger;
+     var V : TComplex1DArray;
+     var X : TComplex1DArray;
+     var EST : Double;
+     var KASE : AlglibInteger;
+     var ISAVE : TInteger1DArray;
+     var RSAVE : TReal1DArray);
+var
+    ITMAX : AlglibInteger;
+    I : AlglibInteger;
+    ITER : AlglibInteger;
+    J : AlglibInteger;
+    JLAST : AlglibInteger;
+    JUMP : AlglibInteger;
+    ABSXI : Double;
+    ALTSGN : Double;
+    ESTOLD : Double;
+    SAFMIN : Double;
+    TEMP : Double;
+    i_ : AlglibInteger;
+begin
+    
+    //
+    //Executable Statements ..
+    //
+    ITMAX := 5;
+    SAFMIN := MinRealNumber;
+    if KASE=0 then
+    begin
+        SetLength(V, N+1);
+        SetLength(X, N+1);
+        SetLength(ISAVE, 5);
+        SetLength(RSAVE, 4);
+        I:=1;
+        while I<=N do
+        begin
+            X[I] := C_Complex(AP_Double(1)/N);
+            Inc(I);
+        end;
+        KASE := 1;
+        JUMP := 1;
+        InternalComplexRCondSaveAll(ISAVE, RSAVE, I, ITER, J, JLAST, JUMP, ABSXI, ALTSGN, ESTOLD, TEMP);
+        Exit;
+    end;
+    InternalComplexRCondLoadAll(ISAVE, RSAVE, I, ITER, J, JLAST, JUMP, ABSXI, ALTSGN, ESTOLD, TEMP);
+    
+    //
+    // ENTRY   (JUMP = 1)
+    // FIRST ITERATION.  X HAS BEEN OVERWRITTEN BY A*X.
+    //
+    if JUMP=1 then
+    begin
+        if N=1 then
+        begin
+            V[1] := X[1];
+            EST := AbsComplex(V[1]);
+            KASE := 0;
+            InternalComplexRCondSaveAll(ISAVE, RSAVE, I, ITER, J, JLAST, JUMP, ABSXI, ALTSGN, ESTOLD, TEMP);
+            Exit;
+        end;
+        EST := InternalComplexRCondSCSUM1(X, N);
+        I:=1;
+        while I<=N do
+        begin
+            ABSXI := AbsComplex(X[I]);
+            if AP_FP_Greater(ABSXI,SAFMIN) then
+            begin
+                X[I] := C_DivR(X[I],ABSXI);
+            end
+            else
+            begin
+                X[I] := C_Complex(1);
+            end;
+            Inc(I);
+        end;
+        KASE := 2;
+        JUMP := 2;
+        InternalComplexRCondSaveAll(ISAVE, RSAVE, I, ITER, J, JLAST, JUMP, ABSXI, ALTSGN, ESTOLD, TEMP);
+        Exit;
+    end;
+    
+    //
+    // ENTRY   (JUMP = 2)
+    // FIRST ITERATION.  X HAS BEEN OVERWRITTEN BY CTRANS(A)*X.
+    //
+    if JUMP=2 then
+    begin
+        J := InternalComplexRCondICMAX1(X, N);
+        ITER := 2;
+        
+        //
+        // MAIN LOOP - ITERATIONS 2,3,...,ITMAX.
+        //
+        I:=1;
+        while I<=N do
+        begin
+            X[I] := C_Complex(0);
+            Inc(I);
+        end;
+        X[J] := C_Complex(1);
+        KASE := 1;
+        JUMP := 3;
+        InternalComplexRCondSaveAll(ISAVE, RSAVE, I, ITER, J, JLAST, JUMP, ABSXI, ALTSGN, ESTOLD, TEMP);
+        Exit;
+    end;
+    
+    //
+    // ENTRY   (JUMP = 3)
+    // X HAS BEEN OVERWRITTEN BY A*X.
+    //
+    if JUMP=3 then
+    begin
+        for i_ := 1 to N do
+        begin
+            V[i_] := X[i_];
+        end;
+        ESTOLD := EST;
+        EST := InternalComplexRCondSCSUM1(V, N);
+        
+        //
+        // TEST FOR CYCLING.
+        //
+        if AP_FP_Less_Eq(EST,ESTOLD) then
+        begin
+            
+            //
+            // ITERATION COMPLETE.  FINAL STAGE.
+            //
+            ALTSGN := 1;
+            I:=1;
+            while I<=N do
+            begin
+                X[I] := C_Complex(ALTSGN*(1+AP_Double((I-1))/(N-1)));
+                ALTSGN := -ALTSGN;
+                Inc(I);
+            end;
+            KASE := 1;
+            JUMP := 5;
+            InternalComplexRCondSaveAll(ISAVE, RSAVE, I, ITER, J, JLAST, JUMP, ABSXI, ALTSGN, ESTOLD, TEMP);
+            Exit;
+        end;
+        I:=1;
+        while I<=N do
+        begin
+            ABSXI := AbsComplex(X[I]);
+            if AP_FP_Greater(ABSXI,SAFMIN) then
+            begin
+                X[I] := C_DivR(X[I],ABSXI);
+            end
+            else
+            begin
+                X[I] := C_Complex(1);
+            end;
+            Inc(I);
+        end;
+        KASE := 2;
+        JUMP := 4;
+        InternalComplexRCondSaveAll(ISAVE, RSAVE, I, ITER, J, JLAST, JUMP, ABSXI, ALTSGN, ESTOLD, TEMP);
+        Exit;
+    end;
+    
+    //
+    // ENTRY   (JUMP = 4)
+    // X HAS BEEN OVERWRITTEN BY CTRANS(A)*X.
+    //
+    if JUMP=4 then
+    begin
+        JLAST := J;
+        J := InternalComplexRCondICMAX1(X, N);
+        if AP_FP_Neq(AbsComplex(X[JLAST]),AbsComplex(X[J])) and (ITER<ITMAX) then
+        begin
+            ITER := ITER+1;
+            
+            //
+            // MAIN LOOP - ITERATIONS 2,3,...,ITMAX.
+            //
+            I:=1;
+            while I<=N do
+            begin
+                X[I] := C_Complex(0);
+                Inc(I);
+            end;
+            X[J] := C_Complex(1);
+            KASE := 1;
+            JUMP := 3;
+            InternalComplexRCondSaveAll(ISAVE, RSAVE, I, ITER, J, JLAST, JUMP, ABSXI, ALTSGN, ESTOLD, TEMP);
+            Exit;
+        end;
+        
+        //
+        // ITERATION COMPLETE.  FINAL STAGE.
+        //
+        ALTSGN := 1;
+        I:=1;
+        while I<=N do
+        begin
+            X[I] := C_Complex(ALTSGN*(1+AP_Double((I-1))/(N-1)));
+            ALTSGN := -ALTSGN;
+            Inc(I);
+        end;
+        KASE := 1;
+        JUMP := 5;
+        InternalComplexRCondSaveAll(ISAVE, RSAVE, I, ITER, J, JLAST, JUMP, ABSXI, ALTSGN, ESTOLD, TEMP);
+        Exit;
+    end;
+    
+    //
+    // ENTRY   (JUMP = 5)
+    // X HAS BEEN OVERWRITTEN BY A*X.
+    //
+    if JUMP=5 then
+    begin
+        TEMP := 2*(InternalComplexRCondSCSUM1(X, N)/(3*N));
+        if AP_FP_Greater(TEMP,EST) then
+        begin
+            for i_ := 1 to N do
+            begin
+                V[i_] := X[i_];
+            end;
+            EST := TEMP;
+        end;
+        KASE := 0;
+        InternalComplexRCondSaveAll(ISAVE, RSAVE, I, ITER, J, JLAST, JUMP, ABSXI, ALTSGN, ESTOLD, TEMP);
+        Exit;
+    end;
+end;
+
+
+function InternalComplexRCondSCSUM1(const X : TComplex1DArray;
+     N : AlglibInteger):Double;
+var
+    I : AlglibInteger;
+begin
+    Result := 0;
+    I:=1;
+    while I<=N do
+    begin
+        Result := Result+AbsComplex(X[I]);
+        Inc(I);
+    end;
+end;
+
+
+function InternalComplexRCondICMAX1(const X : TComplex1DArray;
+     N : AlglibInteger):AlglibInteger;
+var
+    I : AlglibInteger;
+    M : Double;
+begin
+    Result := 1;
+    M := AbsComplex(X[1]);
+    I:=2;
+    while I<=N do
+    begin
+        if AP_FP_Greater(AbsComplex(X[I]),M) then
+        begin
+            Result := I;
+            M := AbsComplex(X[I]);
+        end;
+        Inc(I);
+    end;
+end;
+
+
+procedure InternalComplexRCondSaveAll(var ISAVE : TInteger1DArray;
+     var RSAVE : TReal1DArray;
+     var I : AlglibInteger;
+     var ITER : AlglibInteger;
+     var J : AlglibInteger;
+     var JLAST : AlglibInteger;
+     var JUMP : AlglibInteger;
+     var ABSXI : Double;
+     var ALTSGN : Double;
+     var ESTOLD : Double;
+     var TEMP : Double);
+begin
+    ISAVE[0] := I;
+    ISAVE[1] := ITER;
+    ISAVE[2] := J;
+    ISAVE[3] := JLAST;
+    ISAVE[4] := JUMP;
+    RSAVE[0] := ABSXI;
+    RSAVE[1] := ALTSGN;
+    RSAVE[2] := ESTOLD;
+    RSAVE[3] := TEMP;
+end;
+
+
+procedure InternalComplexRCondLoadAll(var ISAVE : TInteger1DArray;
+     var RSAVE : TReal1DArray;
+     var I : AlglibInteger;
+     var ITER : AlglibInteger;
+     var J : AlglibInteger;
+     var JLAST : AlglibInteger;
+     var JUMP : AlglibInteger;
+     var ABSXI : Double;
+     var ALTSGN : Double;
+     var ESTOLD : Double;
+     var TEMP : Double);
+begin
+    I := ISAVE[0];
+    ITER := ISAVE[1];
+    J := ISAVE[2];
+    JLAST := ISAVE[3];
+    JUMP := ISAVE[4];
+    ABSXI := RSAVE[0];
+    ALTSGN := RSAVE[1];
+    ESTOLD := RSAVE[2];
+    TEMP := RSAVE[3];
 end;
 
 

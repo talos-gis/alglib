@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit spline2d;
 interface
-uses Math, Sysutils, Ap, spline3, blas, trinverse, cholesky, spdsolve, lbfgs, minlm, reflections, bidiagonal, qr, lq, rotations, bdsvd, svd, lu, trlinsolve, rcond, leastsquares, lsfit, spline1d;
+uses Math, Sysutils, Ap, spline3, blas, reflections, creflections, hqrnd, matgen, trinverse, ablasf, ablas, trfac, bidiagonal, qr, lq, rotations, bdsvd, svd, trlinsolve, safesolve, rcond, tsort, xblas, densesolver, lbfgs, minlm, leastsquares, lsfit, spline1d;
 
 type
 (*************************************************************************
@@ -473,8 +473,6 @@ var
     DT : Double;
     U : Double;
     DU : Double;
-    I : AlglibInteger;
-    J : AlglibInteger;
     IX : AlglibInteger;
     IY : AlglibInteger;
     L : AlglibInteger;
@@ -990,7 +988,6 @@ var
     J : AlglibInteger;
     N : AlglibInteger;
     M : AlglibInteger;
-    V : Double;
     X : TReal1DArray;
     Y : TReal1DArray;
     F : TReal2DArray;
@@ -1305,14 +1302,12 @@ procedure BicubicCalcDerivatives(const A : TReal2DArray;
 var
     I : AlglibInteger;
     J : AlglibInteger;
-    K : AlglibInteger;
     XT : TReal1DArray;
     FT : TReal1DArray;
     C : TReal1DArray;
     S : Double;
     DS : Double;
     D2S : Double;
-    V : Double;
 begin
     SetLength(DX, M-1+1, N-1+1);
     SetLength(DY, M-1+1, N-1+1);

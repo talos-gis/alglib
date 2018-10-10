@@ -1,6 +1,6 @@
 
 program _test;
-uses Sysutils, testluunit;
+uses Sysutils, testablasunit;
 
 var
     MySeed: Cardinal;
@@ -14,14 +14,13 @@ begin
         MySeed:=StrToIntDef(ParamStr(1),0);
     RandSeed:=MySeed;
     try 
-        if not testluunit_test_silent() then
+        if not testablasunit_test_silent() then
             raise Exception.Create('');
     except on E: Exception do 
         begin
-            WriteLn('lu                               FAILED(seed=',MySeed,')');
+            WriteLn('SEED ', MySeed:9, '    UNIT ', 'ablas');
             Halt(1);
         end;
     end;
-    WriteLn('lu                               OK');
     Halt(0);
 end.

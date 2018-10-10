@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit mlptrain;
 interface
-uses Math, Sysutils, Ap, mlpbase, trinverse, lbfgs, cholesky, spdsolve;
+uses Math, Sysutils, Ap, mlpbase, trinverse, lbfgs, reflections, bidiagonal, qr, lq, blas, rotations, bdsvd, svd, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, tsort, xblas, densesolver;
 
 type
 (*************************************************************************
@@ -164,9 +164,7 @@ var
     LMFTol : Double;
     LMStepTol : Double;
     I : AlglibInteger;
-    J : AlglibInteger;
     K : AlglibInteger;
-    MX : AlglibInteger;
     V : Double;
     E : Double;
     ENew : Double;
@@ -182,20 +180,19 @@ var
     Lambda : Double;
     LambdaUp : Double;
     LambdaDown : Double;
-    CVCnt : AlglibInteger;
-    CVRelCnt : Double;
     InternalRep : LBFGSReport;
     State : LBFGSState;
     X : TReal1DArray;
     Y : TReal1DArray;
     WBase : TReal1DArray;
-    WStep : Double;
     WDir : TReal1DArray;
     WT : TReal1DArray;
     WX : TReal1DArray;
     Pass : AlglibInteger;
     WBest : TReal1DArray;
     EBest : Double;
+    SolverInfo : AlglibInteger;
+    SolverRep : DenseSolverReport;
 begin
     MLPProperties(Network, NIn, NOut, WCount);
     LambdaUp := 10;
@@ -333,7 +330,8 @@ begin
                 Nu := Nu*2;
                 Continue;
             end;
-            if  not SPDMatrixCholeskySolve(HMod, G, WCount, True, WDir) then
+            SPDMatrixCholeskySolve(HMod, WCount, True, G, SolverInfo, SolverRep, WDir);
+            if SolverInfo<0 then
             begin
                 Lambda := Lambda*LambdaUp*Nu;
                 Nu := Nu*2;
@@ -531,7 +529,6 @@ procedure MLPTrainLBFGS(var Network : MultiLayerPerceptron;
      var Rep : MLPReport);
 var
     I : AlglibInteger;
-    J : AlglibInteger;
     Pass : AlglibInteger;
     NIn : AlglibInteger;
     NOut : AlglibInteger;
@@ -684,7 +681,6 @@ procedure MLPTrainES(var Network : MultiLayerPerceptron;
      var Rep : MLPReport);
 var
     I : AlglibInteger;
-    J : AlglibInteger;
     Pass : AlglibInteger;
     NIn : AlglibInteger;
     NOut : AlglibInteger;

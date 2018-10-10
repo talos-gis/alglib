@@ -223,7 +223,6 @@ var
     F1 : Double;
     F2 : Double;
     F3 : Double;
-    F : Double;
     F12 : Double;
     F23 : Double;
     X : Double;

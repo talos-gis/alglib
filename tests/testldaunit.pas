@@ -1,6 +1,6 @@
 unit testldaunit;
 interface
-uses Math, Sysutils, Ap, blas, rotations, tdevd, sblas, reflections, tridiagonal, sevd, cholesky, spdinverse, lda;
+uses Math, Sysutils, Ap, blas, rotations, tdevd, sblas, reflections, tridiagonal, sevd, creflections, hqrnd, matgen, ablasf, ablas, trfac, spdinverse, lda;
 
 function TestLDA(Silent : Boolean):Boolean;
 function testldaunit_test_silent():Boolean;

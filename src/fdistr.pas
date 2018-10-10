@@ -173,7 +173,6 @@ function InvFDistribution(a : AlglibInteger;
      y : Double):Double;
 var
     w : Double;
-    x : Double;
 begin
     Assert((a>=1) and (b>=1) and AP_FP_Greater(y,0) and AP_FP_Less_Eq(y,1), 'Domain error in InvFDistribution');
     

@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit polint;
 interface
-uses Math, Sysutils, Ap, tsort, ratinterpolation, blas, trinverse, cholesky, spdsolve, lbfgs, minlm, reflections, bidiagonal, qr, lq, rotations, bdsvd, svd, lu, trlinsolve, rcond, spline3, leastsquares, lsfit, ratint, taskgen;
+uses Math, Sysutils, Ap, tsort, ratinterpolation, blas, reflections, creflections, hqrnd, matgen, trinverse, ablasf, ablas, trfac, bidiagonal, qr, lq, rotations, bdsvd, svd, trlinsolve, safesolve, rcond, xblas, densesolver, lbfgs, minlm, spline3, leastsquares, lsfit, ratint, taskgen;
 
 type
 (*************************************************************************
@@ -339,7 +339,6 @@ var
     W : TReal1DArray;
     X : TReal1DArray;
     V : Double;
-    T : Double;
 begin
     Assert(N>0, 'PolIntBuildCheb2: N<=0!');
     

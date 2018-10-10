@@ -118,8 +118,6 @@ var
     NCVT : AlglibInteger;
     I : AlglibInteger;
     J : AlglibInteger;
-    IM1 : AlglibInteger;
-    SM : Double;
 begin
     A := DynamicArrayCopy(A);
     Result := True;
@@ -395,8 +393,6 @@ var
     NCVT : AlglibInteger;
     I : AlglibInteger;
     J : AlglibInteger;
-    IM1 : AlglibInteger;
-    SM : Double;
 begin
     A := DynamicArrayCopy(A);
     Result := True;

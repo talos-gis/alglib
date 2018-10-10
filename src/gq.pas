@@ -764,9 +764,7 @@ procedure GQGenerateGaussHermite(N : AlglibInteger;
 var
     A : TReal1DArray;
     B : TReal1DArray;
-    T : Double;
     I : AlglibInteger;
-    S : Double;
 begin
     if N<1 then
     begin

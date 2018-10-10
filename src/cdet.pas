@@ -19,16 +19,12 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit cdet;
 interface
-uses Math, Sysutils, Ap, clu;
+uses Math, Sysutils, Ap, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac;
 
 function CMatrixLUDet(const A : TComplex2DArray;
      const Pivots : TInteger1DArray;
      N : AlglibInteger):Complex;
 function CMatrixDet(A : TComplex2DArray; N : AlglibInteger):Complex;
-function ComplexDeterminantLU(const A : TComplex2DArray;
-     const Pivots : TInteger1DArray;
-     N : AlglibInteger):Complex;
-function ComplexDeterminant(A : TComplex2DArray; N : AlglibInteger):Complex;
 
 implementation
 
@@ -90,39 +86,6 @@ begin
     A := DynamicArrayCopy(A);
     CMatrixLU(A, N, N, Pivots);
     Result := CMatrixLUDet(A, Pivots, N);
-end;
-
-
-function ComplexDeterminantLU(const A : TComplex2DArray;
-     const Pivots : TInteger1DArray;
-     N : AlglibInteger):Complex;
-var
-    I : AlglibInteger;
-    S : AlglibInteger;
-begin
-    Result := C_Complex(1);
-    S := 1;
-    I:=1;
-    while I<=N do
-    begin
-        Result := C_Mul(Result,A[I,I]);
-        if Pivots[I]<>I then
-        begin
-            S := -S;
-        end;
-        Inc(I);
-    end;
-    Result := C_MulR(Result,S);
-end;
-
-
-function ComplexDeterminant(A : TComplex2DArray; N : AlglibInteger):Complex;
-var
-    Pivots : TInteger1DArray;
-begin
-    A := DynamicArrayCopy(A);
-    ComplexLUDecomposition(A, N, N, Pivots);
-    Result := ComplexDeterminantLU(A, Pivots, N);
 end;
 
 

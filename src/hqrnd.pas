@@ -51,9 +51,7 @@ function HQRNDUniformR(var State : HQRNDState):Double;
 function HQRNDUniformI(N : AlglibInteger;
      var State : HQRNDState):AlglibInteger;
 function HQRNDNormal(var State : HQRNDState):Double;
-function HQRNDUnit2(var State : HQRNDState;
-     var X : Double;
-     var Y : Double):Double;
+procedure HQRNDUnit2(var State : HQRNDState; var X : Double; var Y : Double);
 procedure HQRNDNormal2(var State : HQRNDState;
      var X1 : Double;
      var X2 : Double);
@@ -173,9 +171,7 @@ State structure must be initialized with HQRNDRandomize() or HQRNDSeed().
   -- ALGLIB --
      Copyright 02.12.2009 by Bochkanov Sergey
 *************************************************************************)
-function HQRNDUnit2(var State : HQRNDState;
-     var X : Double;
-     var Y : Double):Double;
+procedure HQRNDUnit2(var State : HQRNDState; var X : Double; var Y : Double);
 var
     V : Double;
     MX : Double;

@@ -1,6 +1,6 @@
 unit testinvcholeskyunit;
 interface
-uses Math, Sysutils, Ap, cholesky, spdinverse;
+uses Math, Sysutils, Ap, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, spdinverse;
 
 function TestInvCholesky(Silent : Boolean):Boolean;
 function testinvcholeskyunit_test_silent():Boolean;

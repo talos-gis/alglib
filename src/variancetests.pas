@@ -86,7 +86,6 @@ var
     YMean : Double;
     XVar : Double;
     YVar : Double;
-    P : Double;
     DF1 : AlglibInteger;
     DF2 : AlglibInteger;
     Stat : Double;
@@ -201,10 +200,7 @@ procedure OneSampleVarianceTest(const X : TReal1DArray;
 var
     I : AlglibInteger;
     XMean : Double;
-    YMean : Double;
     XVar : Double;
-    YVar : Double;
-    P : Double;
     S : Double;
     Stat : Double;
 begin

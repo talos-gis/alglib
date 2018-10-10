@@ -1,6 +1,6 @@
 unit testpolintunit;
 interface
-uses Math, Sysutils, Ap, tsort, ratinterpolation, blas, trinverse, cholesky, spdsolve, lbfgs, minlm, reflections, bidiagonal, qr, lq, rotations, bdsvd, svd, lu, trlinsolve, rcond, spline3, leastsquares, lsfit, ratint, taskgen, polint;
+uses Math, Sysutils, Ap, tsort, ratinterpolation, blas, reflections, creflections, hqrnd, matgen, trinverse, ablasf, ablas, trfac, bidiagonal, qr, lq, rotations, bdsvd, svd, trlinsolve, safesolve, rcond, xblas, densesolver, lbfgs, minlm, spline3, leastsquares, lsfit, ratint, taskgen, polint;
 
 function TestPolInt(Silent : Boolean):Boolean;
 function testpolintunit_test_silent():Boolean;

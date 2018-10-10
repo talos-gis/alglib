@@ -19,7 +19,7 @@ http://www.fsf.org/licensing/licenses
 *************************************************************************)
 unit logit;
 interface
-uses Math, Sysutils, Ap, descriptivestatistics, mlpbase, cholesky, spdsolve, tsort, bdss;
+uses Math, Sysutils, Ap, descriptivestatistics, mlpbase, reflections, bidiagonal, qr, lq, blas, rotations, bdsvd, svd, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, tsort, xblas, densesolver, bdss;
 
 type
 LogitModel = record
@@ -193,8 +193,6 @@ var
     I : AlglibInteger;
     J : AlglibInteger;
     K : AlglibInteger;
-    M : AlglibInteger;
-    N : AlglibInteger;
     SSize : AlglibInteger;
     AllSame : Boolean;
     Offs : AlglibInteger;
@@ -213,7 +211,6 @@ var
     G : TReal1DArray;
     H : TReal2DArray;
     SPD : Boolean;
-    CVCnt : AlglibInteger;
     X : TReal1DArray;
     Y : TReal1DArray;
     WBase : TReal1DArray;
@@ -224,6 +221,8 @@ var
     MCState : LOGITMCState;
     MCInfo : AlglibInteger;
     MCNFEV : AlglibInteger;
+    SolverInfo : AlglibInteger;
+    SolverRep : DenseSolverReport;
 begin
     Threshold := 1000*MachineEpsilon;
     WMinStep := 0.001;
@@ -404,10 +403,8 @@ begin
         // factorization since it is much faster than higher-triangle version.
         //
         SPD := SPDMatrixCholesky(H, WCount, False);
-        if SPD then
-        begin
-            SPD := SPDMatrixCholeskySolve(H, G, WCount, False, WDir);
-        end;
+        SPDMatrixCholeskySolve(H, WCount, False, G, SolverInfo, SolverRep, WDir);
+        SPD := SolverInfo>0;
         if SPD then
         begin
             
@@ -513,8 +510,6 @@ var
     Offs : AlglibInteger;
     I : AlglibInteger;
     I1 : AlglibInteger;
-    V : Double;
-    MX : Double;
     S : Double;
 begin
     Assert(AP_FP_Eq(LM.W[1],LogitVNum), 'MNLProcess: unexpected model version');
@@ -710,10 +705,8 @@ var
     NVars : AlglibInteger;
     NClasses : AlglibInteger;
     I : AlglibInteger;
-    J : AlglibInteger;
     WorkX : TReal1DArray;
     WorkY : TReal1DArray;
-    NMAX : AlglibInteger;
 begin
     Assert(AP_FP_Eq(LM.W[1],LogitVNum), 'MNLClsError: unexpected model version');
     NVars := Round(LM.W[2]);

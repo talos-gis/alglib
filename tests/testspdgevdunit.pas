@@ -1,6 +1,6 @@
 unit testspdgevdunit;
 interface
-uses Math, Sysutils, Ap, cholesky, sblas, blas, trinverse, rotations, tdevd, reflections, tridiagonal, sevd, spdgevd;
+uses Math, Sysutils, Ap, reflections, creflections, hqrnd, matgen, ablasf, ablas, trfac, sblas, blas, trinverse, rotations, tdevd, tridiagonal, sevd, spdgevd;
 
 function TestSPDGEVD(Silent : Boolean):Boolean;
 function testspdgevdunit_test_silent():Boolean;

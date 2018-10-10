@@ -84,13 +84,11 @@ var
     EBest : Double;
     X : TReal1DArray;
     Tmp : TReal1DArray;
-    CC : AlglibInteger;
     D2 : TReal1DArray;
     P : TReal1DArray;
     CSizes : TInteger1DArray;
     CBusy : TBoolean1DArray;
     V : Double;
-    S : Double;
     CClosest : AlglibInteger;
     DClosest : Double;
     WORK : TReal1DArray;

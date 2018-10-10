@@ -1,6 +1,6 @@
 unit testmlpeunit;
 interface
-uses Math, Sysutils, Ap, mlpbase, trinverse, lbfgs, cholesky, spdsolve, mlptrain, tsort, descriptivestatistics, bdss, mlpe;
+uses Math, Sysutils, Ap, mlpbase, trinverse, lbfgs, reflections, bidiagonal, qr, lq, blas, rotations, bdsvd, svd, creflections, hqrnd, matgen, ablasf, ablas, trfac, trlinsolve, safesolve, rcond, tsort, xblas, densesolver, mlptrain, descriptivestatistics, bdss, mlpe;
 
 function TestMLPE(Silent : Boolean):Boolean;
 function testmlpeunit_test_silent():Boolean;

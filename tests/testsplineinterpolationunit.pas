@@ -1,6 +1,6 @@
 unit testsplineinterpolationunit;
 interface
-uses Math, Sysutils, Ap, spline3, blas, trinverse, cholesky, spdsolve, lbfgs, minlm, reflections, bidiagonal, qr, lq, rotations, bdsvd, svd, lu, trlinsolve, rcond, leastsquares, lsfit, spline1d;
+uses Math, Sysutils, Ap, spline3, blas, reflections, creflections, hqrnd, matgen, trinverse, ablasf, ablas, trfac, bidiagonal, qr, lq, rotations, bdsvd, svd, trlinsolve, safesolve, rcond, tsort, xblas, densesolver, lbfgs, minlm, leastsquares, lsfit, spline1d;
 
 function TestSplineInterpolation(Silent : Boolean):Boolean;
 function testsplineinterpolationunit_test_silent():Boolean;

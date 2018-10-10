@@ -162,7 +162,6 @@ var
     WR1 : TReal1DArray;
     WI1 : TReal1DArray;
     I : AlglibInteger;
-    MX : Double;
 begin
     A := DynamicArrayCopy(A);
     Assert((VNeeded>=0) and (VNeeded<=3), 'RMatrixEVD: incorrect VNeeded!');

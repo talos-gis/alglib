@@ -1,6 +1,6 @@
 
 program _test;
-uses Sysutils, testcluunit;
+uses Sysutils, testablasunit;
 
 var
     MySeed: Cardinal;
@@ -14,18 +14,14 @@ begin
         MySeed:=StrToIntDef(ParamStr(1),0);
     RandSeed:=MySeed;
     try 
-        if not testcluunit_test() then
-        begin
-            WriteLn('SEED: ', MySeed);
-            Halt(1);
-        end;
+        if not testablasunit_test_silent() then
+            raise Exception.Create('');
     except on E: Exception do 
         begin
-            WriteLn('SEED: ', MySeed);
-            WriteLn('AP exception generated!');
-            WriteLn('\"',E.Message,'\"');
+            WriteLn('ablas                            FAILED(seed=',MySeed,')');
             Halt(1);
         end;
     end;
+    WriteLn('ablas                            OK');
     Halt(0);
 end.

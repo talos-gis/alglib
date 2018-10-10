@@ -1,6 +1,6 @@
 
 program _test;
-uses Sysutils, testspdrcondunit;
+uses Sysutils, testsafesolveunit;
 
 var
     MySeed: Cardinal;
@@ -14,14 +14,13 @@ begin
         MySeed:=StrToIntDef(ParamStr(1),0);
     RandSeed:=MySeed;
     try 
-        if not testspdrcondunit_test_silent() then
+        if not testsafesolveunit_test_silent() then
             raise Exception.Create('');
     except on E: Exception do 
         begin
-            WriteLn('spdrcond                         FAILED(seed=',MySeed,')');
+            WriteLn('SEED ', MySeed:9, '    UNIT ', 'safesolve');
             Halt(1);
         end;
     end;
-    WriteLn('spdrcond                         OK');
     Halt(0);
 end.

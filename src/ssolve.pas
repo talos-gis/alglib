@@ -91,7 +91,6 @@ function SMatrixLDLTSolve(const A : TReal2DArray;
      var X : TReal1DArray):Boolean;
 var
     I : AlglibInteger;
-    J : AlglibInteger;
     K : AlglibInteger;
     KP : AlglibInteger;
     AK : Double;
@@ -548,7 +547,6 @@ function SolveSystemLDLT(const A : TReal2DArray;
      var X : TReal1DArray):Boolean;
 var
     I : AlglibInteger;
-    J : AlglibInteger;
     K : AlglibInteger;
     KP : AlglibInteger;
     KM1 : AlglibInteger;
